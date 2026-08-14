@@ -482,3 +482,134 @@ If everything works, your report of all PASS tests is just as valuable as findin
 If you find a bug: FAIL → screenshot → report it to Shivansh.
 
 Do NOT try to fix the code yourself.
+
+---
+
+## Saturday Mentor Reporting (Vishal)
+
+Every Saturday you send Shivansh your update so he can include it in the team report to the mentor. This section tells you exactly what to send and how to explain your testing work.
+
+### Your weekly update format (send this to Shivansh every Friday evening)
+
+```
+Vishal — Week [N]
+
+Tests performed this week: [number]
+Tests passed: [number]
+Tests failed: [number]
+
+What I tested:
+- [Brief description of each test area]
+
+Bugs found:
+- Bug #[X]: [One line description] — Severity: [High/Medium/Low]
+
+Bugs fixed and retested:
+- Bug #[X]: [Was fixed by Shivansh] — Retested: [PASS/FAIL]
+
+What I'll test next week:
+- [Brief plan]
+```
+
+---
+
+### Week 1 Mentor Update
+
+**What Vishal did:**
+> "I studied the project flow to understand what the website is supposed to do. I created the initial test case list covering the basic user journey — opening the website, uploading a file, pasting a JD, clicking Analyze, and seeing results."
+
+**Approach:**
+> "Before testing anything, I first understood what the expected behavior should be for each feature. A test without a clear expected result is not useful — you can't tell if something passed or failed."
+
+**What is in Git:**
+> `docs/testing/test-cases.md` committed.
+
+**Be ready if mentor asks:**
+- "What is a test case?"
+- "How many tests did you write?"
+- "What does your test case cover?"
+
+---
+
+### Week 2 Mentor Update
+
+**What Vishal did:**
+> "I tested the resume upload feature with 8 different scenarios — valid PDF, valid DOCX, JPG, TXT, no file, very large file, empty document, and a renamed file. I documented each test with its expected and actual result."
+
+**Approach:**
+> "I tested both valid and invalid inputs. Testing only valid inputs is not enough — you need to try to break the feature with unexpected inputs to find edge cases."
+
+**If a bug was found:**
+> "I found that [describe bug]. I took a screenshot, wrote the bug report in bug-report.md, and reported it to Shivansh."
+
+**Be ready if mentor asks:**
+- "What is an edge case?"
+- "What happened when you uploaded an invalid file?"
+- "How did you report the bug?"
+
+---
+
+### Week 3 Mentor Update
+
+**What Vishal did:**
+> "I tested the job description input with 8 scenarios — normal JD, very long JD, very short JD, empty JD, random text, special characters, and a JD with specific skills like Python, FastAPI, Docker."
+
+**Approach:**
+> "I focused on what happens at the boundaries — what happens with too little input, too much input, or completely wrong input. These boundary conditions are where systems most commonly fail."
+
+**Be ready if mentor asks:**
+- "What is boundary testing?"
+- "What happened when you left the JD empty?"
+
+---
+
+### Week 4 Mentor Update
+
+**What Vishal did:**
+> "I tested 5 complete analysis scenarios — strong match, weak match, partial match, wrong job role, and AI suggestion relevance. I checked whether the results made logical sense — not just whether they appeared."
+
+**Approach:**
+> "For this week's testing I focused on 'sanity checking' — does the result make sense? If a resume has Python and the JD requires Python, Python should appear in matched skills, not missing skills. This kind of logical verification is just as important as functional testing."
+
+**Be ready if mentor asks:**
+- "What is a sanity check?"
+- "How did you verify the score was correct?"
+- "What did you do with a completely unrelated resume and JD?"
+
+---
+
+### Week 5 Mentor Update
+
+**What Vishal did:**
+> "I performed bug hunting — intentionally trying unusual actions to find problems. I tried submitting with no inputs, refreshing mid-analysis, uploading oversized files, and testing on mobile. I updated the bug report with all findings."
+
+**Approach:**
+> "Bug hunting is different from normal testing. Instead of following the expected flow, I deliberately tried to do things a normal user might accidentally do. This finds bugs that structured test cases miss."
+
+**Be ready if mentor asks:**
+- "What bugs did you find?"
+- "How did you test on mobile?"
+- "What is the severity of the bugs you found?"
+
+---
+
+### Week 6 Mentor Update
+
+**What Vishal did:**
+> "I performed final end-to-end testing of the complete website, covering all major features — file upload, JD input, analysis results, and mobile view. I compiled the final test report with a summary of all tests performed across all weeks."
+
+**Be ready if mentor asks:**
+- "How many total tests were performed?"
+- "What was the final pass rate?"
+- "Are there any open bugs?"
+- "Show me your final test report."
+
+---
+
+### General Tips for Mentor Meetings
+
+1. **Bring your bug-report.md.** If the mentor asks "did you find any issues?", you should be able to show documented bugs.
+2. **Demonstrate a test live.** Open the website and show the mentor what happens when you upload an invalid file.
+3. **Know the difference between High and Low severity.** The mentor may ask you to prioritize.
+4. **Testing is not just clicking.** Explain that you verified logical correctness too — not just that buttons work.
+
