@@ -421,3 +421,163 @@ Present this to the mentor. Keep it honest — if something didn't get done, say
 | 4 | AI integration + secrets | Personalized recommendations added |
 | 5 | CORS + edge cases + integration | Complete working API |
 | 6 | Deployment + docs + cleanup | Live V1 |
+
+---
+
+## Saturday Mentor Reporting (Shivansh)
+
+Every Saturday you give the mentor a clear update. This section tells you exactly what to say, how to explain your approach, and what questions to be ready for.
+
+### How to structure your update (every week)
+
+```
+1. What I built this week (features/endpoints)
+2. The approach I used and WHY
+3. What I learned
+4. What I tested
+5. What is committed and pushed
+6. What's planned for next week
+7. Any blockers
+```
+
+Do NOT just say "I did backend work." Say WHAT you built, HOW you built it, and WHY that approach was chosen.
+
+---
+
+### Week 1 Mentor Update — FastAPI + Resume Upload
+
+**What I built:**
+> "I set up the FastAPI backend, created the health check endpoint, implemented the resume upload API that accepts PDF and DOCX files, and built the text extraction service for both formats."
+
+**Approach I used:**
+> "I used FastAPI because it's a modern Python web framework with automatic Swagger documentation and built-in request validation through Pydantic. For PDF extraction I used PyMuPDF because it's fast and reliable for text-based PDFs. For DOCX I used python-docx which lets me iterate through paragraphs. I kept them as separate functions in a single resume_parser.py service file."
+
+**Why this approach:**
+> "I separated the parser into its own service file so the route code stays clean. Each file type has its own function because PDF and DOCX have fundamentally different internal formats."
+
+**What I tested:**
+> "I tested with a real PDF resume, a DOCX resume, and a JPG to confirm it's rejected. I also tested an empty PDF."
+
+**What is in Git:**
+> Show the mentor: `git log --oneline` — they should see 7 commits with clear messages.
+
+**Be ready for these questions:**
+- "What is FastAPI?"
+- "Why did you use PyMuPDF and not pdfplumber?"
+- "What happens if someone uploads a corrupted PDF?"
+- "What does your health check endpoint do?"
+
+---
+
+### Week 2 Mentor Update — JD Processing + Skill Extraction
+
+**What I built:**
+> "I extended the analyze endpoint to accept both a resume file and a job description text field in the same request. I built a text cleaner to normalize raw extracted text, and a skill extractor that identifies known technologies from both the resume and JD."
+
+**Approach I used:**
+> "I used a predefined skill list instead of AI for skill extraction at this stage. This is intentional — keyword matching is fast, free, predictable, and easy to debug. The skill extractor does a case-insensitive search for each known skill in the cleaned text."
+
+**Why this approach:**
+> "We deliberately did NOT use AI for skill extraction in Week 2 because we want the core matching logic to be deterministic and understandable. AI will come in Week 4, but only for generating human-readable suggestions — not for the core logic."
+
+**What is in Git:**
+> Show 5 new commits from this week.
+
+**Be ready for these questions:**
+- "Why keyword matching and not AI for skill extraction?"
+- "What is text cleaning and why is it needed?"
+- "How does your skill list work?"
+- "What does `POST /analyze` accept as input?"
+
+---
+
+### Week 3 Mentor Update — Matching + Scoring
+
+**What I built:**
+> "I implemented the skill matching logic that compares resume skills with JD skills and produces a matched list and a missing list. I also built the deterministic scoring system that calculates a match percentage."
+
+**Approach I used:**
+> "I used Python set operations — specifically set intersection for matched skills and set difference for missing skills. This is the most efficient and readable way to compare two lists. The score is calculated as: (number of matched skills / total JD skills) × 100."
+
+**Why this approach:**
+> "The score is calculated by Python code, not by AI. This is a deliberate design decision. If we let the AI decide the score, the same resume could get a different score each time. Deterministic code gives consistent, explainable results — which is much more credible for a real-world system."
+
+**API response format:**
+> Show the mentor the actual Swagger response:
+```json
+{
+  "score": 72,
+  "matched_skills": ["Python", "FastAPI"],
+  "missing_skills": ["Docker", "AWS"],
+  "recommendations": []
+}
+```
+
+**Be ready for these questions:**
+- "How is the score calculated?"
+- "Why is the score calculated by code and not AI?"
+- "What is set intersection?"
+- "What does the API return?"
+
+---
+
+### Week 4 Mentor Update — AI Integration
+
+**What I built:**
+> "I integrated the Gemini AI API to generate personalized improvement suggestions based on the match analysis. The AI receives the resume skills, JD skills, matched skills, missing skills, and score — and returns strengths, skill gaps, and concrete suggestions."
+
+**Approach I used:**
+> "The AI is used only for explanation and recommendations — not for scoring or matching. I wrote a structured prompt that gives the AI specific context so it doesn't generate generic advice. The API key is stored in a .env file and loaded through python-dotenv — it never leaves the backend."
+
+**Why this approach:**
+> "Separating AI from the scoring logic means if the AI API is down, the system still works — it just returns the score and skills without recommendations. This is called graceful degradation."
+
+**Security point to mention:**
+> "The Gemini API key is stored only in the backend's .env file. It is in .gitignore and never committed to GitHub. The frontend never sees the key."
+
+**Be ready for these questions:**
+- "What exactly does the AI do in your system?"
+- "Where is the API key stored?"
+- "What happens if the AI service is unavailable?"
+- "What prompt do you send to the AI?"
+
+---
+
+### Week 5 Mentor Update — Frontend Integration + Complete Testing
+
+**What I built:**
+> "I added CORS middleware so the React frontend can call our FastAPI backend. I fixed edge cases discovered during integration testing, and worked with Vishal to test all 7 key scenarios including invalid files, empty JD, and AI failure."
+
+**Approach I used:**
+> "CORS is configured to allow all origins during development. For production, it will be restricted to the frontend's specific URL. I also ensured the API fails gracefully in all edge cases — returning a partial result rather than crashing."
+
+**Be ready for these questions:**
+- "What is CORS?"
+- "What happens if you send an invalid file?"
+- "What happens if the AI API is down?"
+- "Walk me through a complete request from frontend to response."
+
+---
+
+### Week 6 Mentor Update — Deployment + Final
+
+**What I built:**
+> "I deployed the FastAPI backend, configured production environment variables, updated CORS for the production frontend URL, and finalized the API documentation and README."
+
+**Be ready for these questions:**
+- "How is the API key set in production?"
+- "What hosting platform did you use?"
+- "How does someone set up this project locally?"
+- "What is the complete flow from user input to result?"
+
+---
+
+### General Mentor Presentation Tips
+
+1. **Always have the live demo ready.** Open Swagger UI before the meeting starts.
+2. **Show the Git log.** Run `git log --oneline` and show the mentor the clean commit history.
+3. **Explain the WHY, not just the WHAT.** Don't just say "I used FastAPI." Say "I used FastAPI because..."
+4. **Be honest about what's incomplete.** Saying "I planned X but ran into Y" is better than pretending something works when it doesn't.
+5. **Have a test resume and JD ready.** Do a live demo of uploading and getting results.
+6. **Know your code.** If the mentor points to any function in any service file, you should explain what it does.
+
