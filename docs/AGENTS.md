@@ -604,3 +604,142 @@ Any external sources cited.
 ```
 
 Every document must describe the actual system — not what you hope it will become.
+
+---
+
+## Saturday Mentor Reporting (Sujeet)
+
+Every Saturday you send Shivansh your update so he can include it in the team report to the mentor. This section tells you exactly what to send and how to explain your documentation work.
+
+### Your weekly update format (send this to Shivansh every Friday evening)
+
+```
+Sujeet — Week [N]
+
+Documents completed this week:
+1. [filename] — [one line description of what it contains]
+2. [filename] — [one line description]
+
+What I researched/learned:
+- [Brief notes]
+
+Documents in progress:
+- [filename] — [what still needs to be done]
+
+Next week's planned documents:
+- [list]
+```
+
+---
+
+### Week 1 Mentor Update
+
+**What Sujeet did:**
+> "I researched the problem our project is solving and wrote three documents: the problem statement (why resume-JD mismatch is a real problem), the project objectives (what our system aims to do), and a comparison of 5 existing resume analysis tools with their strengths and limitations."
+
+**Approach:**
+> "I researched existing tools like Resumeworded, Jobscan, and LinkedIn Resume Insights before writing the existing-systems document. I compared each tool on what it does, what it does well, and where it falls short. This helped position our V1 project clearly."
+
+**What is in Git:**
+> `docs/problem-statement.md`, `docs/objectives.md`, `docs/existing-systems.md`
+
+**Be ready if mentor asks:**
+- "What problem does this project solve?"
+- "What existing tools did you research?"
+- "How is our project different from Resumeworded?"
+
+---
+
+### Week 2 Mentor Update
+
+**What Sujeet did:**
+> "I documented the complete user flow — the step-by-step journey a user takes from opening the website to seeing their analysis results. I also created a flowchart diagram using draw.io to visually represent this flow."
+
+**Approach:**
+> "Before writing the user flow document, I asked Shivansh to walk me through the system verbally. I then wrote the flow in my own words and verified it with him. This ensures the documentation matches what is actually being built."
+
+**What is in Git:**
+> `docs/user-flow.md`, `docs/diagrams/project-flow.png`
+
+**Be ready if mentor asks:**
+- "Walk me through the user flow."
+- "What tool did you use to create the flowchart?"
+
+---
+
+### Week 3 Mentor Update
+
+**What Sujeet did:**
+> "I wrote the system requirements document, divided into functional requirements (what the system does) and non-functional requirements (how well it does it). I wrote 10 functional requirements and 5 non-functional requirements."
+
+**Approach:**
+> "I used the FR-XX and NFR-XX numbering format, which is standard in software engineering requirements documentation. Separating functional from non-functional requirements makes it easier to track what the system must do versus how it must perform."
+
+**What is in Git:**
+> `docs/requirements.md`
+
+**Be ready if mentor asks:**
+- "What is the difference between functional and non-functional requirements?"
+- "Give me an example of a functional requirement."
+- "What are non-functional requirements for this project?"
+
+---
+
+### Week 4 Mentor Update
+
+**What Sujeet did:**
+> "I created the system architecture diagram showing all components — frontend, backend, resume parser, text cleaner, skill extractor, matcher, scorer, and AI analyzer — with arrows showing data flow. I also wrote a plain-language explanation of what each component does."
+
+**Approach:**
+> "I did NOT write the architecture document based on guesses. I first asked Shivansh to explain each component verbally — what it is, what it receives, and what it returns. Then I wrote the explanation in my own words and asked Shivansh to verify it was accurate."
+
+**What is in Git:**
+> `docs/diagrams/system-architecture.png`, `docs/architecture-explanation.md`
+
+**Be ready if mentor asks:**
+- "Explain the system architecture to me."
+- "What does the resume parser do?"
+- "Why does the score come from Python code and not the AI?"
+- "Where did you get the architecture information from?"
+
+---
+
+### Week 5 Mentor Update
+
+**What Sujeet did:**
+> "I assembled the first complete draft of the project report, combining all documentation from Weeks 1-4 into a structured academic report. The report includes abstract, introduction, problem statement, objectives, existing systems, proposed system, methodology, advantages, limitations, and future scope."
+
+**Approach:**
+> "I reused and expanded the documents I had already written in previous weeks rather than starting from scratch. The limitations section describes real constraints of V1 — I did not exaggerate or hide them."
+
+**What is in Git:**
+> `docs/report/final-report.md` (first draft)
+
+**Be ready if mentor asks:**
+- "What are the limitations of your project?"
+- "What can be added in the next version?"
+- "Show me the project report."
+
+---
+
+### Week 6 Mentor Update
+
+**What Sujeet did:**
+> "I prepared the final project PPT (12 slides), wrote the user manual explaining how to use the website step by step, compiled 30 viva questions with answers covering basic, technical, and project-specific categories, and finalized the project report."
+
+**Be ready if mentor asks:**
+- "Walk me through your PPT structure."
+- "What is in the user manual?"
+- "How many viva questions did you prepare?"
+- "What is the future scope of this project?"
+
+---
+
+### General Tips for Mentor Meetings
+
+1. **Always have your documents open.** Before the meeting, open the relevant document so you can show it instantly.
+2. **Explain the WHY.** Don't just say "I wrote the problem statement." Say "I wrote the problem statement to explain why this project exists and who it helps."
+3. **Verify accuracy before submitting.** Every technical claim in your documentation should be verified with Shivansh.
+4. **Documents should match reality.** If the mentor looks at your architecture diagram and then looks at the code, they should match.
+5. **Be ready to read your own documents.** The mentor may ask you to read a specific section out loud — know your content.
+
