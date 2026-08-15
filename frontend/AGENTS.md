@@ -1,9 +1,13 @@
 # AGENTS.md — Frontend Developer
 # Member: Harshwardhan
+# GitHub Username: harsh123-code
+# Git Author Name: harsh123-code
+# Git Email: hsisodiya205@bbdu.ac.in
 # Role: Frontend Developer
 # Project: AI-Powered Resume & Job Description Analyzer
 
 ---
+
 
 ## Your Responsibilities
 

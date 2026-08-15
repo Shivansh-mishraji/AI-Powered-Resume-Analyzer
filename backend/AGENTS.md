@@ -21,10 +21,14 @@ But the typing is always yours.
 ---
 
 # Member: Shivansh Mishra
+# GitHub Username: Shivansh-mishraji
+# Git Author Name: Shivansh-mishraji
+# Git Email: tgsmishra@gmail.com
 # Role: Backend Engineer + AI Engineer + Scrum Master
 # Project: AI-Powered Resume & Job Description Analyzer
 
 ---
+
 
 ## Your Responsibilities
 
