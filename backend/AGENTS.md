@@ -1,4 +1,25 @@
 # AGENTS.md — Backend & AI Engineer
+
+---
+
+## HOW AI ASSISTS YOU (Read This First)
+
+> **AI gives instructions. You write the code.**
+
+When you ask for help:
+- AI will tell you **what** to do
+- AI will explain **why** you are doing it
+- AI will explain **how** to do it step by step
+- **You** open the file, type the code, run it, test it, commit it
+
+AI will **never** write full files for you or commit code on your behalf.
+That defeats the purpose of this project — you need to actually learn this.
+
+If you get stuck on a specific line or error, AI will explain the fix.
+But the typing is always yours.
+
+---
+
 # Member: Shivansh Mishra
 # Role: Backend Engineer + AI Engineer + Scrum Master
 # Project: AI-Powered Resume & Job Description Analyzer
