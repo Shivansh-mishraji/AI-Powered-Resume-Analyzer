@@ -1,5 +1,6 @@
-from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from app.services.resume_parser import extract_text_from_pdf, extract_text_from_docx
+from app.services.skill_extractor import extract_skills
 
 app = FastAPI(
     title = "AI Resume Analyzer",
@@ -44,4 +45,43 @@ async def upload_resume(file: UploadFile = File(...)):
         "file_type": file.content_type,
         "text_length": len(extracted_text),
         "preview": extracted_text[:200]
+    }
+@app.post("/analyze")
+async def analyze_resume(
+    resume: UploadFile = File(...),
+    job_description: str = Form(...)
+):
+    if resume.content_type not in ALLOWED_TYPES:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid file type. Only PDF and DOCX allowed."
+        )
+    if not job_description.strip():
+        raise HTTPException(
+            status_code=400,
+            detail="Job description cannot be empty."
+        )
+
+    file_bytes = await resume.read()
+
+    if resume.content_type == "application/pdf":
+        resume_text = extract_text_from_pdf(file_bytes)
+    else:
+        resume_text = extract_text_from_docx(file_bytes)
+
+    if not resume_text:
+        raise HTTPException(
+            status_code=400,
+            detail="Could not extract text from resume."
+        )
+
+    resume_skills = extract_skills(resume_text)
+    jd_skills = extract_skills(job_description)
+
+    return {
+        "filename": resume.filename,
+        "resume_skills": resume_skills,
+        "jd_skills": jd_skills,
+        "resume_skills_count": len(resume_skills),
+        "jd_skills_count": len(jd_skills)
     }
