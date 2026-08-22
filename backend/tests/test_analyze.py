@@ -30,9 +30,10 @@ def test_analyze_extracts_skills_from_pdf():
     assert "Python" in result["resume_skills"]
     assert "Fastapi" in result["resume_skills"]
     assert "Docker" in result["resume_skills"]
-    assert result["resume_skills_count"] > 0
-    assert result["jd_skills_count"] > 0
-
+    assert result["score"] >= 0
+    assert "matched_skills" in result
+    assert "missing_skills" in result
+    assert result["total_jd_skills"] > 0
 
 def test_analyze_rejects_empty_job_description():
     pdf_bytes = make_pdf("Python developer with Django experience.")
