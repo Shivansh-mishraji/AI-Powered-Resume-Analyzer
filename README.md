@@ -8,7 +8,7 @@ A minor project by a team of 4, built progressively over 6 weeks.
 |---|---|---|
 | Shivansh Mishra | Backend + AI Engineer + Scrum Master | [@Shivansh-mishraji](https://github.com/Shivansh-mishraji) |
 | Harshwardhan Sisodiya | Frontend Developer | [@harsh123-code](https://github.com/harsh123-code) |
-| Vishal | Testing & QA | [@Vishal](https://github.com/Vishal) |
+| Vishal Patel | Testing & QA | [@patelvishal-ji](https://github.com/patelvishal-ji) |
 | Sujeet Kannujiya | Research & Documentation | [@sujeet-official](https://github.com/sujeet-official) |
 
 
