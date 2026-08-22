@@ -34,6 +34,52 @@ The **AI-Powered Resume Analyzer** bridges this gap:
 
 ---
 
+## 🔬 How It Works: Step-by-Step Visual Walkthrough
+
+Here is exactly how data moves through our system from raw document upload to final visual insights:
+
+---
+
+### 📥 Step 1: Secure In-Memory Document Parsing (`resume_parser.py`)
+
+<div align="center">
+  <img src="./assets/step1_parsing.jpg" alt="Step 1 In-Memory Parsing" width="90%" style="border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);" />
+</div>
+
+* **How it works:** When a user uploads a `.pdf` or `.docx` file, FastAPI accepts the binary stream in RAM.
+* **Security & Speed:** We use **PyMuPDF (`fitz`)** for PDFs and **`python-docx`** for Word files. Zero temporary files are written to the disk, ensuring total privacy and near-instant (<50ms) text extraction.
+* **Validation:** Strict MIME-type checking rejects any invalid file formats (e.g. `.jpg`, `.png`, `.exe`) with an HTTP 400 Bad Request error.
+
+---
+
+### 🧠 Step 2 & 3: Skill Extraction & Set-Intersection Scoring Engine (`skill_extractor.py` & `score_calculator.py`)
+
+<div align="center">
+  <img src="./assets/step2_matching.jpg" alt="Step 2 & 3 Skill Extraction and Venn Matching" width="90%" style="border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);" />
+</div>
+
+* **Text Normalization:** `text_cleaner.py` strips noisy characters, bullet points, and normalizes capitalization.
+* **Keyword Matching:** `skill_extractor.py` uses word-boundary regex patterns to detect 50+ industry-standard tech skills (Python, React, Docker, AWS, FastAPI, etc.) across both the candidate's resume and the recruiter's Job Description.
+* **Mathematical Set Comparison:**
+  $$\text{Matched Skills} = \text{Resume Skills} \cap \text{Job Description Skills}$$
+  $$\text{Missing Skills} = \text{Job Description Skills} \setminus \text{Resume Skills}$$
+  $$\text{Match Score} = \left( \frac{|\text{Matched Skills}|}{|\text{Job Description Skills}|} \right) \times 100$$
+
+---
+
+### 📊 Step 4: Interactive React Dashboard & Real-Time Feedback (`App.jsx`)
+
+<div align="center">
+  <img src="./assets/step3_ui_dashboard.jpg" alt="Step 4 Interactive UI Dashboard" width="90%" style="border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);" />
+</div>
+
+* **Live Result Rendering:** The React client receives the JSON payload from `POST /analyze` and renders:
+  * 🟢 **Score Gauge:** Visual radial progress bar displaying the candidate's match percentage.
+  * ✅ **Green Badges:** Clean pill tags for skills the candidate already possesses.
+  * ❌ **Red Warning Badges:** Clear missing skill alerts to help the candidate optimize their resume.
+
+---
+
 ## 👥 The Dream Team & Role Breakdown
 
 Our project is divided among 4 specialized members following Agile/Scrum engineering workflows:
@@ -105,44 +151,6 @@ Our project is divided among 4 specialized members following Agile/Scrum enginee
 ### 🚀 What is Left to Do (Weeks 5 – 6)
 - [ ] **Week 5 (AI Integration):** Connect Google Gemini API to read missing skills and write customized, high-impact resume bullet points.
 - [ ] **Week 6 (Export & Deployment):** One-click "Download PDF Analysis Report", cloud deployment (Vercel + Render), and final project submission.
-
----
-
-## 🏗️ System Architecture & Data Flow
-
-```
-┌────────────────────────────────────────────────────────┐
-│                        USER                            │
-│           (Web Browser at localhost:5173)              │
-└─────────────────────────┬──────────────────────────────┘
-                          │ 1. Uploads Resume + Pastes JD
-                          ▼
-┌────────────────────────────────────────────────────────┐
-│             FRONTEND: React.js (Vite)                  │
-│  • App.jsx: State Management (File, JD, Loading)       │
-│  • FormData: Sends multipart payload to API            │
-│  • Visual Dashboard: Score Box, Matched/Missing Tags   │
-└─────────────────────────┬──────────────────────────────┘
-                          │ 2. HTTP POST /analyze
-                          ▼
-┌────────────────────────────────────────────────────────┐
-│             BACKEND: FastAPI (Python 3.13)             │
-│  • CORS Middleware: Authorizes Frontend requests       │
-│  • In-Memory Stream: No temporary files on disk        │
-├────────────────────────────────────────────────────────┤
-│                     SERVICES LAYER                     │
-│  ├── resume_parser.py    → PyMuPDF (PDF) & docx (DOCX) │
-│  ├── text_cleaner.py     → Regex text normalization    │
-│  ├── skill_extractor.py  → 50+ tech keyword matcher    │
-│  └── score_calculator.py → Set intersection scoring    │
-└─────────────────────────┬──────────────────────────────┘
-                          │ 3. Returns JSON Result
-                          ▼
-┌────────────────────────────────────────────────────────┐
-│                   ANALYSIS RESULT                      │
-│   { score: 85.0%, matched: [...], missing: [...] }     │
-└────────────────────────────────────────────────────────┘
-```
 
 ---
 
