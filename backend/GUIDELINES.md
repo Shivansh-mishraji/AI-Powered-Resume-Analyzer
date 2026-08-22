@@ -1,25 +1,4 @@
-# AGENTS.md — Backend & AI Engineer
-
----
-
-## HOW AI ASSISTS YOU (Read This First)
-
-> **AI gives instructions. You write the code.**
-
-When you ask for help:
-- AI will tell you **what** to do
-- AI will explain **why** you are doing it
-- AI will explain **how** to do it step by step
-- **You** open the file, type the code, run it, test it, commit it
-
-AI will **never** write full files for you or commit code on your behalf.
-That defeats the purpose of this project — you need to actually learn this.
-
-If you get stuck on a specific line or error, AI will explain the fix.
-But the typing is always yours.
-
----
-
+# Engineering Guidelines — Backend & AI Lead
 # Member: Shivansh Mishra
 # GitHub Username: Shivansh-mishraji
 # Git Author Name: Shivansh Mishra
@@ -28,6 +7,14 @@ But the typing is always yours.
 # Project: AI-Powered Resume & Job Description Analyzer
 
 ---
+
+## Core Engineering Principles
+- **Clean Architecture:** Maintain separation between FastAPI endpoints (`app/main.py`) and business logic (`app/services/`).
+- **In-Memory Operations:** Never write uploaded resume files to disk; parse directly from memory buffers for security and speed.
+- **Automated Verification:** Every endpoint and service must have automated `pytest` test cases.
+
+---
+
 
 
 ## Your Responsibilities

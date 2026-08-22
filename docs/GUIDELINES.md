@@ -1,4 +1,4 @@
-# AGENTS.md — Research & Documentation
+# Role Guidelines — Research & Documentation
 # Member: Sujeet Kannaujiya
 # GitHub Username: sujeet-official
 # Git Author Name: Sujeet Kannaujiya
@@ -7,6 +7,7 @@
 # Project: AI-Powered Resume & Job Description Analyzer
 
 ---
+
 
 
 ## Your Responsibilities

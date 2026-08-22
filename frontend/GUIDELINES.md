@@ -1,5 +1,5 @@
-# AGENTS.md — Frontend Developer
-# Member: Harshwardhan
+# Engineering Guidelines — Frontend Developer
+# Member: Harshwardhan Sisodiya
 # GitHub Username: harsh123-code
 # Git Author Name: Harshvardhan Sisodiya
 # Git Email: hsisodiya205@bbdu.ac.in
@@ -7,6 +7,7 @@
 # Project: AI-Powered Resume & Job Description Analyzer
 
 ---
+
 
 
 ## Your Responsibilities
