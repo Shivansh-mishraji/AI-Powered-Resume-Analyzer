@@ -1,0 +1,70 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# AI Resume Analyzer — Continuous Integration Pipeline
+# ──────────────────────────────────────────────────────────────────────────────
+#
+# WHAT THIS DOES:
+#   Every time anyone on the team pushes code or opens a Pull Request,
+#   GitHub automatically runs all 29 tests.
+#
+#   ✅ If all tests pass  → green badge, safe to merge.
+#   ❌ If any test fails  → red badge, PR is blocked until fixed.
+#
+# WHY WE DO THIS:
+#   No broken code can ever reach the main branch by accident.
+#   This is what every professional software team does.
+#
+# MAINTAINED BY: Vishal Patel (@patelvishal-ji) — QA & Testing
+# ──────────────────────────────────────────────────────────────────────────────
+
+name: Backend CI — Run All Tests
+
+# Trigger this pipeline on every push and every Pull Request
+# targeting the main branch.
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test:
+    name: Run 29 Backend Tests
+    runs-on: ubuntu-latest
+
+    steps:
+
+      # Step 1 — Check out the code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2 — Set up Python 3.13
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: "pip"
+          cache-dependency-path: backend/requirements.txt
+
+      # Step 3 — Install all backend dependencies
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r backend/requirements.txt
+
+      # Step 4 — Run all tests with verbose output
+      #           --tb=short  → short traceback so failures are easy to read
+      #           -v          → show each test name individually
+      - name: Run tests
+        working-directory: backend
+        run: |
+          python -m pytest tests/ -v --tb=short
+
+      # Step 5 — Show a clear summary line at the end
+      - name: Test summary
+        if: always()
+        working-directory: backend
+        run: |
+          echo "──────────────────────────────────────"
+          echo "  AI Resume Analyzer — CI Test Summary"
+          echo "──────────────────────────────────────"
+          python -m pytest tests/ --tb=no -q
