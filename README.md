@@ -115,7 +115,7 @@ Our project is divided among 4 specialized members following Agile/Scrum enginee
 ---
 
 #### 🧪 **Vishal Patel** — *Testing & QA Specialist*
-* ✅ **Done:** Created the automated test suite (`test_text_cleaner.py`, `test_skill_extractor.py`, `test_score_calculator.py`) achieving **29/29 passing unit tests** in under 1.4 seconds.
+* ✅ **Done:** Created the full automated test suite — **29/29 unit tests passing** across 4 modules. Built `testing/run_tests.py`, a QA runner that auto-generates timestamped narrative test reports in `testing/reports/`. Backfilled a complete audit trail (3 historical logs) showing every bug found, root cause, fix, and who fixed it. Set up GitHub Actions CI pipeline (`.github/workflows/ci.yml`) — every push now auto-runs all tests and blocks any PR that fails.
 * 🔄 **Doing Now:** Stress-testing edge cases (multi-page resumes, distorted fonts, empty text, special characters like `C++` & `C#`).
 * 🚀 **Will Do:** Write end-to-end integration test suites and performance load tests before final production deployment.
 
@@ -131,27 +131,27 @@ Our project is divided among 4 specialized members following Agile/Scrum enginee
 ## 🗺️ 6-Week Project Roadmap: Progress & What's Left
 
 ```
-[████████████████████████████████░░░░░░░░░░░░] 60% Completed
+[███████████████████████████████████░░░░░░░░░] 70% Completed
 ```
 
 ### ✅ What We Have Done So Far (Weeks 1 – 3)
 - [x] **Week 1 (Foundation):** FastAPI backend initialized, `/health` endpoint, strict PDF/DOCX MIME-type validation, and initial React Vite homepage.
 - [x] **Week 2 (Text Cleaning & Skill Extraction):** Built `text_cleaner.py` (regex normalization) and `skill_extractor.py` (50+ tech skills dictionary with regex boundaries).
 - [x] **Week 3 (Scoring & Full-Stack Integration):** Built `score_calculator.py` with set-intersection mathematics, upgraded `POST /analyze`, and connected React frontend to display live score, green matched tags, and red missing tags.
-- [x] **Documentation & QA:** 29 automated test cases passing + complete architecture, API, and research documents.
+- [x] **Week 4 (UI Overhaul, QA & CI/CD):** Complete glassmorphism dark-mode UI redesign with drag-and-drop upload and radial score gauge. Full QA audit trail (`testing/reports/`) with narrative test logs. GitHub Actions CI pipeline — every push auto-runs all 29 tests.
 
 ---
 
-### 🔄 What We Are Doing Now (Week 4)
-- [ ] **CORS & Performance Hardening:** Finalizing cross-origin resource sharing between `:5173` and `:8000`.
-- [ ] **Score Progress Gauge:** Visual radial/linear animation for the match percentage.
-- [ ] **Resume Extracted Skills View:** Displaying all candidate skills alongside job requirements.
+### 🔄 What We Are Doing Now (Week 5)
+- [ ] **CORS & Performance Hardening:** Finalizing cross-origin resource sharing between `:5173` and `:8000` before going live.
+- [ ] **PDF Report Export:** One-click "Download Analysis Report" button in the UI.
+- [ ] **Gemini AI Integration:** Connect Google Gemini API to generate personalized resume improvement bullet points based on missing skills.
 
 ---
 
-### 🚀 What is Left to Do (Weeks 5 – 6)
-- [ ] **Week 5 (AI Integration):** Connect Google Gemini API to read missing skills and write customized, high-impact resume bullet points.
-- [ ] **Week 6 (Export & Deployment):** One-click "Download PDF Analysis Report", cloud deployment (Vercel + Render), and final project submission.
+### 🚀 What is Left to Do (Week 6)
+- [ ] **Deployment:** Cloud deployment — Render (backend FastAPI) + Vercel (React frontend) → makes the project publicly live.
+- [ ] **Final Polish:** End-to-end integration tests, performance load testing, and final project submission.
 
 ---
 
@@ -184,8 +184,64 @@ npm run dev
 
 ### 4️⃣ Run the Automated Test Suite (29 Tests)
 ```bash
-cd backend
-python -m pytest tests/ -v
+# Run from the project root — auto-generates a timestamped report in testing/reports/
+python testing/run_tests.py
+```
+> Each run saves a human-readable log: *"On Aug 23 at 7:36 PM, we ran 29 tests. All 29 passed."*
+
+---
+
+## 🗂️ Project Structure
+
+```
+AI-Powered-Resume-Analyzer/
+│
+├── .github/
+│   └── workflows/
+│       └── ci.yml              # GitHub Actions — auto-runs all 29 tests on every push
+│
+├── backend/
+│   ├── app/
+│   │   ├── main.py             # FastAPI app entry point, POST /analyze endpoint
+│   │   └── services/
+│   │       ├── resume_parser.py    # In-memory PDF & DOCX binary parser
+│   │       ├── text_cleaner.py     # Regex-based text normalization
+│   │       ├── skill_extractor.py  # 50+ tech skill keyword matcher
+│   │       └── score_calculator.py # Set-intersection match score engine
+│   ├── tests/
+│   │   ├── test_main.py
+│   │   ├── test_analyze.py
+│   │   ├── test_score_calculator.py
+│   │   ├── test_skill_extractor.py
+│   │   └── test_text_cleaner.py
+│   ├── conftest.py             # Shared pytest fixtures
+│   ├── requirements.txt
+│   └── GUIDELINES.md
+│
+├── frontend/
+│   ├── src/
+│   │   ├── App.jsx             # Main React component (glassmorphism UI)
+│   │   ├── App.css             # Dark mode glassmorphism design system
+│   │   └── index.css           # Global CSS variables & fonts
+│   ├── index.html
+│   ├── vite.config.js
+│   └── GUIDELINES.md
+│
+├── testing/
+│   ├── run_tests.py            # QA runner — generates narrative reports automatically
+│   └── reports/
+│       ├── test_log_2026-08-15_11-20.md   # Run 1: 8/15 passed, 7 bugs found
+│       ├── test_log_2026-08-15_15-45.md   # Run 2: 20/22 passed, 2 edge cases
+│       └── test_log_2026-08-23_19-36.md   # Run 3: 29/29 all green ✅
+│
+├── docs/
+│   ├── API_REFERENCE.md
+│   ├── ARCHITECTURE.md
+│   └── RESEARCH.md
+│
+├── assets/                     # Architecture diagrams & pipeline visuals
+├── README.md
+└── .gitignore
 ```
 
 ---
