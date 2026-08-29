@@ -1,95 +1,73 @@
-# Research Notes — AI-Powered Resume Analyzer
+# Research & Technical Decisions — AI-Powered Resume Analyzer
 
-> Researched & Documented by: Sujeet (Research & Documentation)
-
----
-
-## Why FastAPI over Flask or Django?
-
-| Feature | FastAPI | Flask | Django |
-|---|---|---|---|
-| **Performance** | ⭐⭐⭐ (async) | ⭐⭐ (sync) | ⭐⭐ (sync) |
-| **Auto Swagger Docs** | ✅ Built-in `/docs` | ❌ Needs extension | ❌ Needs extension |
-| **Type Safety** | ✅ Pydantic validation | ❌ Manual | ⚠️ Partial |
-| **Learning Curve** | Low | Very Low | High |
-| **Best For** | APIs & ML services | Simple APIs | Full web apps |
-
-**Decision:** FastAPI is the industry standard for Python AI/ML APIs due to its async support, automatic documentation, and built-in data validation.
+> Researched & Documented by: Sujeet Kannaujiya (Research & Documentation Lead)
 
 ---
 
-## Why PyMuPDF for PDF Parsing?
+## 1. Why Google Gemini for Semantic Analysis?
 
-Alternatives evaluated:
+We evaluated multiple LLM and NLP options for the primary intelligence engine:
 
-| Library | Speed | In-Memory Support | Accuracy | License |
+| Approach | Contextual Reasoning | Structured Output Support | Latency | Infrastructure Cost |
 |---|---|---|---|---|
-| **PyMuPDF (fitz)** | ⭐⭐⭐ Very Fast | ✅ Yes | ⭐⭐⭐ Excellent | AGPL |
-| pdfplumber | ⭐⭐ Medium | ✅ Yes | ⭐⭐⭐ Excellent | MIT |
-| PyPDF2 | ⭐ Slow | ⚠️ Limited | ⭐⭐ Good | BSD |
-| pdfminer | ⭐ Very Slow | ✅ Yes | ⭐⭐ Good | MIT |
+| **Google Gemini (Flash)** | ⭐⭐⭐ High | ✅ Built-in Pydantic JSON schema | ~1.0 – 2.0s | $0 (Free Tier / BYOK) |
+| OpenAI GPT-4o-mini | ⭐⭐⭐ High | ✅ Structured Outputs | ~1.5 – 2.5s | Pay-per-token required |
+| Local LLM (Llama 3 / Ollama) | ⭐⭐ Medium | ⚠️ Inconsistent JSON parsing | ~5 – 15s | High RAM/GPU requirement |
+| Traditional NLP (spaCy NER) | ⭐ Low | ❌ Unstructured entities | < 500ms | CPU only |
 
-**Decision:** PyMuPDF is the fastest and most accurate PDF text extractor. It processes binary streams in memory without writing temporary files to disk, which is critical for security and performance.
+### Key Findings:
+1. **Dynamic Skill Extraction:** Gemini extracts unlisted and emerging technologies dynamically without relying on a static 50-word dictionary.
+2. **Semantic Equivalence:** Understands technical relationships (e.g. *AWS ECS + Terraform* fulfills *Container Orchestration & Infrastructure as Code*).
+3. **Structured Outputs:** Gemini's official `google-genai` SDK supports strict JSON schema mapping via Pydantic (`response_schema=AnalysisResult`), ensuring consistent response structures.
 
 ---
 
-## Why React + Vite over Create React App?
+## 2. Why Not a 5-Agent Multi-Agent Swarm?
 
-| Feature | Vite | Create React App |
+During architectural planning, a Multi-Agent Swarm (Agent 1: Extract, Agent 2: Match, Agent 3: Audit, Agent 4: Rewrite, Agent 5: Prep) was evaluated.
+
+### Trade-Off Analysis:
+
+```
+[Multi-Agent Swarm (Rejected)]
+Request ──> Agent 1 ──> Agent 2 ──> Agent 3 ──> Agent 4 ──> Agent 5 ──> Response
+Latency: 8–15 seconds | Failure Points: 5 sequential network hops | Token Cost: 5x
+
+[Single Unified AI Pipeline (Selected)]
+Request ──> Structured Gemini Call (Rubric-Grounded Prompt) ──> Unified Pydantic Response
+Latency: ~1.5 seconds | Failure Points: 1 hop with 1 retry | Token Cost: 1x
+```
+
+**Decision:** A single, well-prompted Gemini call with structured JSON schema output provides identical analytical depth with significantly lower latency, lower token overhead, and greater reliability.
+
+---
+
+## 3. Why the BYOK (Bring Your Own Key) Model?
+
+1. **Zero Database & Zero Credential Storage:** Eliminates the need to build and maintain user authentication systems, password hashing, and database encryption.
+2. **Privacy Preservation:** The API key is stored only in React component memory for the current browser session and is discarded immediately after request processing.
+3. **Sustainability:** Eliminates API hosting costs for the project maintainer while allowing any user to test the application using their personal Google AI Studio free-tier quota.
+
+---
+
+## 4. Why Preserve the Deterministic Rule-Based Fallback?
+
+No cloud AI API is immune to transient network outages, invalid user keys, or rate limits (HTTP 429). 
+
+Preserving our 29-test-verified **Regex Keyword Extractor & Set-Intersection Calculator** guarantees that:
+* The application **never crashes or returns a dead screen**.
+* If AI analysis is unavailable, the user receives an honest, transparent rule-based match score accompanied by an explanatory warning in the response payload.
+
+---
+
+## 5. Technical Limits & Boundary Decisions
+
+To protect the server from memory bloat and malicious payloads, the following constraints are enforced:
+
+| Parameter | Limit | Rationale |
 |---|---|---|
-| **Dev Server Start** | ~300ms | ~10 seconds |
-| **Hot Module Reload** | Instant | Several seconds |
-| **Build Tool** | Rollup (ESM native) | Webpack |
-| **Bundle Size** | Smaller | Larger |
-| **Maintenance** | Actively maintained | Deprecated |
-
-**Decision:** Vite is the modern standard for React development. Create React App is officially deprecated since 2023.
-
----
-
-## Skill Extraction Approach
-
-We evaluated two approaches:
-
-### Approach 1: Machine Learning (NLP-based NER)
-- Using `spaCy` Named Entity Recognition to detect skills
-- **Pros:** Intelligent, can find new/unlisted skills
-- **Cons:** Requires large model download (~500MB), slow inference, overkill for V1
-
-### Approach 2: Keyword Matching (Our Choice)
-- Maintain a curated dictionary of 50+ known tech skills
-- Use regex with word boundaries to match exactly
-- **Pros:** Fast (< 1ms), lightweight, predictable, easy to expand
-- **Cons:** Can only find skills that are in the dictionary
-
-**Decision:** Keyword matching for V1. NLP-based extraction is planned for V2 after we have enough user data to justify the complexity.
-
----
-
-## Scoring Algorithm
-
-The match score is calculated using **Set Intersection**:
-
-```
-score = |resume_skills ∩ jd_skills| / |jd_skills| × 100
-```
-
-- `resume_skills ∩ jd_skills` = skills present in BOTH (matched skills)
-- `|jd_skills|` = total skills required by the job description
-- Result is a 0–100 percentage
-
-**Example:**
-- JD requires: Python, FastAPI, Docker, Kubernetes (4 skills)
-- Resume has: Python, FastAPI, Docker, SQL (4 skills)
-- Matched: Python, FastAPI, Docker (3 skills)
-- Score = 3/4 × 100 = **75.0%**
-
----
-
-## Future Improvements (V2 Roadmap)
-
-1. **AI-powered skill extraction** using spaCy or HuggingFace transformers
-2. **Gemini API integration** for generating personalized improvement suggestions
-3. **Resume scoring by section** (education, experience, projects separately)
-4. **PDF report generation** with detailed analysis
-5. **User authentication** and history tracking
+| `MAX_FILE_SIZE_BYTES` | `5 MB` | Ample for any standard PDF/DOCX resume while preventing RAM exhaustion. |
+| `MAX_PDF_PAGES` | `10 Pages` | Rejects multi-volume thesis documents; typical resumes are 1–3 pages. |
+| `MIN_EXTRACTED_CHARS` | `50 Chars` | Detects scanned image PDFs that contain no selectable text layer. |
+| `MAX_RESUME_CHARS` | `15,000 Chars` | Bounds the LLM prompt payload; resumes exceeding this are truncated with a warning. |
+| `MAX_JD_CHARS` | `5,000 Chars` | Prevents overly long job description submissions. |

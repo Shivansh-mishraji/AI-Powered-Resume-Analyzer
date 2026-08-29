@@ -1,6 +1,6 @@
 # API Reference — AI-Powered Resume Analyzer
 
-> Documented by: Sujeet (Research & Documentation)
+> Documented by: Sujeet Kannaujiya (Research & Documentation Lead)
 
 Base URL: `http://127.0.0.1:8000`
 
@@ -8,91 +8,126 @@ Base URL: `http://127.0.0.1:8000`
 
 ## Endpoints
 
-### GET `/health`
-Health check to verify the server is running.
+### 1. GET `/health`
+Health check endpoint to verify backend operational status.
 
-**Response:**
-```json
-{ "status": "ok" }
-```
-
----
-
-### POST `/resume/upload`
-Uploads a resume file and extracts raw text from it.
-
-**Request:** `multipart/form-data`
-
-| Field | Type | Required | Description |
-|---|---|---|---|
-| `file` | File | ✅ | PDF or DOCX resume file |
-
-**Success Response (200):**
+**Response (200 OK):**
 ```json
 {
-  "filename": "shivansh_resume.pdf",
-  "file_type": "application/pdf",
-  "text_length": 2450,
-  "preview": "Shivansh Mishra | Backend Developer | Python, FastAPI..."
+  "status": "ok"
 }
 ```
 
-**Error Responses:**
+---
 
-| Code | Reason |
-|---|---|
-| `400` | Invalid file type (not PDF or DOCX) |
-| `400` | No readable text found in file |
+### 2. POST `/analyze`
+Analyzes a resume against a target job description using either the **Google Gemini AI Engine** (if API key provided) or the **Deterministic Rule-Based Engine** (fallback mode).
+
+#### Request Headers:
+| Header | Type | Required | Description |
+|---|---|---|---|
+| `X-Gemini-API-Key` | string | ❌ Optional | User's Google Gemini API Key for AI semantic analysis (BYOK). |
+
+#### Request Body (`multipart/form-data`):
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `resume` | File | ✅ Required | PDF or DOCX file (Max 5MB, max 10 pages). |
+| `job_description` | string | ✅ Required | Target job description text (Max 5,000 characters). |
 
 ---
 
-### POST `/analyze`
-Analyzes a resume against a job description and returns a skill match score.
+### Success Responses (200 OK)
 
-**Request:** `multipart/form-data`
-
-| Field | Type | Required | Description |
-|---|---|---|---|
-| `resume` | File | ✅ | PDF or DOCX resume file |
-| `job_description` | string | ✅ | Raw job description text |
-
-**Success Response (200):**
+#### Scenario A: AI-Powered Mode (Valid Key Provided)
 ```json
 {
-  "filename": "shivansh_resume.pdf",
-  "resume_skills": ["Docker", "Fastapi", "Git", "Python"],
-  "jd_skills": ["Docker", "Fastapi", "Kubernetes", "Python"],
-  "score": 75.0,
-  "matched_skills": ["Docker", "Fastapi", "Python"],
-  "missing_skills": ["Kubernetes"],
-  "total_jd_skills": 4
+  "filename": "john_doe_resume.pdf",
+  "score": 88,
+  "is_ai_powered": true,
+  "analysis_confidence": "high",
+  "candidate_summary": "Strong backend developer with 3+ years of experience in Python, FastAPI, and PostgreSQL. Demonstrates relevant cloud deployment and containerization expertise.",
+  "matched_skills": [
+    "Python",
+    "FastAPI",
+    "Docker",
+    "PostgreSQL",
+    "REST APIs",
+    "CI/CD"
+  ],
+  "missing_skills": [
+    "Kubernetes",
+    "Redis"
+  ],
+  "strengths": [
+    "Direct hands-on experience architecting scalable REST APIs using FastAPI.",
+    "Demonstrated database design and optimization with PostgreSQL.",
+    "Active CI/CD automation experience matching job requirements."
+  ],
+  "weaknesses": [
+    "No direct evidence of Kubernetes container orchestration found in resume.",
+    "Lacks mentioned experience with Redis in-memory caching."
+  ],
+  "suggestions": [
+    "Add a bullet point explaining your experience with container orchestration or Docker Compose.",
+    "Highlight any caching strategies or performance optimizations implemented in your backend projects."
+  ],
+  "warnings": []
 }
 ```
 
-**Error Responses:**
-
-| Code | Reason |
-|---|---|
-| `400` | Invalid file type |
-| `400` | Empty job description |
-| `400` | Could not extract text from resume |
+#### Scenario B: Fallback Mode (No Key / AI Unavailable)
+```json
+{
+  "filename": "john_doe_resume.pdf",
+  "score": 75,
+  "is_ai_powered": false,
+  "analysis_confidence": "not_applicable",
+  "candidate_summary": "Analyzed using deterministic rule-based keyword matching engine.",
+  "matched_skills": [
+    "Docker",
+    "Fastapi",
+    "Python"
+  ],
+  "missing_skills": [
+    "Kubernetes"
+  ],
+  "strengths": [],
+  "weaknesses": [],
+  "suggestions": [],
+  "warnings": [
+    "No Gemini API key provided. Ran deterministic rule-based analysis."
+  ]
+}
+```
 
 ---
 
-## Response Fields Explained
+## Standard Error Codes
+
+| Status Code | Error Message / Scenario | Reason |
+|---|---|---|
+| `400 Bad Request` | `Invalid file type. Only PDF and DOCX allowed.` | Uploaded file MIME type or extension is invalid. |
+| `400 Bad Request` | `Job description cannot be empty.` | Job description text contains only whitespace. |
+| `400 Bad Request` | `The uploaded document appears to be an image scan.` | PDF extractable text is under the minimum threshold (50 chars). |
+| `413 Payload Too Large` | `File size exceeds the 5MB limit.` | Uploaded resume file is larger than 5,242,880 bytes. |
+| `422 Unprocessable Entity` | `Validation error in request payload.` | Form data format is invalid or missing required keys. |
+| `429 Too Many Requests` | `Gemini API rate limit reached.` | User's free-tier Gemini API key exceeded request quota. |
+| `500 Internal Server Error` | `Unexpected server error occurred.` | Unhandled internal exception occurred. |
+
+---
+
+## Response Field Definitions
 
 | Field | Type | Description |
 |---|---|---|
-| `score` | float | Match percentage (0–100). Higher = better fit. |
-| `matched_skills` | list | Skills present in BOTH the resume AND the JD |
-| `missing_skills` | list | Skills required by JD but ABSENT from the resume |
-| `total_jd_skills` | int | Total number of skills detected in the JD |
-
----
-
-## Allowed File Types
-
-| MIME Type | Extension |
-|---|---|
-| `application/pdf` | `.pdf` |
-| `application/vnd.openxmlformats-officedocument.wordprocessingml.document` | `.docx` |
+| `filename` | string | Original filename of the uploaded resume. |
+| `score` | integer | Contextual or set-based match score between 0 and 100. |
+| `is_ai_powered` | boolean | `true` if processed by Google Gemini; `false` if rule-based fallback. |
+| `analysis_confidence` | string | `high`, `medium`, `low` (for AI mode) or `not_applicable` (for fallback). |
+| `candidate_summary` | string | 2-3 sentence overview of candidate profile and role alignment. |
+| `matched_skills` | array of strings | Skills required by JD that the candidate possesses. |
+| `missing_skills` | array of strings | Critical skills/qualifications required by JD absent from resume. |
+| `strengths` | array of strings | Key competitive advantages for this specific role. |
+| `weaknesses` | array of strings | Specific gaps or missing qualifications for this role. |
+| `suggestions` | array of strings | Actionable resume optimization advice without hallucinating facts. |
+| `warnings` | array of strings | Non-blocking alerts (e.g. text truncation, fallback trigger reason). |

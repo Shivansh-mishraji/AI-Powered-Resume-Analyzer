@@ -1,121 +1,160 @@
 # System Architecture — AI-Powered Resume Analyzer
 
-> Documented by: Sujeet (Research & Documentation)
+> Documented by: Sujeet Kannaujiya (Research & Documentation Lead)
 
 ---
 
-## High-Level Architecture
+## 🏛️ High-Level System Architecture
+
+The AI-Powered Resume Analyzer implements a **Hybrid AI & Deterministic Architecture** using a Bring-Your-Own-Key (BYOK) model. 
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                        USER                             │
-│            (Browser at localhost:5173)                  │
-└─────────────────────────┬───────────────────────────────┘
-                          │  HTTP POST /analyze
-                          │  (multipart/form-data)
-                          ▼
-┌─────────────────────────────────────────────────────────┐
-│              FRONTEND  (React + Vite)                   │
-│                                                         │
-│   App.jsx                                               │
-│   ├── File Upload Input (PDF / DOCX)                    │
-│   ├── Job Description Textarea                          │
-│   ├── fetch() → POST http://127.0.0.1:8000/analyze      │
-│   └── Results Display (Score, Matched, Missing Skills)  │
-└─────────────────────────┬───────────────────────────────┘
-                          │  HTTP Request (CORS enabled)
-                          ▼
-┌─────────────────────────────────────────────────────────┐
-│              BACKEND  (FastAPI + Uvicorn)               │
-│                                                         │
-│   main.py                                               │
-│   ├── GET  /health        → Health check                │
-│   ├── POST /resume/upload → Raw text extraction only    │
-│   └── POST /analyze       → Full analysis pipeline      │
-│                                                         │
-│   Services Layer                                        │
-│   ├── resume_parser.py    → PyMuPDF (PDF) / python-docx │
-│   ├── text_cleaner.py     → Regex normalization         │
-│   ├── skill_extractor.py  → 50+ skill keyword matching  │
-│   └── score_calculator.py → Set intersection scoring   │
-└─────────────────────────────────────────────────────────┘
-```
-
----
-
-## Data Flow — `/analyze` Endpoint
-
-```
-User uploads PDF + pastes Job Description
-           │
-           ▼
-   Validate file type (PDF/DOCX only)
-           │
-           ▼
-   Read file bytes into memory (no disk write)
-           │
-           ▼
-   resume_parser.py → extract raw text
-           │
-           ▼
-   text_cleaner.py  → normalize text (lowercase, remove symbols)
-           │
-           ├─────────────────────────────────────┐
-           ▼                                     ▼
-   Extract resume skills              Extract JD skills
-   (skill_extractor.py)              (skill_extractor.py)
-           │                                     │
-           └──────────────┬──────────────────────┘
-                          ▼
-               score_calculator.py
-               ├── matched = resume ∩ jd
-               ├── missing = jd - resume
-               └── score  = matched/total × 100
-                          │
-                          ▼
-               JSON Response → Frontend
+┌────────────────────────────────────────────────────────────────────────┐
+│                                 USER                                   │
+│                     (Browser at localhost:5173)                        │
+└───────────────────────────────────┬────────────────────────────────────┘
+                                    │ HTTP POST /analyze
+                                    │ Headers: 'X-Gemini-API-Key' (Optional)
+                                    │ Body: multipart/form-data (Resume, JD)
+                                    ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│                        FRONTEND (React 19 + Vite)                      │
+│                                                                        │
+│   App.jsx                                                              │
+│   ├── In-Memory BYOK Key Input (Password field, zero disk storage)     │
+│   ├── Drag-and-Drop File Upload (PDF / DOCX)                           │
+│   ├── Target Job Description Textarea                                  │
+│   ├── Request Debounce & State Controller                              │
+│   └── Unified Dashboard (Score, Confidence, Skills, AI Insights)       │
+└───────────────────────────────────┬────────────────────────────────────┘
+                                    │ HTTP Request (CORS scoped to origin)
+                                    ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│                        BACKEND (FastAPI + Uvicorn)                     │
+│                                                                        │
+│   HTTP Gateway (`main.py`)                                             │
+│   ├── GET  /health           ──> System health check                   │
+│   └── POST /analyze          ──> Passes request to Analysis Service    │
+│                                                                        │
+│   Configuration Layer (`config.py`)                                    │
+│   ├── MAX_FILE_SIZE_BYTES    ──> 5 MB                                  │
+│   ├── MAX_RESUME_CHARS       ──> 15,000 characters                     │
+│   ├── MAX_JD_CHARS           ──> 5,000 characters                      │
+│   └── ALLOWED_CORS_ORIGINS   ──> Explicit frontend origins             │
+│                                                                        │
+│   Parsing & In-Memory Extraction Layer (`resume_parser.py`)            │
+│   ├── PyMuPDF (`fitz` / `pymupdf`) with `sort=True` block sorting      │
+│   ├── python-docx for Word document streams                            │
+│   └── Scanned PDF detection (rejection if extractable text < 50 chars) │
+│                                                                        │
+│   Analysis Router (`services/analysis_service.py`)                     │
+│   ├── Decides engine execution based on API key availability           │
+│   ├── Calls AI Service (with 1-retry policy for transient errors)      │
+│   └── Triggers Rule-Based Service on missing key or service failure    │
+│                                                                        │
+│   Primary Engine (`services/ai_service.py`)                            │
+│   ├── Google Gemini LLM (via official `google-genai` SDK)              │
+│   ├── Strict Rubric-Grounded System Prompting                          │
+│   └── Structured JSON Output Validation via Pydantic                   │
+│                                                                        │
+│   Fallback Engine (`services/rule_based_service.py`)                   │
+│   ├── Text Cleaner (`text_cleaner.py`)                                 │
+│   ├── 50+ Skill Keyword Extractor (`skill_extractor.py`)               │
+│   └── Set-Intersection Scorer (`score_calculator.py`)                 │
+│                                                                        │
+│   Unified Schema Contract (`schemas/analysis_schema.py`)               │
+│   └── AnalysisResult (Single response format for both engines)         │
+└────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## Technology Decisions
+## 🔄 End-to-End Data Flow (`POST /analyze`)
 
-| Layer | Technology | Reason |
+```
+User uploads Resume + pastes Job Description + optional Gemini Key
+                             │
+                             ▼
+     [1. Request Gateway & Validation]
+     ├── Validate Content-Type (application/pdf or docx)
+     ├── Enforce file size limit (≤ 5MB)
+     └── Read binary stream directly into RAM
+                             │
+                             ▼
+     [2. Parsing & Text Normalization]
+     ├── Extract text stream in memory (sort=True)
+     ├── Scanned image check (len(text) ≥ 50 chars)
+     ├── Normalize whitespace & format bounds
+     └── Check text length limits (warn if truncated)
+                             │
+                             ▼
+     [3. Analysis Router Decision]
+                    │
+            API Key Provided?
+             /             \
+           YES              NO
+            │                │
+            ▼                ▼
+     [4. Gemini AI Service]  [4b. Rule-Based Engine]
+     ├── Rubric-based prompt ├── Clean text (regex)
+     ├── Structured JSON     ├── Extract 50+ keywords
+     ├── 1-retry on failure  └── Calculate set score
+     │                       │
+     ├── Success ────┐       │
+     └── Failure ─┐  │       │
+                  │  │       │
+                  ▼  ▼       ▼
+     [5. Unified Result Builder]
+     ├── Maps output to `AnalysisResult` Pydantic model
+     ├── Sets `is_ai_powered`: true / false
+     ├── Sets `analysis_confidence`: "high" | "medium" | "low" | "not_applicable"
+     └── Populates `warnings` array for transparency
+                             │
+                             ▼
+     [6. JSON Response ──> React Dashboard]
+```
+
+---
+
+## 🔐 Security & Privacy Architecture (BYOK Model)
+
+1. **In-Memory Lifespan:** The user's Gemini API key is accepted via the `X-Gemini-API-Key` HTTP header. It resides only in temporary process memory for the duration of the request.
+2. **Zero Storage / Zero Logging:** The key is never written to disk, never saved to a database, and never printed in server or access logs.
+3. **Frontend Memory State:** In React, the key is held in component runtime state (`useState`) with an optional clear button. It is not saved in `localStorage`.
+4. **CORS Boundary:** The API only allows requests from verified frontend origins, preventing unauthorized cross-site invocations.
+
+---
+
+## 📦 Unified Data Contract
+
+Both engines return the identical Pydantic schema:
+
+```python
+class AnalysisResult(BaseModel):
+    filename: str
+    score: int                              # 0 to 100
+    is_ai_powered: bool
+    analysis_confidence: Literal["high", "medium", "low", "not_applicable"]
+    candidate_summary: str
+    matched_skills: List[str]
+    missing_skills: List[str]
+    strengths: List[str]                    # Empty list in fallback mode
+    weaknesses: List[str]                   # Empty list in fallback mode
+    suggestions: List[str]                  # Empty list in fallback mode
+    warnings: List[str]
+```
+
+---
+
+## ⚙️ Component Responsibilities
+
+| Component | File Path | Core Responsibility |
 |---|---|---|
-| Backend Framework | FastAPI | Async, auto-docs (Swagger), fast, type-safe |
-| ASGI Server | Uvicorn | High-performance async server for FastAPI |
-| PDF Parsing | PyMuPDF (`fitz`) | In-memory binary stream processing, no temp files |
-| DOCX Parsing | python-docx | Standard library for `.docx` format |
-| Frontend | React + Vite | Fast dev server, component-based UI |
-| Testing | pytest + TestClient | Zero-dependency, runs without live server |
-
----
-
-## Project Folder Structure
-
-```
-Resume Analyzer/
-├── backend/
-│   ├── app/
-│   │   ├── main.py                  # FastAPI app + endpoints
-│   │   └── services/
-│   │       ├── resume_parser.py     # PDF & DOCX text extraction
-│   │       ├── text_cleaner.py      # Text normalization
-│   │       ├── skill_extractor.py   # Keyword skill matching
-│   │       └── score_calculator.py  # Match scoring logic
-│   ├── tests/
-│   │   ├── test_main.py             # Tests for /health and /resume/upload
-│   │   ├── test_analyze.py          # Tests for /analyze endpoint
-│   │   ├── test_text_cleaner.py     # Unit tests for text cleaner
-│   │   ├── test_skill_extractor.py  # Unit tests for skill extractor
-│   │   └── test_score_calculator.py # Unit tests for score calculator
-│   └── requirements.txt
-├── frontend/
-│   └── src/
-│       ├── App.jsx                  # Main React component
-│       └── App.css                  # Styles
-└── docs/
-    ├── API_REFERENCE.md             # Full API documentation
-    ├── ARCHITECTURE.md              # This file
-    └── RESEARCH.md                  # Technology research notes
-```
+| **Central Config** | `backend/app/config.py` | Constants, thresholds, file bounds, CORS origins. |
+| **Pydantic Schema** | `backend/app/schemas/analysis_schema.py` | Standardized response contract for all engines. |
+| **Resume Parser** | `backend/app/services/resume_parser.py` | In-memory text extraction, reading order sorting, image scan detection. |
+| **Rule-Based Engine** | `backend/app/services/rule_based_service.py` | Deterministic keyword extraction, set-math scoring, fallback schema mapping. |
+| **Gemini AI Service** | `backend/app/services/ai_service.py` | Gemini LLM integration, rubric-grounded prompt, structured JSON validation, 1-retry logic. |
+| **Analysis Router** | `backend/app/services/analysis_service.py` | Orchestration, engine routing, graceful error recovery, fallback tagging. |
+| **HTTP Gateway** | `backend/app/main.py` | FastAPI routes, CORS middleware, multipart request receiving. |
+| **Frontend UI** | `frontend/src/App.jsx` | BYOK key input, debounce handling, unified dashboard visualizer. |
