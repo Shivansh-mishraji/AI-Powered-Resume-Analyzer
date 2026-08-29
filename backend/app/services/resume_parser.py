@@ -1,10 +1,10 @@
 from docx import Document
-import fitz
+import pymupdf
 import io
 
 def extract_text_from_pdf(file_bytes: bytes) -> str:
     text = ""
-    with fitz.open(stream=file_bytes, filetype="pdf") as doc:
+    with pymupdf.open(stream=file_bytes, filetype="pdf") as doc:
         for page in doc:
             text += page.get_text()
     return text.strip()
