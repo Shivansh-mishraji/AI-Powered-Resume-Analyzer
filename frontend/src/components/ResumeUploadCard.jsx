@@ -31,7 +31,7 @@ export default function ResumeUploadCard({ file, onFileSelect, onFileRemove, dis
 
   const formatFileSize = (bytes) => {
     if (!bytes) return '0 KB';
-    return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / 1024).toFixed(0) + ' KB';
   };
 
   return (
@@ -46,7 +46,7 @@ export default function ResumeUploadCard({ file, onFileSelect, onFileRemove, dis
         id={inputId}
         accept=".pdf,.docx"
         onChange={handleInputChange}
-        className="sr-only-input"
+        className="hidden"
         disabled={disabled}
       />
 
@@ -60,40 +60,41 @@ export default function ResumeUploadCard({ file, onFileSelect, onFileRemove, dis
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
         >
-          <div className="w-12 h-12 rounded-full bg-surface-variant flex items-center justify-center mb-4 group-hover/drop:scale-110 transition-transform duration-300 shadow-glow-sm">
+          <div className="w-12 h-12 rounded-full bg-surface-variant flex items-center justify-center mb-4 group-hover/drop:scale-110 transition-transform duration-300">
             <span className="material-symbols-outlined text-[24px] text-outline-variant group-hover/drop:text-secondary transition-colors" aria-hidden="true">
               cloud_upload
             </span>
           </div>
           <p className="font-label-md text-label-md text-on-background mb-1">Drag and drop your resume here</p>
           <p className="font-body-md text-label-sm text-on-surface-variant">
-            or <span className="text-secondary hover:underline font-semibold">browse files</span>
+            or <span className="text-secondary hover:underline">browse files</span>
           </p>
           <div className="mt-4 flex items-center gap-4 font-label-sm text-[11px] text-outline">
             <span>PDF, DOCX</span>
-            <span>•</span>
             <span>Max 5MB</span>
           </div>
         </label>
       ) : (
-        <div className="border border-outline-variant/40 rounded-lg p-4 bg-surface-container-low/40 flex items-center justify-between group/file hover:border-secondary/30 transition-all">
-          <div className="flex items-center gap-3.5 min-w-0">
-            <div className="w-10 h-10 rounded-lg bg-surface-variant/80 border border-outline-variant/40 flex items-center justify-center text-match-rose shadow-glow-sm shrink-0">
-              <span className="material-symbols-outlined text-[22px]" aria-hidden="true">
+        <div className="border border-outline-variant/50 rounded-lg p-4 bg-surface-container-low/50 flex items-center justify-between">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-10 h-10 rounded bg-match-rose/10 flex items-center justify-center border border-match-rose/20 shrink-0">
+              <span className="material-symbols-outlined text-match-rose" aria-hidden="true">
                 picture_as_pdf
               </span>
             </div>
             <div className="truncate">
-              <p className="font-label-md text-label-md text-on-background truncate font-medium">{file.name}</p>
+              <p className="font-label-md text-label-md text-on-background truncate max-w-[200px] font-medium">
+                {file.name}
+              </p>
               <p className="font-label-sm text-[11px] text-on-surface-variant mt-0.5">
-                {formatFileSize(file.size)} • <span className="text-match-emerald">Ready for Analysis</span>
+                {formatFileSize(file.size)}
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-1.5 shrink-0">
+          <div className="flex items-center gap-2 shrink-0">
             <label
               htmlFor={inputId}
-              className="p-1.5 hover:bg-surface-bright/50 rounded-md text-on-surface-variant hover:text-secondary transition-colors cursor-pointer"
+              className="p-1.5 text-outline hover:text-secondary transition-colors cursor-pointer"
               title="Replace file"
             >
               <span className="material-symbols-outlined text-[18px]" aria-hidden="true">sync</span>
@@ -101,7 +102,7 @@ export default function ResumeUploadCard({ file, onFileSelect, onFileRemove, dis
             <button
               type="button"
               onClick={onFileRemove}
-              className="p-1.5 hover:bg-surface-bright/50 rounded-md text-on-surface-variant hover:text-match-rose transition-colors"
+              className="p-1.5 text-outline hover:text-match-rose transition-colors"
               title="Remove file"
               disabled={disabled}
             >

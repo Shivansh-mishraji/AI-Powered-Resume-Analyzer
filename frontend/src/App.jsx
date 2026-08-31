@@ -16,25 +16,26 @@ import { analyzeResume, checkHealth } from './services/api';
 import './App.css';
 
 export default function App() {
-  // State management
   const [resumeFile, setResumeFile] = useState(null);
-  const [jobDescription, setJobDescription] = useState('');
-  const [apiKey, setApiKey] = useState(''); // BYOK in-memory state
+  const [jobDescription, setJobDescription] = useState(
+    'We are seeking a Senior Full-Stack Engineer to join our core product team. You will be responsible for designing and implementing scalable backend services in Node.js and building responsive frontends using React and Tailwind CSS. Experience with PostgreSQL and cloud deployments (AWS/GCP) is required.'
+  );
+  const [apiKey, setApiKey] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [analysisResult, setAnalysisResult] = useState(null);
   const [sessionHistory, setSessionHistory] = useState([]);
   const [isBackendOnline, setIsBackendOnline] = useState(true);
-  const [pingLatency, setPingLatency] = useState(12);
+  const [pingLatency, setPingLatency] = useState(14);
 
-  // Modal and Drawer states
+  // Modals & Drawers
   const [isTeamOpen, setIsTeamOpen] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [isTelemetryOpen, setIsTelemetryOpen] = useState(false);
   const [isHowItWorksOpen, setIsHowItWorksOpen] = useState(false);
   const [isAboutOpen, setIsAboutOpen] = useState(false);
 
-  // Health check on mount & periodically
+  // Health check on mount and interval
   useEffect(() => {
     let mounted = true;
     const verifyHealth = async () => {
@@ -59,7 +60,7 @@ export default function App() {
     setError(null);
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
-        setError('File exceeds the 5MB size limit. Please upload a smaller PDF or DOCX file.');
+        setError('File exceeds the 5MB maximum size limit. Please upload a smaller PDF or DOCX file.');
         return;
       }
       setResumeFile(file);
@@ -83,7 +84,6 @@ export default function App() {
       const data = await analyzeResume(resumeFile, jobDescription, apiKey);
       setAnalysisResult(data);
 
-      // Save to in-memory session history
       setSessionHistory((prev) => [
         {
           ...data,
@@ -106,8 +106,8 @@ export default function App() {
   };
 
   return (
-    <div className="app-layout bg-mesh">
-      {/* Fixed Top Navigation Bar */}
+    <div className="bg-mesh text-on-background min-h-screen flex flex-col font-body-md overflow-x-hidden">
+      {/* Top Navigation Bar */}
       <TopNavBar
         isOnline={isBackendOnline}
         onOpenAbout={() => setIsAboutOpen(true)}
@@ -115,7 +115,7 @@ export default function App() {
         onOpenTeam={() => setIsTeamOpen(true)}
       />
 
-      {/* Left Sidebar Navigation */}
+      {/* Side Navigation Bar */}
       <Sidebar
         activeView={analysisResult ? 'dashboard' : 'analyzer'}
         onOpenHistory={() => setIsHistoryOpen(true)}
@@ -124,8 +124,8 @@ export default function App() {
         isAiPowered={Boolean(apiKey && apiKey.trim())}
       />
 
-      {/* Main Content Area */}
-      <main className="main-content-canvas">
+      {/* Main Content Canvas */}
+      <main className="flex-1 pt-[100px] md:pl-[280px] px-gutter pb-stack-lg max-w-7xl mx-auto w-full relative z-10">
         {/* Error Alert Banner */}
         {error && (
           <div className="mb-6 p-4 rounded-xl bg-match-rose/15 border border-match-rose/40 text-match-rose flex items-center justify-between animate-fade-in">
@@ -144,15 +144,16 @@ export default function App() {
           </div>
         )}
 
-        {/* View Switcher: Workspace (Screen 1) vs Dashboard (Screen 2) */}
+        {/* View Switcher */}
         {!analysisResult ? (
-          <div className="workspace-view-container animate-fade-in">
+          <div className="workspace-container">
+            {/* Hero Section */}
             <Hero isAiPowered={Boolean(apiKey && apiKey.trim())} />
 
-            {/* 2-Column Workspace Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 relative items-stretch">
-              {/* Left Column: File Upload & BYOK Hub */}
-              <div className="lg:col-span-5 flex flex-col gap-6">
+            {/* Workspace Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-stack-md relative">
+              {/* Left Column: Upload & BYOK Hub */}
+              <div className="lg:col-span-5 flex flex-col gap-stack-md z-10">
                 <ResumeUploadCard
                   file={resumeFile}
                   onFileSelect={handleFileSelect}
@@ -168,8 +169,8 @@ export default function App() {
                 />
               </div>
 
-              {/* Right Column: Job Description Workspace */}
-              <div className="lg:col-span-7 flex flex-col">
+              {/* Right Column: Job Description Card */}
+              <div className="lg:col-span-7 flex flex-col gap-stack-md z-10">
                 <JobDescriptionCard
                   value={jobDescription}
                   onChange={setJobDescription}
@@ -179,32 +180,12 @@ export default function App() {
               </div>
             </div>
 
-            {/* Centered Full-Width Action Button */}
+            {/* Full-Width Analyze CTA */}
             <AnalyzeButton
               onClick={handleAnalyze}
               loading={loading}
               disabled={!resumeFile || !jobDescription.trim()}
             />
-
-            {/* Workspace Footer */}
-            <footer className="mt-16 pt-6 border-t border-surface-container-highest/40 flex flex-col md:flex-row justify-between items-center text-xs text-on-surface-variant gap-4">
-              <div>
-                © 2026 ResumeAI. Developed by Team Antigravity. All rights reserved.
-              </div>
-              <div className="flex items-center gap-4">
-                <button type="button" onClick={() => setIsAboutOpen(true)} className="hover:text-on-background">
-                  Privacy Policy
-                </button>
-                <span>•</span>
-                <button type="button" onClick={() => setIsHowItWorksOpen(true)} className="hover:text-on-background">
-                  Architecture
-                </button>
-                <span>•</span>
-                <button type="button" onClick={() => setIsTeamOpen(true)} className="hover:text-on-background">
-                  Engineering Team
-                </button>
-              </div>
-            </footer>
           </div>
         ) : (
           <ResultsDashboard
@@ -215,7 +196,64 @@ export default function App() {
         )}
       </main>
 
-      {/* Modals & Drawers */}
+      {/* Footer for Workspace View */}
+      {!analysisResult && (
+        <footer className="w-full py-6 border-t border-surface-container-highest/50 bg-background mt-auto relative z-10 flex flex-col md:flex-row justify-between items-center px-margin-desktop max-w-7xl mx-auto md:pl-[280px]">
+          <div className="font-label-sm text-label-sm text-outline mb-4 md:mb-0">
+            © 2026 ResumeAI. All rights reserved.
+            <span className="mx-2">•</span>
+            <button
+              type="button"
+              className="hover:text-secondary transition-colors"
+              onClick={() => setIsTeamOpen(true)}
+            >
+              Developed by Team Antigravity
+            </button>
+          </div>
+          <div className="flex items-center gap-6">
+            <button type="button" onClick={() => setIsAboutOpen(true)} className="font-label-sm text-label-sm text-outline hover:text-on-background transition-colors">
+              Privacy
+            </button>
+            <button type="button" onClick={() => setIsHowItWorksOpen(true)} className="font-label-sm text-label-sm text-outline hover:text-on-background transition-colors">
+              Architecture
+            </button>
+            <button type="button" onClick={() => setIsTeamOpen(true)} className="font-label-sm text-label-sm text-outline hover:text-on-background transition-colors">
+              Security
+            </button>
+          </div>
+        </footer>
+      )}
+
+      {/* Progressive Loading State Overlay */}
+      {loading && (
+        <div className="fixed inset-0 bg-background/90 backdrop-blur-sm z-[100] flex flex-col items-center justify-center animate-fade-in">
+          <div className="glass-panel rounded-2xl p-8 max-w-md w-full mx-4 border-secondary/30 shadow-glow-cyan relative">
+            <h3 className="font-headline-md text-headline-md text-on-background mb-6 text-center">
+              Analyzing Compatibility
+            </h3>
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center gap-3 text-match-emerald">
+                <span className="material-symbols-outlined text-[20px]" aria-hidden="true">check_circle</span>
+                <span className="font-label-md text-label-md">Extracting resume entities...</span>
+              </div>
+              <div className="flex items-center gap-3 text-secondary animate-pulse">
+                <div className="w-5 h-5 border-2 border-secondary border-t-transparent rounded-full animate-spin" aria-hidden="true" />
+                <span className="font-label-md text-label-md">Mapping JD requirements...</span>
+              </div>
+              <div className="flex items-center gap-3 text-outline">
+                <span className="material-symbols-outlined text-[20px] opacity-50" aria-hidden="true">pending</span>
+                <span className="font-label-md text-label-md opacity-50">Running ATS AST rules...</span>
+              </div>
+              <div className="flex items-center gap-3 text-outline">
+                <span className="material-symbols-outlined text-[20px] opacity-50" aria-hidden="true">pending</span>
+                <span className="font-label-md text-label-md opacity-50">Generating AI insights...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Interactive Modals & Drawers */}
       <TeamModal isOpen={isTeamOpen} onClose={() => setIsTeamOpen(false)} />
       <SessionHistoryDrawer
         isOpen={isHistoryOpen}

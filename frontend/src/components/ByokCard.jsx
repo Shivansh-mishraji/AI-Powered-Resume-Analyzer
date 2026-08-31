@@ -1,23 +1,25 @@
-import { useState, useId } from 'react';
+import { useState } from 'react';
 
 export default function ByokCard({ value, onChange, onClear, disabled = false }) {
   const [showKey, setShowKey] = useState(false);
-  const inputId = useId();
 
   return (
-    <div className="glass-panel rounded-xl p-6 relative overflow-hidden group">
-      <div className="flex items-center gap-2 mb-2">
-        <span className="material-symbols-outlined text-primary" aria-hidden="true">vpn_key</span>
-        <h2 className="font-headline-md text-body-lg text-on-background">Bring Your Own Key (BYOK)</h2>
-      </div>
+    <div className="glass-panel rounded-xl p-6 relative">
+      <h2 className="font-headline-md text-body-lg text-on-background mb-4 flex items-center gap-2">
+        <span className="material-symbols-outlined text-tertiary" aria-hidden="true">key</span>
+        <span>Bring Your Own Key (BYOK)</span>
+      </h2>
 
       <p className="font-body-md text-label-sm text-on-surface-variant mb-4">
-        Provide your Gemini API key for local analysis. Your key is stored in memory and never leaves your browser.
+        Provide your Gemini API key for local analysis. Your key never leaves your browser.
       </p>
 
-      <div className="relative flex items-center mb-3">
+      <div className="relative focus-glow rounded-lg transition-all duration-300 bg-surface border border-outline-variant flex items-center overflow-hidden group">
+        <div className="pl-3 text-outline group-focus-within:text-secondary transition-colors">
+          <span className="material-symbols-outlined text-[18px]" aria-hidden="true">password</span>
+        </div>
         <input
-          id={inputId}
+          id="apiKeyInput"
           type={showKey ? 'text' : 'password'}
           placeholder="AIzaSy..."
           value={value}
@@ -25,27 +27,26 @@ export default function ByokCard({ value, onChange, onClear, disabled = false })
           disabled={disabled}
           autoComplete="off"
           spellCheck="false"
-          className="w-full bg-surface-container-low/40 border border-outline-variant/50 rounded-lg px-4 py-2.5 text-on-background font-mono text-label-md placeholder-outline focus:outline-none focus:border-secondary/50 focus:ring-1 focus:ring-secondary/50 focus-glow transition-all"
+          className="w-full bg-transparent border-none text-on-background font-body-md text-label-md py-2.5 px-3 focus:ring-0 placeholder:text-outline/50 focus:outline-none"
         />
-
-        <div className="absolute right-2 flex items-center gap-1">
+        <div className="pr-2 flex items-center gap-1">
           {value && (
             <button
               type="button"
               onClick={onClear}
               disabled={disabled}
-              className="p-1 hover:bg-surface-bright/50 rounded text-on-surface-variant hover:text-match-rose transition-colors text-xs font-bold"
-              title="Clear API Key"
+              className="p-1 text-outline hover:text-on-background transition-colors"
+              title="Clear"
             >
-              ✕
+              <span className="material-symbols-outlined text-[18px]" aria-hidden="true">close</span>
             </button>
           )}
           <button
             type="button"
             onClick={() => setShowKey(!showKey)}
-            disabled={disabled || !value}
-            className="p-1 hover:bg-surface-bright/50 rounded text-on-surface-variant hover:text-on-background transition-colors"
-            title={showKey ? 'Hide Key' : 'Show Key'}
+            disabled={disabled}
+            className="p-1 text-outline hover:text-on-background transition-colors"
+            title="Toggle visibility"
           >
             <span className="material-symbols-outlined text-[18px]" aria-hidden="true">
               {showKey ? 'visibility_off' : 'visibility'}
@@ -54,18 +55,18 @@ export default function ByokCard({ value, onChange, onClear, disabled = false })
         </div>
       </div>
 
-      <div className="flex items-center justify-between text-label-sm text-[12px] flex-wrap gap-2">
-        <span className="text-match-emerald/90 flex items-center gap-1">
-          <span className="material-symbols-outlined text-[14px]" aria-hidden="true">eco</span>
+      <div className="mt-4 flex justify-between items-center flex-wrap gap-2">
+        <p className="font-label-sm text-[11px] text-match-emerald flex items-center gap-1">
+          <span className="material-symbols-outlined text-[14px]" aria-hidden="true">money_off</span>
           <span>Zero billing expected on Free Tier</span>
-        </span>
+        </p>
         <a
           href="https://aistudio.google.com/app/apikey"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-secondary hover:underline flex items-center gap-1 font-medium"
+          className="font-label-sm text-label-sm text-tertiary hover:text-tertiary-fixed transition-colors flex items-center gap-1"
         >
-          <span>Get key from Google AI Studio</span>
+          <span>Google AI Studio</span>
           <span className="material-symbols-outlined text-[14px]" aria-hidden="true">open_in_new</span>
         </a>
       </div>
