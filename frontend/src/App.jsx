@@ -125,7 +125,7 @@ export default function App() {
       />
 
       {/* Main Content Canvas */}
-      <main className="flex-1 pt-[100px] md:pl-[280px] px-gutter pb-stack-lg max-w-7xl mx-auto w-full relative z-10">
+      <main className="flex-1 md:ml-64 pt-[90px] px-6 md:px-12 pb-12 w-auto min-h-screen">
         {/* Error Alert Banner */}
         {error && (
           <div className="mb-6 p-4 rounded-xl bg-match-rose/15 border border-match-rose/40 text-match-rose flex items-center justify-between animate-fade-in">
@@ -151,7 +151,7 @@ export default function App() {
             <Hero isAiPowered={Boolean(apiKey && apiKey.trim())} />
 
             {/* Workspace Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-stack-md relative">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-stack-md relative items-stretch">
               {/* Left Column: Upload & BYOK Hub */}
               <div className="lg:col-span-5 flex flex-col gap-stack-md z-10">
                 <ResumeUploadCard
@@ -198,8 +198,8 @@ export default function App() {
 
       {/* Footer for Workspace View */}
       {!analysisResult && (
-        <footer className="w-full py-6 border-t border-surface-container-highest/50 bg-background mt-auto relative z-10 flex flex-col md:flex-row justify-between items-center px-margin-desktop max-w-7xl mx-auto md:pl-[280px]">
-          <div className="font-label-sm text-label-sm text-outline mb-4 md:mb-0">
+        <footer className="w-auto md:ml-64 py-6 border-t border-surface-container-highest/50 bg-background/50 backdrop-blur-md relative z-10 flex flex-col md:flex-row justify-between items-center px-6 md:px-12 text-xs text-outline">
+          <div className="mb-4 md:mb-0">
             © 2026 ResumeAI. All rights reserved.
             <span className="mx-2">•</span>
             <button
@@ -211,13 +211,13 @@ export default function App() {
             </button>
           </div>
           <div className="flex items-center gap-6">
-            <button type="button" onClick={() => setIsAboutOpen(true)} className="font-label-sm text-label-sm text-outline hover:text-on-background transition-colors">
+            <button type="button" onClick={() => setIsAboutOpen(true)} className="hover:text-on-background transition-colors">
               Privacy
             </button>
-            <button type="button" onClick={() => setIsHowItWorksOpen(true)} className="font-label-sm text-label-sm text-outline hover:text-on-background transition-colors">
+            <button type="button" onClick={() => setIsHowItWorksOpen(true)} className="hover:text-on-background transition-colors">
               Architecture
             </button>
-            <button type="button" onClick={() => setIsTeamOpen(true)} className="font-label-sm text-label-sm text-outline hover:text-on-background transition-colors">
+            <button type="button" onClick={() => setIsTeamOpen(true)} className="hover:text-on-background transition-colors">
               Security
             </button>
           </div>

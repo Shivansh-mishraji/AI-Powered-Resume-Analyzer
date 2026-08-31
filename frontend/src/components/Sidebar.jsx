@@ -6,9 +6,9 @@ export default function Sidebar({
   isAiPowered = false,
 }) {
   return (
-    <aside className="hidden md:flex fixed left-0 top-0 h-full w-64 bg-surface-container/40 backdrop-blur-2xl border-r border-surface-container-highest/50 flex-col p-base gap-stack-sm pt-[100px] z-40">
+    <aside className="hidden md:flex fixed left-0 top-[65px] bottom-0 w-64 bg-surface-container/40 backdrop-blur-2xl border-r border-surface-container-highest/50 flex-col p-4 gap-3 z-40">
       {/* Brand Card */}
-      <div className="px-4 py-3 mb-4 rounded-xl bg-surface/50 border border-outline-variant/30">
+      <div className="px-4 py-3 rounded-xl bg-surface/50 border border-outline-variant/30">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-lg bg-surface-variant flex items-center justify-center border border-outline-variant/50 shadow-glow-sm">
             <span className="material-symbols-outlined text-primary text-[24px]" aria-hidden="true">terminal</span>
@@ -17,14 +17,14 @@ export default function Sidebar({
             <h3 className="font-label-md text-label-md text-on-background font-semibold">ResumeAI Engine</h3>
             <div className="flex items-center gap-1.5 mt-1">
               <span className="w-1.5 h-1.5 rounded-full bg-match-emerald" aria-hidden="true"></span>
-              <p className="font-label-sm text-[10px] text-on-surface-variant">Local: 127.0.0.1:8000</p>
+              <p className="font-label-sm text-[10px] text-on-surface-variant font-mono">Local: 127.0.0.1:8000</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Navigation Links */}
-      <nav className="flex-1 flex flex-col gap-1.5" aria-label="Sidebar navigation">
+      <nav className="flex-1 flex flex-col gap-1.5 mt-2" aria-label="Sidebar navigation">
         <button
           type="button"
           className={`flex items-center gap-3 px-4 py-2.5 rounded-lg font-medium font-label-md text-label-md transition-colors text-left ${
@@ -66,13 +66,13 @@ export default function Sidebar({
       </nav>
 
       {/* Engine Status Bottom Telemetry */}
-      <div className="mt-auto p-4 border-t border-outline-variant/30">
+      <div className="mt-auto p-3 border-t border-outline-variant/30 rounded-xl bg-surface-container-low/40">
         <div className="flex flex-col gap-1">
           <span className="font-label-sm text-[10px] text-outline uppercase tracking-wider">Engine Status</span>
-          <span className="font-label-md text-label-sm text-on-surface-variant">
+          <span className="font-label-md text-label-sm text-on-surface-variant font-medium">
             {isAiPowered ? 'Gemini 2.5 Flash + AST' : 'Deterministic AST Engine'}
           </span>
-          <span className="font-label-sm text-[11px] text-secondary">
+          <span className="font-label-sm text-[11px] text-secondary font-semibold">
             {isAiPowered ? 'Free Tier Active' : 'Fallback Active'}
           </span>
         </div>
