@@ -216,6 +216,23 @@
   color: #ffffff;
 }
 
+.btn-clear-key {
+  background: rgba(244, 63, 94, 0.15);
+  border: none;
+  border-left: 1px solid rgba(244, 63, 94, 0.3);
+  color: #fda4af;
+  padding: 0 0.85rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.btn-clear-key:hover {
+  background: rgba(244, 63, 94, 0.28);
+  color: #ffffff;
+}
+
 .get-key-link {
   font-size: 0.82rem;
   font-weight: 600;
@@ -228,6 +245,53 @@
 .get-key-link:hover {
   color: #c084fc;
   text-decoration: underline;
+}
+
+/* Quota & Billing Monitor Bar */
+.quota-monitor-bar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 0.85rem 1.15rem;
+  margin-top: 0.25rem;
+}
+
+.quota-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.quota-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #94a3b8;
+}
+
+.quota-val {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #e2e8f0;
+}
+
+.quota-val strong {
+  color: #38bdf8;
+}
+
+.key-val {
+  font-family: monospace;
+  color: #c4b5fd;
+  font-size: 0.82rem;
+}
+
+.badge-zero-cost {
+  color: #34d399;
+  font-weight: 600;
 }
 
 /* ==========================================================================

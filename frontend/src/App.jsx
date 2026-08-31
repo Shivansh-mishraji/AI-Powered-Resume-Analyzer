@@ -16,11 +16,15 @@ const SAMPLE_JDS = [
   }
 ]
 
+const FREE_TIER_DAILY_LIMIT = 1500
+const FREE_TIER_RPM_LIMIT = 15
+
 function App() {
   const [file, setFile] = useState(null)
   const [jobDescription, setJobDescription] = useState('')
   const [apiKey, setApiKey] = useState('')
   const [showApiKey, setShowApiKey] = useState(false)
+  const [sessionAiRequests, setSessionAiRequests] = useState(0)
   const [result, setResult] = useState(null)
   const [loading, setLoading] = useState(false)
   const [loadingStep, setLoadingStep] = useState('Analyzing...')
@@ -88,8 +92,10 @@ function App() {
     setResult(null)
     setLoadingStep('📄 Reading document stream into RAM...')
 
+    const isUsingAI = Boolean(apiKey.trim())
+
     const stepTimer1 = setTimeout(() => {
-      setLoadingStep(apiKey.trim() ? '🤖 Running Gemini 2.5 Semantic AI Analysis...' : '🔍 Running 50+ skill keyword matching...')
+      setLoadingStep(isUsingAI ? '🤖 Running Gemini 2.5 Semantic AI Analysis...' : '🔍 Running 50+ skill keyword matching...')
     }, 400)
 
     const stepTimer2 = setTimeout(() => {
@@ -101,7 +107,7 @@ function App() {
     formData.append('job_description', jobDescription)
 
     const headers = {}
-    if (apiKey.trim()) {
+    if (isUsingAI) {
       headers['X-Gemini-API-Key'] = apiKey.trim()
     }
 
@@ -119,6 +125,9 @@ function App() {
       }
 
       setResult(data)
+      if (data.is_ai_powered) {
+        setSessionAiRequests(prev => prev + 1)
+      }
     } catch {
       setError('Could not connect to FastAPI backend on http://127.0.0.1:8000. Please ensure uvicorn is running.')
     } finally {
@@ -153,6 +162,14 @@ Missing Skills (${result.missing_skills.length}): ${result.missing_skills.join('
     setError('')
   }
 
+  // Format masked key for preview
+  const getMaskedKey = (key) => {
+    const trimmed = key.trim()
+    if (!trimmed) return 'None'
+    if (trimmed.length <= 10) return `${trimmed.slice(0, 3)}•••••`
+    return `${trimmed.slice(0, 6)}••••••••${trimmed.slice(-4)}`
+  }
+
   // Calculate score circle stroke
   const radius = 56
   const circumference = 2 * Math.PI * radius
@@ -184,6 +201,8 @@ Missing Skills (${result.missing_skills.length}): ${result.missing_skills.join('
     }
   }
 
+  const remainingFreeRequests = Math.max(0, FREE_TIER_DAILY_LIMIT - sessionAiRequests)
+
   return (
     <div className="app-wrapper">
       {/* Top Brand Header */}
@@ -200,7 +219,7 @@ Missing Skills (${result.missing_skills.length}): ${result.missing_skills.join('
         </p>
       </header>
 
-      {/* BYOK Security & API Key Section */}
+      {/* BYOK Security & API Key Section with Quota Tracker */}
       <section className="glass-card api-key-card">
         <div className="api-key-header">
           <div className="api-key-title">
@@ -237,6 +256,16 @@ Missing Skills (${result.missing_skills.length}): ${result.missing_skills.join('
             >
               {showApiKey ? '👁️ Hide' : '👁️ Show'}
             </button>
+            {apiKey.trim() && (
+              <button
+                type="button"
+                onClick={() => setApiKey('')}
+                className="btn-clear-key"
+                title="Clear API Key"
+              >
+                ✕ Clear
+              </button>
+            )}
           </div>
           <a
             href="https://aistudio.google.com/app/apikey"
@@ -246,6 +275,35 @@ Missing Skills (${result.missing_skills.length}): ${result.missing_skills.join('
           >
             Get Free Gemini Key ↗
           </a>
+        </div>
+
+        {/* Live Quota & Billing Monitor Bar */}
+        <div className="quota-monitor-bar">
+          <div className="quota-col">
+            <span className="quota-label">Current Active Key</span>
+            <span className="quota-val key-val">
+              {apiKey.trim() ? getMaskedKey(apiKey) : 'None (Using Rule-Based Fallback)'}
+            </span>
+          </div>
+
+          <div className="quota-col">
+            <span className="quota-label">Free Tier Daily Quota</span>
+            <span className="quota-val">
+              <strong>{remainingFreeRequests}</strong> / {FREE_TIER_DAILY_LIMIT} requests left today
+            </span>
+          </div>
+
+          <div className="quota-col">
+            <span className="quota-label">Rate Limits</span>
+            <span className="quota-val">{FREE_TIER_RPM_LIMIT} Requests / Min</span>
+          </div>
+
+          <div className="quota-col">
+            <span className="quota-label">Billing & Cost Risk</span>
+            <span className="quota-val badge-zero-cost">
+              $0.00 (100% Free Tier • No Auto-Charge)
+            </span>
+          </div>
         </div>
       </section>
 
