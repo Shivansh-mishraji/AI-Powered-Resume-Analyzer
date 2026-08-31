@@ -19,6 +19,8 @@ const SAMPLE_JDS = [
 function App() {
   const [file, setFile] = useState(null)
   const [jobDescription, setJobDescription] = useState('')
+  const [apiKey, setApiKey] = useState('')
+  const [showApiKey, setShowApiKey] = useState(false)
   const [result, setResult] = useState(null)
   const [loading, setLoading] = useState(false)
   const [loadingStep, setLoadingStep] = useState('Analyzing...')
@@ -61,6 +63,11 @@ function App() {
       return
     }
 
+    if (selectedFile.size > 5 * 1024 * 1024) {
+      setError('File exceeds the 5MB size limit. Please upload a smaller document.')
+      return
+    }
+
     setFile(selectedFile)
     setResult(null)
     setError('')
@@ -82,20 +89,26 @@ function App() {
     setLoadingStep('📄 Reading document stream into RAM...')
 
     const stepTimer1 = setTimeout(() => {
-      setLoadingStep('🔍 Scanning 50+ technical skills...')
+      setLoadingStep(apiKey.trim() ? '🤖 Running Gemini 2.5 Semantic AI Analysis...' : '🔍 Running 50+ skill keyword matching...')
     }, 400)
 
     const stepTimer2 = setTimeout(() => {
-      setLoadingStep('🎯 Computing set-intersection match score...')
-    }, 800)
+      setLoadingStep('🎯 Generating comprehensive evaluation report...')
+    }, 1200)
 
     const formData = new FormData()
     formData.append('resume', file)
     formData.append('job_description', jobDescription)
 
+    const headers = {}
+    if (apiKey.trim()) {
+      headers['X-Gemini-API-Key'] = apiKey.trim()
+    }
+
     try {
       const response = await fetch('http://127.0.0.1:8000/analyze', {
         method: 'POST',
+        headers: headers,
         body: formData
       })
       const data = await response.json()
@@ -118,12 +131,19 @@ function App() {
   const handleCopySummary = () => {
     if (!result) return
     const text = `Resume Match Analysis for ${result.filename}
-Match Score: ${result.score}%
+Overall Match Score: ${result.score}%
+Mode: ${result.is_ai_powered ? 'Google Gemini AI' : 'Deterministic Rule-Based'}
+Confidence: ${result.analysis_confidence}
+Candidate Summary: ${result.candidate_summary}
 Matched Skills (${result.matched_skills.length}): ${result.matched_skills.join(', ')}
 Missing Skills (${result.missing_skills.length}): ${result.missing_skills.join(', ')}`
     navigator.clipboard.writeText(text)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
+  }
+
+  const handlePrintReport = () => {
+    window.print()
   }
 
   const handleReset = () => {
@@ -145,10 +165,23 @@ Missing Skills (${result.missing_skills.length}): ${result.missing_skills.join('
   }
 
   const getScoreBadge = (score) => {
-    if (score >= 80) return { label: '🔥 Outstanding Match', class: 'badge-emerald' }
-    if (score >= 65) return { label: '✅ Strong Potential', class: 'badge-emerald' }
-    if (score >= 45) return { label: '⚠️ Moderate Match', class: 'badge-amber' }
-    return { label: '❌ Skill Gap Detected', class: 'badge-rose' }
+    if (score >= 85) return { label: '🔥 Exceptional Match', class: 'badge-emerald' }
+    if (score >= 70) return { label: '✅ Strong Qualification', class: 'badge-emerald' }
+    if (score >= 50) return { label: '⚠️ Partial Alignment', class: 'badge-amber' }
+    return { label: '❌ Critical Skill Gap', class: 'badge-rose' }
+  }
+
+  const getConfidenceBadge = (confidence) => {
+    switch (confidence) {
+      case 'high':
+        return { label: 'High AI Confidence', class: 'conf-high' }
+      case 'medium':
+        return { label: 'Medium AI Confidence', class: 'conf-med' }
+      case 'low':
+        return { label: 'Low AI Confidence', class: 'conf-low' }
+      default:
+        return { label: 'Deterministic Engine', class: 'conf-rule' }
+    }
   }
 
   return (
@@ -157,15 +190,64 @@ Missing Skills (${result.missing_skills.length}): ${result.missing_skills.join('
       <header className="brand-header">
         <div className="brand-badge">
           <span className="badge-pulse"></span>
-          <span>FastAPI + React 19 Powered</span>
+          <span>FastAPI + Google Gemini 2.5 Hybrid</span>
         </div>
         <h1 className="brand-title">
           AI-Powered <span className="gradient-text">Resume Analyzer</span>
         </h1>
         <p className="brand-subtitle">
-          Instantly evaluate your resume against real job descriptions. Identify technical skill matches, discover missing requirements, and beat the ATS.
+          Next-generation resume evaluation. Perform deep semantic analysis with Google Gemini or instant deterministic ATS matching in full privacy.
         </p>
       </header>
+
+      {/* BYOK Security & API Key Section */}
+      <section className="glass-card api-key-card">
+        <div className="api-key-header">
+          <div className="api-key-title">
+            <span className="key-icon">🔑</span>
+            <div>
+              <h3>Gemini API Key (BYOK — Optional)</h3>
+              <p className="privacy-note">
+                🔒 <strong>100% In-Memory:</strong> Your key is held only in React RAM and never stored in localStorage, cookies, or databases.
+              </p>
+            </div>
+          </div>
+          <div className="mode-indicator-pill">
+            <span className={`status-dot ${apiKey.trim() ? 'dot-active' : 'dot-fallback'}`}></span>
+            <span>{apiKey.trim() ? 'Gemini 2.5 AI Ready' : 'Deterministic Mode (No Key)'}</span>
+          </div>
+        </div>
+
+        <div className="api-key-input-wrap">
+          <div className="input-group">
+            <input
+              type={showApiKey ? 'text' : 'password'}
+              placeholder="Paste Google Gemini API Key (e.g. AIzaSy...)"
+              value={apiKey}
+              onChange={(e) => setApiKey(e.target.value)}
+              className="modern-key-input"
+              autoComplete="off"
+              spellCheck="false"
+            />
+            <button
+              type="button"
+              onClick={() => setShowApiKey(!showApiKey)}
+              className="btn-toggle-key"
+              title={showApiKey ? 'Hide API Key' : 'Show API Key'}
+            >
+              {showApiKey ? '👁️ Hide' : '👁️ Show'}
+            </button>
+          </div>
+          <a
+            href="https://aistudio.google.com/app/apikey"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="get-key-link"
+          >
+            Get Free Gemini Key ↗
+          </a>
+        </div>
+      </section>
 
       {/* Main Input Grid */}
       <main className="input-grid">
@@ -175,7 +257,7 @@ Missing Skills (${result.missing_skills.length}): ${result.missing_skills.join('
             <div className="step-num">01</div>
             <div>
               <h2>Upload Resume</h2>
-              <p>Supported: PDF, DOCX (In-Memory Safe)</p>
+              <p>Supported: PDF, DOCX (Max 5MB • RAM-Only)</p>
             </div>
           </div>
 
@@ -205,7 +287,7 @@ Missing Skills (${result.missing_skills.length}): ${result.missing_skills.join('
                 <span className="dropzone-primary-text">
                   <strong>Click to browse</strong> or drag & drop resume
                 </span>
-                <span className="dropzone-hint">PDF or Word DOCX (Max 10MB)</span>
+                <span className="dropzone-hint">PDF or Word DOCX (Multi-Column Supported)</span>
               </label>
             ) : (
               <div className="file-preview-card">
@@ -217,7 +299,7 @@ Missing Skills (${result.missing_skills.length}): ${result.missing_skills.join('
                 </div>
                 <div className="file-details">
                   <span className="file-name">{file.name}</span>
-                  <span className="file-meta">{(file.size / 1024).toFixed(1)} KB • Ready for extraction</span>
+                  <span className="file-meta">{(file.size / 1024).toFixed(1)} KB • Ready for memory parse</span>
                 </div>
                 <button
                   type="button"
@@ -316,16 +398,41 @@ Missing Skills (${result.missing_skills.length}): ${result.missing_skills.join('
       {/* Step 3: Analysis Results View */}
       {result && (
         <section className="glass-card results-dashboard">
+          {/* Top Status and Header */}
           <div className="results-header-bar">
-            <div>
-              <span className="results-pill">⚡ Analysis Complete</span>
+            <div className="results-header-left">
+              <div className="header-badges-row">
+                <span className={`engine-badge ${result.is_ai_powered ? 'badge-ai' : 'badge-fallback'}`}>
+                  {result.is_ai_powered ? '🤖 Google Gemini 2.5 AI' : '⚡ Deterministic Fallback'}
+                </span>
+                <span className={`conf-badge ${getConfidenceBadge(result.analysis_confidence).class}`}>
+                  {getConfidenceBadge(result.analysis_confidence).label}
+                </span>
+              </div>
               <h2>Match Performance Breakdown</h2>
               <p className="results-subtitle">Evaluated document: <strong>{result.filename}</strong></p>
             </div>
-            <button type="button" onClick={handleCopySummary} className="btn-copy">
-              {copied ? '✅ Copied to Clipboard!' : '📋 Copy Summary'}
-            </button>
+            <div className="results-header-actions">
+              <button type="button" onClick={handlePrintReport} className="btn-print">
+                🖨️ Print / Save PDF
+              </button>
+              <button type="button" onClick={handleCopySummary} className="btn-copy">
+                {copied ? '✅ Copied!' : '📋 Copy Summary'}
+              </button>
+            </div>
           </div>
+
+          {/* Warnings Banner if any */}
+          {result.warnings && result.warnings.length > 0 && (
+            <div className="warnings-container">
+              {result.warnings.map((warn, idx) => (
+                <div key={idx} className="warning-item">
+                  <span className="warn-icon">ℹ️</span>
+                  <span>{warn}</span>
+                </div>
+              ))}
+            </div>
+          )}
 
           {/* Metrics Top Row */}
           <div className="metrics-row">
@@ -364,7 +471,7 @@ Missing Skills (${result.missing_skills.length}): ${result.missing_skills.join('
                   {getScoreBadge(result.score).label}
                 </span>
                 <p className="gauge-explanation">
-                  Your resume satisfies <strong>{result.matched_skills.length}</strong> out of <strong>{result.total_jd_skills}</strong> detected key technical requirements.
+                  Candidate meets <strong>{result.matched_skills.length}</strong> verified qualifications with <strong>{result.missing_skills.length}</strong> identified skill gaps.
                 </p>
               </div>
             </div>
@@ -375,7 +482,7 @@ Missing Skills (${result.missing_skills.length}): ${result.missing_skills.join('
               <div className="stat-content">
                 <span className="stat-big-num">{result.matched_skills.length}</span>
                 <span className="stat-label">Matched Skills</span>
-                <span className="stat-sub">Found in your resume</span>
+                <span className="stat-sub">Verified in resume</span>
               </div>
             </div>
 
@@ -384,10 +491,86 @@ Missing Skills (${result.missing_skills.length}): ${result.missing_skills.join('
               <div className="stat-content">
                 <span className="stat-big-num">{result.missing_skills.length}</span>
                 <span className="stat-label">Missing Skills</span>
-                <span className="stat-sub">Required by job role</span>
+                <span className="stat-sub">Required by job</span>
               </div>
             </div>
           </div>
+
+          {/* Executive Candidate Summary Card */}
+          {result.candidate_summary && (
+            <div className="insight-card summary-card">
+              <div className="insight-header">
+                <span className="insight-icon">📝</span>
+                <h3>Executive Candidate Assessment</h3>
+              </div>
+              <p className="summary-text">{result.candidate_summary}</p>
+            </div>
+          )}
+
+          {/* Qualitative AI Cards Grid (Strengths, Weaknesses, Suggestions) */}
+          {result.is_ai_powered && (
+            <div className="ai-insights-grid">
+              {/* Strengths */}
+              <div className="insight-card strengths-card">
+                <div className="insight-header">
+                  <span className="insight-icon">💪</span>
+                  <h3>Competitive Strengths</h3>
+                </div>
+                <ul className="insight-list">
+                  {result.strengths && result.strengths.length > 0 ? (
+                    result.strengths.map((str, idx) => (
+                      <li key={idx} className="strength-item">
+                        <span className="bullet-icon">✓</span>
+                        <span>{str}</span>
+                      </li>
+                    ))
+                  ) : (
+                    <li className="empty-subtext">No distinct competitive strengths highlighted.</li>
+                  )}
+                </ul>
+              </div>
+
+              {/* Weaknesses / Gaps */}
+              <div className="insight-card weaknesses-card">
+                <div className="insight-header">
+                  <span className="insight-icon">🔍</span>
+                  <h3>Areas for Alignment</h3>
+                </div>
+                <ul className="insight-list">
+                  {result.weaknesses && result.weaknesses.length > 0 ? (
+                    result.weaknesses.map((weak, idx) => (
+                      <li key={idx} className="weakness-item">
+                        <span className="bullet-icon">!</span>
+                        <span>{weak}</span>
+                      </li>
+                    ))
+                  ) : (
+                    <li className="empty-subtext">No severe domain mismatches identified.</li>
+                  )}
+                </ul>
+              </div>
+
+              {/* Actionable Suggestions */}
+              <div className="insight-card suggestions-card">
+                <div className="insight-header">
+                  <span className="insight-icon">💡</span>
+                  <h3>Resume Optimization Recommendations</h3>
+                </div>
+                <ul className="insight-list">
+                  {result.suggestions && result.suggestions.length > 0 ? (
+                    result.suggestions.map((sug, idx) => (
+                      <li key={idx} className="suggestion-item">
+                        <span className="bullet-icon">➜</span>
+                        <span>{sug}</span>
+                      </li>
+                    ))
+                  ) : (
+                    <li className="empty-subtext">Resume is well tailored to this job specification.</li>
+                  )}
+                </ul>
+              </div>
+            </div>
+          )}
 
           {/* Skill Tag Filters */}
           <div className="skills-filter-nav">
