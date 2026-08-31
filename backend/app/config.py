@@ -2,6 +2,7 @@
 Central Configuration & Boundaries
 AI-Powered Resume Analyzer
 """
+import os
 
 # Maximum uploaded file size (5 MB)
 MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024
@@ -28,7 +29,8 @@ ALLOWED_CORS_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
     "http://localhost:3000",
-    "http://127.0.0.1:3000"
+    "http://127.0.0.1:3000",
+    "*"
 ]
 
 # Primary Gemini AI Model
