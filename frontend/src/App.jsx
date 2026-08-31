@@ -1,4 +1,4 @@
-import { useState, useId } from 'react'
+import { useState, useId, useEffect } from 'react'
 import './App.css'
 
 const SAMPLE_ROLES = [
@@ -29,6 +29,7 @@ function App() {
   const [showApiKey, setShowApiKey] = useState(false)
   const [sessionAiRequests, setSessionAiRequests] = useState(0)
   const [result, setResult] = useState(null)
+  const [animatedScore, setAnimatedScore] = useState(0)
   const [loading, setLoading] = useState(false)
   const [loadingStep, setLoadingStep] = useState('Initializing Google Gemini AI...')
   const [loadingProgress, setLoadingProgress] = useState(15)
@@ -38,6 +39,32 @@ function App() {
   const [filterTab, setFilterTab] = useState('all') // 'all', 'matched', 'missing'
 
   const fileInputId = useId()
+
+  // Smooth Count-Up Animation for Match Score
+  useEffect(() => {
+    if (result && result.score !== undefined) {
+      let current = 0
+      const target = result.score
+      const duration = 1200 // ms
+      const steps = 40
+      const increment = target / steps
+      const intervalTime = duration / steps
+
+      const timer = setInterval(() => {
+        current += increment
+        if (current >= target) {
+          setAnimatedScore(target)
+          clearInterval(timer)
+        } else {
+          setAnimatedScore(Math.round(current))
+        }
+      }, intervalTime)
+
+      return () => clearInterval(timer)
+    } else {
+      setAnimatedScore(0)
+    }
+  }, [result])
 
   const handleDragOver = (e) => {
     e.preventDefault()
@@ -88,26 +115,26 @@ function App() {
       return
     }
     if (!jobDescription.trim()) {
-      setError('Please provide a target job description or select a Google Stitch template.')
+      setError('Please provide a target job description or select a template.')
       return
     }
 
     setLoading(true)
     setError('')
     setResult(null)
-    setLoadingProgress(25)
-    setLoadingStep('📄 Stitching document stream into in-memory parser...')
+    setLoadingProgress(20)
+    setLoadingStep('📄 Parsing resume byte stream in secure RAM...')
 
     const isUsingAI = Boolean(apiKey.trim())
 
     const t1 = setTimeout(() => {
-      setLoadingProgress(60)
-      setLoadingStep(isUsingAI ? '🤖 Prompting Gemini 2.5 structured rubric engine...' : '🔍 Running 50+ deterministic AST skill matching...')
+      setLoadingProgress(55)
+      setLoadingStep(isUsingAI ? '🤖 Prompting Gemini 2.5 deep neural rubric...' : '🔍 Running 50+ deterministic AST skill matching...')
     }, 400)
 
     const t2 = setTimeout(() => {
-      setLoadingProgress(90)
-      setLoadingStep('✨ Rendering Google Material 3 Analytics Studio...')
+      setLoadingProgress(85)
+      setLoadingStep('✨ Rendering high-animated Google Material 3 Studio...')
     }, 1100)
 
     const formData = new FormData()
@@ -185,10 +212,10 @@ ${result.missing_skills.join(', ')}`
     return `${trimmed.slice(0, 6)}••••••••${trimmed.slice(-4)}`
   }
 
-  // Google Stitch Progress Gauge
+  // Google Stitch Animated Progress Gauge
   const radius = 68
   const circumference = 2 * Math.PI * radius
-  const strokeDashoffset = result ? circumference - (result.score / 100) * circumference : circumference
+  const strokeDashoffset = result ? circumference - (animatedScore / 100) * circumference : circumference
 
   const getScoreColor = (score) => {
     if (score >= 80) return '#10b981' // Google Green
@@ -208,10 +235,17 @@ ${result.missing_skills.join(', ')}`
 
   return (
     <div className="stitch-app">
+      {/* Background Animated Floating Ambient Orbs */}
+      <div className="ambient-orbs-container" aria-hidden="true">
+        <div className="ambient-orb orb-1"></div>
+        <div className="ambient-orb orb-2"></div>
+        <div className="ambient-orb orb-3"></div>
+      </div>
+
       {/* ── 1. Google Stitch Header Navigation ── */}
-      <header className="stitch-navbar">
+      <header className="stitch-navbar animate-fade-down">
         <div className="stitch-nav-left">
-          <div className="stitch-logo-badge">
+          <div className="stitch-logo-badge logo-pulse">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
               <path d="M12 2L14.4 9.6L22 12L14.4 14.4L12 22L9.6 14.4L2 12L9.6 9.6L12 2Z" fill="url(#gemini-stitch-gradient)" />
               <circle cx="19" cy="5" r="2" fill="#38bdf8" />
@@ -255,24 +289,39 @@ ${result.missing_skills.join(', ')}`
       </header>
 
       {/* ── 2. Stitch Hero Banner ── */}
-      <section className="stitch-hero">
-        <div className="stitch-hero-pill">
-          <span className="pill-gemini-icon">✦</span>
+      <section className="stitch-hero animate-fade-up">
+        <div className="stitch-hero-pill float-badge">
+          <span className="pill-gemini-icon sparkle-spin">✦</span>
           <span>Google AI Studio & Material 3 Stitch Component System</span>
         </div>
         <h1 className="stitch-hero-headline">
-          Autonomous Resume Intelligence & <span className="stitch-gradient-text">ATS Benchmarking</span>
+          Autonomous Resume Intelligence & <span className="stitch-gradient-text animated-shimmer-text">ATS Benchmarking</span>
         </h1>
         <p className="stitch-hero-subheadline">
           Stitch your candidate profile against complex target job descriptions with deep semantic evaluation, rubric scoring, and deterministic fallback protection.
         </p>
+
+        <div className="hero-features-bar">
+          <div className="hero-feature-item card-hover-tilt">
+            <span className="feature-icon">🔒</span>
+            <span>RAM-Only Privacy</span>
+          </div>
+          <div className="hero-feature-item card-hover-tilt">
+            <span className="feature-icon">⚡</span>
+            <span>Deterministic ATS Rule-Engine</span>
+          </div>
+          <div className="hero-feature-item card-hover-tilt">
+            <span className="feature-icon">🤖</span>
+            <span>Gemini 2.5 Structured Reasoning</span>
+          </div>
+        </div>
       </section>
 
       {/* ── 3. Google Stitch BYOK & Quota Hub ── */}
-      <section className="stitch-card stitch-byok-card">
+      <section className="stitch-card stitch-byok-card animate-fade-up-delay-1 card-hover-glow">
         <div className="byok-header-row">
           <div className="byok-title-block">
-            <div className="byok-icon-shield">🔑</div>
+            <div className="byok-icon-shield shield-glow">🔑</div>
             <div>
               <h3>Gemini API Key (BYOK — In-Memory Safe)</h3>
               <p className="byok-privacy-desc">
@@ -280,7 +329,7 @@ ${result.missing_skills.join(', ')}`
               </p>
             </div>
           </div>
-          <div className={`byok-badge ${apiKey.trim() ? 'byok-badge-ai' : 'byok-badge-rule'}`}>
+          <div className={`byok-badge ${apiKey.trim() ? 'byok-badge-ai glow-green' : 'byok-badge-rule glow-amber'}`}>
             <span className="byok-dot"></span>
             <span>{apiKey.trim() ? 'Google Gemini 2.5 Active' : 'Deterministic Mode (No Key)'}</span>
           </div>
@@ -321,7 +370,7 @@ ${result.missing_skills.join(', ')}`
             href="https://aistudio.google.com/app/apikey"
             target="_blank"
             rel="noopener noreferrer"
-            className="stitch-link-aistudio"
+            className="stitch-link-aistudio button-glow-pulse"
           >
             <span>Get Free Gemini Key</span>
             <span className="external-arrow">↗</span>
@@ -356,7 +405,7 @@ ${result.missing_skills.join(', ')}`
       {/* ── 4. Main Two-Column Input Workspace ── */}
       <main className="stitch-workspace-grid">
         {/* Step 1: Upload Dropzone Card */}
-        <section className="stitch-card workspace-step-card">
+        <section className="stitch-card workspace-step-card animate-fade-up-delay-2 card-hover-glow">
           <div className="step-header">
             <div className="stitch-step-circle">01</div>
             <div>
@@ -381,7 +430,7 @@ ${result.missing_skills.join(', ')}`
 
             {!file ? (
               <label htmlFor={fileInputId} className="dropzone-label-wrap">
-                <div className="upload-glow-orb">
+                <div className="upload-glow-orb radar-pulse">
                   <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                     <polyline points="17 8 12 3 7 8" />
@@ -396,7 +445,7 @@ ${result.missing_skills.join(', ')}`
                 </div>
               </label>
             ) : (
-              <div className="stitch-file-preview">
+              <div className="stitch-file-preview animate-scale-in">
                 <div className="file-format-badge">
                   {file.name.endsWith('.pdf') ? '📄 PDF' : '📝 DOCX'}
                 </div>
@@ -424,7 +473,7 @@ ${result.missing_skills.join(', ')}`
         </section>
 
         {/* Step 2: Target Job Description Card */}
-        <section className="stitch-card workspace-step-card">
+        <section className="stitch-card workspace-step-card animate-fade-up-delay-2 card-hover-glow">
           <div className="step-header">
             <div className="stitch-step-circle">02</div>
             <div>
@@ -439,7 +488,7 @@ ${result.missing_skills.join(', ')}`
               <button
                 key={sample.title}
                 type="button"
-                className="stitch-template-pill"
+                className="stitch-template-pill pill-hover-lift"
                 onClick={() => setJobDescription(sample.text)}
               >
                 <span>{sample.icon}</span>
@@ -474,18 +523,18 @@ ${result.missing_skills.join(', ')}`
 
       {/* Error Alert */}
       {error && (
-        <div className="stitch-error-banner">
+        <div className="stitch-error-banner animate-shake">
           <span className="error-icon-bubble">⚠️</span>
           <div>{error}</div>
         </div>
       )}
 
       {/* ── 5. Action Execution Hub ── */}
-      <div className="stitch-action-hub">
+      <div className="stitch-action-hub animate-fade-up-delay-3">
         <button
           type="button"
           onClick={handleAnalyze}
-          className={`stitch-btn-primary ${loading ? 'stitch-btn-loading' : ''}`}
+          className={`stitch-btn-primary ${loading ? 'stitch-btn-loading' : 'btn-shimmer-interactive'}`}
           disabled={loading}
         >
           {loading ? (
@@ -496,7 +545,7 @@ ${result.missing_skills.join(', ')}`
             </div>
           ) : (
             <>
-              <span className="btn-sparkle-glyph">✦</span>
+              <span className="btn-sparkle-glyph sparkle-float">✦</span>
               <span>Run Google Stitch Compatibility Audit</span>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                 <line x1="5" y1="12" x2="19" y2="12" />
@@ -507,7 +556,7 @@ ${result.missing_skills.join(', ')}`
         </button>
 
         {result && (
-          <button type="button" onClick={handleReset} className="stitch-btn-reset">
+          <button type="button" onClick={handleReset} className="stitch-btn-reset pill-hover-lift">
             <span>🔄 New Analysis</span>
           </button>
         )}
@@ -515,7 +564,7 @@ ${result.missing_skills.join(', ')}`
 
       {/* ── 6. Results Studio (Google Material 3 Dashboard) ── */}
       {result && (
-        <section className="stitch-card stitch-results-studio">
+        <section className="stitch-card stitch-results-studio animate-cascade-in">
           {/* Studio Top Header */}
           <div className="studio-top-bar">
             <div className="studio-top-left">
@@ -532,10 +581,10 @@ ${result.missing_skills.join(', ')}`
             </div>
 
             <div className="studio-top-actions">
-              <button type="button" onClick={handlePrintReport} className="stitch-btn-action-outline">
+              <button type="button" onClick={handlePrintReport} className="stitch-btn-action-outline pill-hover-lift">
                 <span>🖨️ Export PDF Report</span>
               </button>
-              <button type="button" onClick={handleCopySummary} className="stitch-btn-action-primary">
+              <button type="button" onClick={handleCopySummary} className="stitch-btn-action-primary pill-hover-lift">
                 <span>{copied ? '✅ Copied!' : '📋 Copy Summary'}</span>
               </button>
             </div>
@@ -556,7 +605,7 @@ ${result.missing_skills.join(', ')}`
           {/* Top Performance Metric Pillars */}
           <div className="studio-metric-grid">
             {/* Radial Score Gauge Card */}
-            <div className="stitch-metric-card gauge-card">
+            <div className="stitch-metric-card gauge-card card-hover-tilt">
               <div className="stitch-gauge-wrap">
                 <svg className="stitch-radial-svg" width="168" height="168">
                   <circle
@@ -578,8 +627,8 @@ ${result.missing_skills.join(', ')}`
                   />
                 </svg>
                 <div className="gauge-center-content">
-                  <span className="gauge-score-value" style={{ color: getScoreColor(result.score) }}>
-                    {result.score}%
+                  <span className="gauge-score-value score-countup" style={{ color: getScoreColor(result.score) }}>
+                    {animatedScore}%
                   </span>
                   <span className="gauge-score-caption">MATCH SCORE</span>
                 </div>
@@ -596,29 +645,29 @@ ${result.missing_skills.join(', ')}`
             </div>
 
             {/* Stat Pillar: Matched Skills */}
-            <div className="stitch-metric-card stat-pillar-verified">
+            <div className="stitch-metric-card stat-pillar-verified card-hover-tilt">
               <div className="stat-card-title-row">
                 <span className="stat-icon">✅</span>
                 <span className="stat-heading">Verified Qualifications</span>
               </div>
-              <div className="stat-large-count">{result.matched_skills.length}</div>
+              <div className="stat-large-count counter-pop">{result.matched_skills.length}</div>
               <p className="stat-subtext">Technical criteria satisfied in resume</p>
             </div>
 
             {/* Stat Pillar: Missing Skills */}
-            <div className="stitch-metric-card stat-pillar-gaps">
+            <div className="stitch-metric-card stat-pillar-gaps card-hover-tilt">
               <div className="stat-card-title-row">
                 <span className="stat-icon">❌</span>
                 <span className="stat-heading">Skill Discrepancies</span>
               </div>
-              <div className="stat-large-count">{result.missing_skills.length}</div>
+              <div className="stat-large-count counter-pop">{result.missing_skills.length}</div>
               <p className="stat-subtext">Required criteria missing from resume</p>
             </div>
           </div>
 
           {/* Executive Candidate Assessment */}
           {result.candidate_summary && (
-            <div className="stitch-assessment-panel">
+            <div className="stitch-assessment-panel card-hover-glow">
               <div className="assessment-header">
                 <div className="assessment-icon-box">📝</div>
                 <div>
@@ -636,7 +685,7 @@ ${result.missing_skills.join(', ')}`
           {result.is_ai_powered && (
             <div className="stitch-triad-grid">
               {/* Strengths */}
-              <div className="triad-panel triad-panel-strengths">
+              <div className="triad-panel triad-panel-strengths card-hover-tilt">
                 <div className="triad-title-row">
                   <span className="triad-emoji">💪</span>
                   <h4>Competitive Strengths</h4>
@@ -656,7 +705,7 @@ ${result.missing_skills.join(', ')}`
               </div>
 
               {/* Weaknesses */}
-              <div className="triad-panel triad-panel-weaknesses">
+              <div className="triad-panel triad-panel-weaknesses card-hover-tilt">
                 <div className="triad-title-row">
                   <span className="triad-emoji">🔍</span>
                   <h4>Critical Skill Gaps</h4>
@@ -676,7 +725,7 @@ ${result.missing_skills.join(', ')}`
               </div>
 
               {/* Suggestions */}
-              <div className="triad-panel triad-panel-suggestions">
+              <div className="triad-panel triad-panel-suggestions card-hover-tilt">
                 <div className="triad-title-row">
                   <span className="triad-emoji">💡</span>
                   <h4>Resume Optimization Tips</h4>
@@ -736,7 +785,7 @@ ${result.missing_skills.join(', ')}`
                   <div className="tags-container">
                     {result.matched_skills.length > 0 ? (
                       result.matched_skills.map((skill) => (
-                        <div key={skill} className="stitch-pill pill-verified">
+                        <div key={skill} className="stitch-pill pill-verified pill-hover-lift">
                           <span className="pill-check">✓</span>
                           <span>{skill}</span>
                         </div>
@@ -758,7 +807,7 @@ ${result.missing_skills.join(', ')}`
                   <div className="tags-container">
                     {result.missing_skills.length > 0 ? (
                       result.missing_skills.map((skill) => (
-                        <div key={skill} className="stitch-pill pill-missing">
+                        <div key={skill} className="stitch-pill pill-missing pill-hover-lift">
                           <span className="pill-plus">+</span>
                           <span>{skill}</span>
                         </div>
