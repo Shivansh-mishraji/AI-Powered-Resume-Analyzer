@@ -1,18 +1,35 @@
-export default function Hero() {
+export default function Hero({ isAiPowered = false }) {
   return (
-    <section className="hero-section" aria-labelledby="hero-heading">
-      <div className="hero-badge" role="status">
-        <span className="badge-sparkle" aria-hidden="true">✦</span>
-        <span>AI-Powered • Privacy-Conscious • BYOK</span>
+    <header className="workspace-hero animate-fade-in-up" aria-labelledby="hero-title">
+      <div
+        className={`hero-mode-pill ${isAiPowered ? 'pill-ai-mode' : 'pill-rule-mode'}`}
+        role="status"
+        aria-live="polite"
+      >
+        <span className="mode-pill-dot animate-pulse" aria-hidden="true" />
+        <span className="mode-pill-text">
+          {isAiPowered ? 'GEMINI AI MODE ACTIVE' : 'DETERMINISTIC FALLBACK ACTIVE'}
+        </span>
       </div>
 
-      <h1 id="hero-heading" className="hero-headline">
-        Analyze your resume against <span className="hero-gradient-text">any job description.</span>
+      <h1 id="hero-title" className="hero-main-title">
+        Analyze your resume against any job description.
       </h1>
 
-      <p className="hero-subheadline">
-        Get AI-powered semantic insights, identify critical skill gaps, and understand how closely your experience matches the role requirements.
-      </p>
-    </section>
+      <div className="hero-badges-row">
+        <span className="hero-feature-badge">
+          <span className="material-symbols-outlined text-[16px] text-match-emerald" aria-hidden="true">memory</span>
+          <span>RAM-Only Privacy</span>
+        </span>
+        <span className="hero-feature-badge">
+          <span className="material-symbols-outlined text-[16px] text-match-amber" aria-hidden="true">rule_settings</span>
+          <span>Deterministic ATS Rule-Engine</span>
+        </span>
+        <span className="hero-feature-badge">
+          <span className="material-symbols-outlined text-[16px] text-primary" aria-hidden="true">psychology</span>
+          <span>Gemini 2.5 Structured Reasoning</span>
+        </span>
+      </div>
+    </header>
   );
 }

@@ -1,102 +1,97 @@
-import { useState, useEffect, useRef } from 'react';
-import Header from './components/Header';
+import { useState, useEffect } from 'react';
+import Sidebar from './components/Sidebar';
+import TopNavBar from './components/TopNavBar';
 import Hero from './components/Hero';
-import HowItWorks from './components/HowItWorks';
-import PrivacyNotice from './components/PrivacyNotice';
-import ResumeUpload from './components/ResumeUpload';
-import JobDescriptionInput from './components/JobDescriptionInput';
-import ApiKeyInput from './components/ApiKeyInput';
+import ResumeUploadCard from './components/ResumeUploadCard';
+import ByokCard from './components/ByokCard';
+import JobDescriptionCard from './components/JobDescriptionCard';
 import AnalyzeButton from './components/AnalyzeButton';
-import LoadingState from './components/LoadingState';
-import ScoreCard from './components/ScoreCard';
-import AnalysisStatus from './components/AnalysisStatus';
-import CandidateSummary from './components/CandidateSummary';
-import SkillsList from './components/SkillsList';
-import StrengthsCard from './components/StrengthsCard';
-import WeaknessesCard from './components/WeaknessesCard';
-import SuggestionsCard from './components/SuggestionsCard';
-import WarningCard from './components/WarningCard';
-import { analyzeResume, checkBackendHealth } from './services/api';
+import ResultsDashboard from './components/ResultsDashboard';
+import TeamModal from './components/TeamModal';
+import SessionHistoryDrawer from './components/SessionHistoryDrawer';
+import ApiTelemetryDrawer from './components/ApiTelemetryDrawer';
+import HowItWorksModal from './components/HowItWorksModal';
+import AboutModal from './components/AboutModal';
+import { analyzeResume, checkHealth } from './services/api';
 import './App.css';
 
 export default function App() {
-  // Input form state
-  const [file, setFile] = useState(null);
+  // State management
+  const [resumeFile, setResumeFile] = useState(null);
   const [jobDescription, setJobDescription] = useState('');
-  const [apiKey, setApiKey] = useState('');
-
-  // Application lifecycle state
+  const [apiKey, setApiKey] = useState(''); // BYOK in-memory state
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [result, setResult] = useState(null);
-  const [isOnline, setIsOnline] = useState(true);
-  const [copied, setCopied] = useState(false);
+  const [error, setError] = useState(null);
+  const [analysisResult, setAnalysisResult] = useState(null);
+  const [sessionHistory, setSessionHistory] = useState([]);
+  const [isBackendOnline, setIsBackendOnline] = useState(true);
+  const [pingLatency, setPingLatency] = useState(12);
 
-  const resultsRef = useRef(null);
+  // Modal and Drawer states
+  const [isTeamOpen, setIsTeamOpen] = useState(false);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const [isTelemetryOpen, setIsTelemetryOpen] = useState(false);
+  const [isHowItWorksOpen, setIsHowItWorksOpen] = useState(false);
+  const [isAboutOpen, setIsAboutOpen] = useState(false);
 
-  // Initial backend health check
+  // Health check on mount & periodically
   useEffect(() => {
-    checkBackendHealth()
-      .then((res) => setIsOnline(res.status === 'ok'))
-      .catch(() => setIsOnline(false));
+    let mounted = true;
+    const verifyHealth = async () => {
+      const start = Date.now();
+      const online = await checkHealth();
+      const duration = Math.max(1, Date.now() - start);
+      if (mounted) {
+        setIsBackendOnline(online);
+        setPingLatency(duration);
+      }
+    };
+
+    verifyHealth();
+    const interval = setInterval(verifyHealth, 15000);
+    return () => {
+      mounted = false;
+      clearInterval(interval);
+    };
   }, []);
 
-  // Scroll to results when analysis completes
-  useEffect(() => {
-    if (result && resultsRef.current) {
-      resultsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  const handleFileSelect = (file) => {
+    setError(null);
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        setError('File exceeds the 5MB size limit. Please upload a smaller PDF or DOCX file.');
+        return;
+      }
+      setResumeFile(file);
     }
-  }, [result]);
-
-  const handleFileSelect = (selectedFile) => {
-    const validExtensions = ['.pdf', '.docx'];
-    const name = selectedFile.name.toLowerCase();
-    const isValid = validExtensions.some((ext) => name.endsWith(ext));
-
-    if (!isValid) {
-      setError('Unsupported file type. Please upload a PDF or DOCX file.');
-      return;
-    }
-
-    if (selectedFile.size > 5 * 1024 * 1024) {
-      setError('File exceeds the 5 MB limit. Please upload a smaller document.');
-      return;
-    }
-
-    setFile(selectedFile);
-    setError('');
-  };
-
-  const handleFileRemove = () => {
-    setFile(null);
-  };
-
-  const handleClearApiKey = () => {
-    setApiKey('');
   };
 
   const handleAnalyze = async () => {
-    if (!file) {
-      setError('Please upload your resume (PDF or DOCX).');
+    if (!resumeFile) {
+      setError('Please select or upload a resume file (PDF or DOCX).');
       return;
     }
-
     if (!jobDescription.trim()) {
-      setError('Please enter a target job description.');
+      setError('Please provide a target job description or click one of the quick templates.');
       return;
     }
 
     setLoading(true);
-    setError('');
+    setError(null);
 
     try {
-      const data = await analyzeResume({
-        file,
-        jobDescription,
-        apiKey,
-      });
+      const data = await analyzeResume(resumeFile, jobDescription, apiKey);
+      setAnalysisResult(data);
 
-      setResult(data);
+      // Save to in-memory session history
+      setSessionHistory((prev) => [
+        {
+          ...data,
+          timestamp: Date.now(),
+          jdSnippet: jobDescription.substring(0, 80) + '...',
+        },
+        ...prev,
+      ]);
     } catch (err) {
       setError(err.message || 'An unexpected error occurred during analysis.');
     } finally {
@@ -105,186 +100,139 @@ export default function App() {
   };
 
   const handleReset = () => {
-    setFile(null);
-    setJobDescription('');
-    setResult(null);
-    setError('');
+    setAnalysisResult(null);
+    setError(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleCopySummary = () => {
-    if (!result) return;
-    const text = `=== RESUME COMPATIBILITY EVALUATION ===
-File: ${result.filename || 'resume'}
-Match Score: ${result.score}%
-Mode: ${result.is_ai_powered ? 'AI-Powered Analysis' : 'Rule-Based Analysis'}
-Confidence: ${(result.analysis_confidence || 'N/A').toUpperCase()}
-
-CANDIDATE SUMMARY:
-${result.candidate_summary || 'N/A'}
-
-MATCHED SKILLS:
-${(result.matched_skills || []).join(', ') || 'None detected'}
-
-SKILL GAPS:
-${(result.missing_skills || []).join(', ') || 'None'}`;
-
-    navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  const handlePrint = () => {
-    window.print();
-  };
-
   return (
-    <div className="app-layout">
-      {/* 1. Header */}
-      <Header isOnline={isOnline} />
+    <div className="app-layout bg-mesh">
+      {/* Fixed Top Navigation Bar */}
+      <TopNavBar
+        isOnline={isBackendOnline}
+        onOpenAbout={() => setIsAboutOpen(true)}
+        onOpenHowItWorks={() => setIsHowItWorksOpen(true)}
+        onOpenTeam={() => setIsTeamOpen(true)}
+      />
 
-      {/* 2. Hero Section */}
-      <Hero />
+      {/* Left Sidebar Navigation */}
+      <Sidebar
+        activeView={analysisResult ? 'dashboard' : 'analyzer'}
+        onOpenHistory={() => setIsHistoryOpen(true)}
+        onOpenTelemetry={() => setIsTelemetryOpen(true)}
+        onOpenTeam={() => setIsTeamOpen(true)}
+        isAiPowered={Boolean(apiKey && apiKey.trim())}
+      />
 
-      {/* 3. Main Workspace */}
-      <main className="main-content-container">
-        <section className="analysis-workspace-card" aria-label="Resume analysis form">
-          <div className="workspace-grid-inputs">
-            {/* Step 1: Resume Upload */}
-            <ResumeUpload
-              file={file}
-              onFileSelect={handleFileSelect}
-              onFileRemove={handleFileRemove}
-              disabled={loading}
-            />
-
-            {/* Step 2: Job Description */}
-            <JobDescriptionInput
-              value={jobDescription}
-              onChange={setJobDescription}
-              onClear={() => setJobDescription('')}
-              disabled={loading}
-            />
+      {/* Main Content Area */}
+      <main className="main-content-canvas">
+        {/* Error Alert Banner */}
+        {error && (
+          <div className="mb-6 p-4 rounded-xl bg-match-rose/15 border border-match-rose/40 text-match-rose flex items-center justify-between animate-fade-in">
+            <div className="flex items-center gap-2.5">
+              <span className="material-symbols-outlined text-[20px]" aria-hidden="true">error</span>
+              <span className="text-sm font-medium">{error}</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setError(null)}
+              className="p-1 hover:bg-match-rose/20 rounded text-xs font-bold"
+              aria-label="Dismiss error"
+            >
+              ✕
+            </button>
           </div>
-
-          {/* Step 3: BYOK Gemini Key Input */}
-          <ApiKeyInput
-            value={apiKey}
-            onChange={setApiKey}
-            onClear={handleClearApiKey}
-            disabled={loading}
-          />
-
-          {/* Privacy Note */}
-          <PrivacyNotice />
-
-          {/* Error Banner */}
-          {error && (
-            <div className="error-alert-banner" role="alert">
-              <span className="error-icon" aria-hidden="true">⚠️</span>
-              <div className="error-message">{error}</div>
-              <button
-                type="button"
-                onClick={() => setError('')}
-                className="btn-dismiss-error"
-                aria-label="Dismiss error"
-              >
-                ✕
-              </button>
-            </div>
-          )}
-
-          {/* Step 4: Primary Analyze CTA */}
-          <AnalyzeButton
-            onClick={handleAnalyze}
-            loading={loading}
-            disabled={!file || !jobDescription.trim()}
-          />
-        </section>
-
-        {/* 4. Loading Experience */}
-        {loading && <LoadingState isAiPowered={Boolean(apiKey.trim())} />}
-
-        {/* 5. Results Dashboard */}
-        {result && (
-          <section
-            ref={resultsRef}
-            className="results-dashboard-container"
-            aria-label="Resume analysis results"
-          >
-            {/* Dashboard Header Bar */}
-            <div className="dashboard-header-bar">
-              <div className="dashboard-header-left">
-                <AnalysisStatus
-                  isAiPowered={result.is_ai_powered}
-                  confidence={result.analysis_confidence}
-                  filename={result.filename}
-                />
-                <h2 className="dashboard-title">Analysis Evaluation Dashboard</h2>
-              </div>
-
-              <div className="dashboard-actions-group">
-                <button
-                  type="button"
-                  onClick={handlePrint}
-                  className="btn-dashboard-action btn-print"
-                  aria-label="Print or export analysis as PDF"
-                >
-                  <span>🖨️ Export PDF</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={handleCopySummary}
-                  className="btn-dashboard-action btn-copy"
-                  aria-label="Copy analysis summary to clipboard"
-                >
-                  <span>{copied ? '✓ Copied' : '📋 Copy Summary'}</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={handleReset}
-                  className="btn-dashboard-action btn-reset"
-                  aria-label="Analyze another resume"
-                >
-                  <span>🔄 Analyze Another Resume</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Warnings Card */}
-            <WarningCard warnings={result.warnings} />
-
-            {/* Score Card & Quick Metrics */}
-            <ScoreCard score={result.score} />
-
-            {/* Candidate Summary */}
-            <CandidateSummary summary={result.candidate_summary} />
-
-            {/* Matched & Missing Skills Matrix */}
-            <SkillsList
-              matchedSkills={result.matched_skills}
-              missingSkills={result.missing_skills}
-            />
-
-            {/* AI Deep Evaluation Cards (Strengths, Weaknesses, Suggestions) */}
-            <div className="triad-cards-grid">
-              <StrengthsCard strengths={result.strengths} />
-              <WeaknessesCard weaknesses={result.weaknesses} />
-              <SuggestionsCard suggestions={result.suggestions} />
-            </div>
-          </section>
         )}
 
-        {/* 6. Onboarding "How It Works" (Shown when no result and not loading) */}
-        {!result && !loading && <HowItWorks />}
+        {/* View Switcher: Workspace (Screen 1) vs Dashboard (Screen 2) */}
+        {!analysisResult ? (
+          <div className="workspace-view-container animate-fade-in">
+            <Hero isAiPowered={Boolean(apiKey && apiKey.trim())} />
+
+            {/* 2-Column Workspace Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 relative items-stretch">
+              {/* Left Column: File Upload & BYOK Hub */}
+              <div className="lg:col-span-5 flex flex-col gap-6">
+                <ResumeUploadCard
+                  file={resumeFile}
+                  onFileSelect={handleFileSelect}
+                  onFileRemove={() => setResumeFile(null)}
+                  disabled={loading}
+                />
+
+                <ByokCard
+                  value={apiKey}
+                  onChange={setApiKey}
+                  onClear={() => setApiKey('')}
+                  disabled={loading}
+                />
+              </div>
+
+              {/* Right Column: Job Description Workspace */}
+              <div className="lg:col-span-7 flex flex-col">
+                <JobDescriptionCard
+                  value={jobDescription}
+                  onChange={setJobDescription}
+                  onClear={() => setJobDescription('')}
+                  disabled={loading}
+                />
+              </div>
+            </div>
+
+            {/* Centered Full-Width Action Button */}
+            <AnalyzeButton
+              onClick={handleAnalyze}
+              loading={loading}
+              disabled={!resumeFile || !jobDescription.trim()}
+            />
+
+            {/* Workspace Footer */}
+            <footer className="mt-16 pt-6 border-t border-surface-container-highest/40 flex flex-col md:flex-row justify-between items-center text-xs text-on-surface-variant gap-4">
+              <div>
+                © 2026 ResumeAI. Developed by Team Antigravity. All rights reserved.
+              </div>
+              <div className="flex items-center gap-4">
+                <button type="button" onClick={() => setIsAboutOpen(true)} className="hover:text-on-background">
+                  Privacy Policy
+                </button>
+                <span>•</span>
+                <button type="button" onClick={() => setIsHowItWorksOpen(true)} className="hover:text-on-background">
+                  Architecture
+                </button>
+                <span>•</span>
+                <button type="button" onClick={() => setIsTeamOpen(true)} className="hover:text-on-background">
+                  Engineering Team
+                </button>
+              </div>
+            </footer>
+          </div>
+        ) : (
+          <ResultsDashboard
+            result={analysisResult}
+            onReset={handleReset}
+            onOpenTeam={() => setIsTeamOpen(true)}
+          />
+        )}
       </main>
 
-      {/* Footer */}
-      <footer className="app-footer" role="contentinfo">
-        <p>
-          AI-Powered Resume & Job Description Analyzer • Built with FastAPI & React
-        </p>
-      </footer>
+      {/* Modals & Drawers */}
+      <TeamModal isOpen={isTeamOpen} onClose={() => setIsTeamOpen(false)} />
+      <SessionHistoryDrawer
+        isOpen={isHistoryOpen}
+        onClose={() => setIsHistoryOpen(false)}
+        history={sessionHistory}
+        onSelectHistoryItem={(item) => setAnalysisResult(item)}
+        onClearHistory={() => setSessionHistory([])}
+      />
+      <ApiTelemetryDrawer
+        isOpen={isTelemetryOpen}
+        onClose={() => setIsTelemetryOpen(false)}
+        isOnline={isBackendOnline}
+        pingLatency={pingLatency}
+        apiKeyPresent={Boolean(apiKey && apiKey.trim())}
+      />
+      <HowItWorksModal isOpen={isHowItWorksOpen} onClose={() => setIsHowItWorksOpen(false)} />
+      <AboutModal isOpen={isAboutOpen} onClose={() => setIsAboutOpen(false)} />
     </div>
   );
 }

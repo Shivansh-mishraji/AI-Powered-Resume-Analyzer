@@ -5,7 +5,21 @@
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
 
-export async function analyzeResume({ file, jobDescription, apiKey }) {
+export async function analyzeResume(fileOrObj, maybeJobDesc, maybeApiKey) {
+  let file;
+  let jobDescription;
+  let apiKey;
+
+  if (fileOrObj && typeof fileOrObj === 'object' && !(fileOrObj instanceof File) && !(fileOrObj instanceof Blob)) {
+    file = fileOrObj.file;
+    jobDescription = fileOrObj.jobDescription;
+    apiKey = fileOrObj.apiKey;
+  } else {
+    file = fileOrObj;
+    jobDescription = maybeJobDesc;
+    apiKey = maybeApiKey;
+  }
+
   if (!file) {
     throw new Error('Please upload a PDF or DOCX resume file.');
   }
@@ -71,6 +85,15 @@ export async function analyzeResume({ file, jobDescription, apiKey }) {
   }
 
   return data;
+}
+
+export async function checkHealth() {
+  try {
+    const res = await fetch(`${API_BASE_URL}/health`);
+    return res.ok;
+  } catch {
+    return false;
+  }
 }
 
 export async function checkBackendHealth() {
