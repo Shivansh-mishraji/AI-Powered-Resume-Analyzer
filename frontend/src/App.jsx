@@ -29,6 +29,7 @@ export default function App() {
   const [pingLatency, setPingLatency] = useState(14);
 
   // Modals & Drawers
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isTeamOpen, setIsTeamOpen] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [isTelemetryOpen, setIsTelemetryOpen] = useState(false);
@@ -113,19 +114,24 @@ export default function App() {
         onOpenAbout={() => setIsAboutOpen(true)}
         onOpenHowItWorks={() => setIsHowItWorksOpen(true)}
         onOpenTeam={() => setIsTeamOpen(true)}
+        onToggleMobileMenu={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
       />
 
-      {/* Side Navigation Bar */}
+      {/* Side Navigation Bar (Desktop fixed & Mobile drawer) */}
       <Sidebar
         activeView={analysisResult ? 'dashboard' : 'analyzer'}
         onOpenHistory={() => setIsHistoryOpen(true)}
         onOpenTelemetry={() => setIsTelemetryOpen(true)}
         onOpenTeam={() => setIsTeamOpen(true)}
+        onOpenAbout={() => setIsAboutOpen(true)}
+        onOpenHowItWorks={() => setIsHowItWorksOpen(true)}
         isAiPowered={Boolean(apiKey && apiKey.trim())}
+        isMobileOpen={isMobileMenuOpen}
+        onCloseMobile={() => setIsMobileMenuOpen(false)}
       />
 
       {/* Main Content Canvas */}
-      <main className="flex-1 md:ml-64 pt-[90px] px-6 md:px-12 pb-12 w-auto min-h-screen">
+      <main className="flex-1 md:ml-64 pt-[80px] md:pt-[90px] px-4 sm:px-6 md:px-12 pb-12 w-auto min-h-screen">
         {/* Error Alert Banner */}
         {error && (
           <div className="mb-6 p-4 rounded-xl bg-match-rose/15 border border-match-rose/40 text-match-rose flex items-center justify-between animate-fade-in">
@@ -136,7 +142,7 @@ export default function App() {
             <button
               type="button"
               onClick={() => setError(null)}
-              className="p-1 hover:bg-match-rose/20 rounded text-xs font-bold"
+              className="p-1 hover:bg-match-rose/20 rounded text-xs font-bold cursor-pointer"
               aria-label="Dismiss error"
             >
               ✕
@@ -151,9 +157,9 @@ export default function App() {
             <Hero isAiPowered={Boolean(apiKey && apiKey.trim())} />
 
             {/* Workspace Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-stack-md relative items-stretch">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-stack-md relative items-stretch">
               {/* Left Column: Upload & BYOK Hub */}
-              <div className="lg:col-span-5 flex flex-col gap-stack-md z-10">
+              <div className="lg:col-span-5 flex flex-col gap-4 md:gap-stack-md z-10">
                 <ResumeUploadCard
                   file={resumeFile}
                   onFileSelect={handleFileSelect}
@@ -170,7 +176,7 @@ export default function App() {
               </div>
 
               {/* Right Column: Job Description Card */}
-              <div className="lg:col-span-7 flex flex-col gap-stack-md z-10">
+              <div className="lg:col-span-7 flex flex-col gap-4 md:gap-stack-md z-10">
                 <JobDescriptionCard
                   value={jobDescription}
                   onChange={setJobDescription}
@@ -198,19 +204,19 @@ export default function App() {
 
       {/* Footer for Workspace View */}
       {!analysisResult && (
-        <footer className="w-auto md:ml-64 py-6 border-t border-surface-container-highest/50 bg-background/50 backdrop-blur-md relative z-10 flex flex-col md:flex-row justify-between items-center px-6 md:px-12 text-xs text-outline">
-          <div className="mb-4 md:mb-0">
+        <footer className="w-auto md:ml-64 py-6 border-t border-surface-container-highest/50 bg-background/50 backdrop-blur-md relative z-10 flex flex-col md:flex-row justify-between items-center px-4 sm:px-6 md:px-12 text-xs text-outline gap-3">
+          <div className="text-center md:text-left">
             © 2026 ResumeAI. All rights reserved.
-            <span className="mx-2">•</span>
+            <span className="mx-2 hidden sm:inline">•</span>
             <button
               type="button"
-              className="hover:text-secondary transition-colors"
+              className="hover:text-secondary transition-colors block sm:inline mt-1 sm:mt-0"
               onClick={() => setIsTeamOpen(true)}
             >
               Developed by Team Antigravity
             </button>
           </div>
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4 sm:gap-6">
             <button type="button" onClick={() => setIsAboutOpen(true)} className="hover:text-on-background transition-colors">
               Privacy
             </button>
@@ -226,27 +232,27 @@ export default function App() {
 
       {/* Progressive Loading State Overlay */}
       {loading && (
-        <div className="fixed inset-0 bg-background/90 backdrop-blur-sm z-[100] flex flex-col items-center justify-center animate-fade-in">
-          <div className="glass-panel rounded-2xl p-8 max-w-md w-full mx-4 border-secondary/30 shadow-glow-cyan relative">
-            <h3 className="font-headline-md text-headline-md text-on-background mb-6 text-center">
+        <div className="fixed inset-0 bg-background/90 backdrop-blur-sm z-[100] flex flex-col items-center justify-center p-4 animate-fade-in">
+          <div className="glass-panel rounded-2xl p-6 sm:p-8 max-w-md w-full border-secondary/30 shadow-glow-cyan relative">
+            <h3 className="font-headline-md text-xl sm:text-2xl text-on-background mb-6 text-center font-semibold">
               Analyzing Compatibility
             </h3>
             <div className="flex flex-col gap-4">
               <div className="flex items-center gap-3 text-match-emerald">
                 <span className="material-symbols-outlined text-[20px]" aria-hidden="true">check_circle</span>
-                <span className="font-label-md text-label-md">Extracting resume entities...</span>
+                <span className="font-label-md text-sm sm:text-base">Extracting resume entities...</span>
               </div>
               <div className="flex items-center gap-3 text-secondary animate-pulse">
                 <div className="w-5 h-5 border-2 border-secondary border-t-transparent rounded-full animate-spin" aria-hidden="true" />
-                <span className="font-label-md text-label-md">Mapping JD requirements...</span>
+                <span className="font-label-md text-sm sm:text-base font-medium">Mapping JD requirements...</span>
               </div>
               <div className="flex items-center gap-3 text-outline">
                 <span className="material-symbols-outlined text-[20px] opacity-50" aria-hidden="true">pending</span>
-                <span className="font-label-md text-label-md opacity-50">Running ATS AST rules...</span>
+                <span className="font-label-md text-sm sm:text-base opacity-50">Running ATS AST rules...</span>
               </div>
               <div className="flex items-center gap-3 text-outline">
                 <span className="material-symbols-outlined text-[20px] opacity-50" aria-hidden="true">pending</span>
-                <span className="font-label-md text-label-md opacity-50">Generating AI insights...</span>
+                <span className="font-label-md text-sm sm:text-base opacity-50">Generating AI insights...</span>
               </div>
             </div>
           </div>
