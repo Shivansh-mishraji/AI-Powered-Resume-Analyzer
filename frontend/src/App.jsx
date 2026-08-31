@@ -1,16 +1,19 @@
-import { useState } from 'react'
+import { useState, useId } from 'react'
 import './App.css'
 
 const SAMPLE_JDS = [
   {
+    role: '🐍 Python Backend Engineer',
     title: 'Python Backend Engineer',
     text: 'Looking for a Senior Python Developer with strong expertise in FastAPI, Django, Docker, PostgreSQL, Redis, and AWS. Experience building REST APIs, CI/CD pipelines, and microservices is required. Knowledge of Kubernetes and Git is a plus.'
   },
   {
+    role: '⚛️ Full-Stack Developer',
     title: 'Full-Stack Developer (React + Node)',
     text: 'Hiring a Full-Stack Engineer skilled in React, TypeScript, Node.js, Express, MongoDB, and Tailwind CSS. Must have hands-on experience with GraphQL, Git, Postman, and deploying web applications on GCP or AWS.'
   },
   {
+    role: '🧠 AI / ML Engineer',
     title: 'AI / Data Science Engineer',
     text: 'Seeking a Machine Learning Engineer proficient in Python, Pandas, NumPy, Scikit-Learn, PyTorch, TensorFlow, and NLP. Experience with Gemini API, Docker, SQL, and data pipelines is highly desirable.'
   }
@@ -27,11 +30,14 @@ function App() {
   const [sessionAiRequests, setSessionAiRequests] = useState(0)
   const [result, setResult] = useState(null)
   const [loading, setLoading] = useState(false)
-  const [loadingStep, setLoadingStep] = useState('Analyzing...')
+  const [loadingStep, setLoadingStep] = useState('Initializing...')
+  const [loadingProgress, setLoadingProgress] = useState(10)
   const [error, setError] = useState('')
   const [isDragging, setIsDragging] = useState(false)
   const [copied, setCopied] = useState(false)
   const [filterTab, setFilterTab] = useState('all') // 'all', 'matched', 'missing'
+
+  const fileInputId = useId()
 
   // Handle Drag and Drop
   const handleDragOver = (e) => {
@@ -63,12 +69,12 @@ function App() {
     const isValid = validExtensions.some(ext => name.endsWith(ext))
 
     if (!isValid) {
-      setError('Invalid file format. Please upload a .pdf or .docx resume.')
+      setError('Unsupported file type. Please upload an authentic .pdf or .docx resume.')
       return
     }
 
     if (selectedFile.size > 5 * 1024 * 1024) {
-      setError('File exceeds the 5MB size limit. Please upload a smaller document.')
+      setError('File exceeds maximum allowed size of 5MB. Please upload a smaller document.')
       return
     }
 
@@ -79,27 +85,30 @@ function App() {
 
   const handleAnalyze = async () => {
     if (!file) {
-      setError('Please upload your resume file (PDF or DOCX).')
+      setError('Please upload your resume file (PDF or DOCX) to begin analysis.')
       return
     }
     if (!jobDescription.trim()) {
-      setError('Please provide a target job description.')
+      setError('Please provide a target job description or select one of the quick templates.')
       return
     }
 
     setLoading(true)
     setError('')
     setResult(null)
-    setLoadingStep('📄 Reading document stream into RAM...')
+    setLoadingProgress(20)
+    setLoadingStep('📄 Reading document stream into secure RAM...')
 
     const isUsingAI = Boolean(apiKey.trim())
 
-    const stepTimer1 = setTimeout(() => {
-      setLoadingStep(isUsingAI ? '🤖 Running Gemini 2.5 Semantic AI Analysis...' : '🔍 Running 50+ skill keyword matching...')
+    const t1 = setTimeout(() => {
+      setLoadingProgress(55)
+      setLoadingStep(isUsingAI ? '🤖 Running Gemini 2.5 deep semantic reasoning...' : '🔍 Parsing 50+ technical skill patterns...')
     }, 400)
 
-    const stepTimer2 = setTimeout(() => {
-      setLoadingStep('🎯 Generating comprehensive evaluation report...')
+    const t2 = setTimeout(() => {
+      setLoadingProgress(85)
+      setLoadingStep('🎯 Generating comprehensive evaluation breakdown...')
     }, 1200)
 
     const formData = new FormData()
@@ -120,32 +129,40 @@ function App() {
       const data = await response.json()
 
       if (!response.ok) {
-        setError(data.detail || 'Failed to process resume analysis.')
+        setError(data.detail || 'Analysis request failed. Please check input parameters.')
         return
       }
 
+      setLoadingProgress(100)
       setResult(data)
       if (data.is_ai_powered) {
         setSessionAiRequests(prev => prev + 1)
       }
     } catch {
-      setError('Could not connect to FastAPI backend on http://127.0.0.1:8000. Please ensure uvicorn is running.')
+      setError('Could not connect to FastAPI backend on http://127.0.0.1:8000. Ensure uvicorn server is active.')
     } finally {
-      clearTimeout(stepTimer1)
-      clearTimeout(stepTimer2)
+      clearTimeout(t1)
+      clearTimeout(t2)
       setLoading(false)
     }
   }
 
   const handleCopySummary = () => {
     if (!result) return
-    const text = `Resume Match Analysis for ${result.filename}
-Overall Match Score: ${result.score}%
-Mode: ${result.is_ai_powered ? 'Google Gemini AI' : 'Deterministic Rule-Based'}
-Confidence: ${result.analysis_confidence}
-Candidate Summary: ${result.candidate_summary}
-Matched Skills (${result.matched_skills.length}): ${result.matched_skills.join(', ')}
-Missing Skills (${result.missing_skills.length}): ${result.missing_skills.join(', ')}`
+    const text = `=== RESUME COMPATIBILITY AUDIT ===
+Target File: ${result.filename}
+Match Score: ${result.score}%
+Mode: ${result.is_ai_powered ? 'Google Gemini 2.5 AI' : 'Deterministic Keyword Engine'}
+Confidence: ${result.analysis_confidence.toUpperCase()}
+
+CANDIDATE SUMMARY:
+${result.candidate_summary}
+
+VERIFIED SKILLS (${result.matched_skills.length}):
+${result.matched_skills.join(', ')}
+
+MISSING GAPS (${result.missing_skills.length}):
+${result.missing_skills.join(', ')}`
     navigator.clipboard.writeText(text)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
@@ -162,202 +179,243 @@ Missing Skills (${result.missing_skills.length}): ${result.missing_skills.join('
     setError('')
   }
 
-  // Format masked key for preview
   const getMaskedKey = (key) => {
     const trimmed = key.trim()
-    if (!trimmed) return 'None'
+    if (!trimmed) return 'None (Fallback active)'
     if (trimmed.length <= 10) return `${trimmed.slice(0, 3)}•••••`
     return `${trimmed.slice(0, 6)}••••••••${trimmed.slice(-4)}`
   }
 
-  // Calculate score circle stroke
-  const radius = 56
+  // Radial Gauge Calculations
+  const radius = 62
   const circumference = 2 * Math.PI * radius
   const strokeDashoffset = result ? circumference - (result.score / 100) * circumference : circumference
 
   const getScoreColor = (score) => {
-    if (score >= 75) return '#10b981' // emerald
-    if (score >= 50) return '#f59e0b' // amber
+    if (score >= 80) return '#10b981' // emerald
+    if (score >= 60) return '#06b6d4' // cyan
+    if (score >= 40) return '#f59e0b' // amber
     return '#f43f5e' // rose
   }
 
-  const getScoreBadge = (score) => {
-    if (score >= 85) return { label: '🔥 Exceptional Match', class: 'badge-emerald' }
-    if (score >= 70) return { label: '✅ Strong Qualification', class: 'badge-emerald' }
-    if (score >= 50) return { label: '⚠️ Partial Alignment', class: 'badge-amber' }
-    return { label: '❌ Critical Skill Gap', class: 'badge-rose' }
+  const getScoreTier = (score) => {
+    if (score >= 85) return { tier: 'Tier 1: Exceptional Fit', label: 'Top Candidate Profile', class: 'tier-top' }
+    if (score >= 70) return { tier: 'Tier 2: Strong Candidate', label: 'High Alignment with Minor Gaps', class: 'tier-high' }
+    if (score >= 50) return { tier: 'Tier 3: Moderate Fit', label: 'Core Fundamentals with Notable Gaps', class: 'tier-med' }
+    return { tier: 'Tier 4: Stack Discrepancy', label: 'Major Skill / Domain Mismatch', class: 'tier-low' }
   }
 
-  const getConfidenceBadge = (confidence) => {
-    switch (confidence) {
-      case 'high':
-        return { label: 'High AI Confidence', class: 'conf-high' }
-      case 'medium':
-        return { label: 'Medium AI Confidence', class: 'conf-med' }
-      case 'low':
-        return { label: 'Low AI Confidence', class: 'conf-low' }
-      default:
-        return { label: 'Deterministic Engine', class: 'conf-rule' }
-    }
-  }
-
-  const remainingFreeRequests = Math.max(0, FREE_TIER_DAILY_LIMIT - sessionAiRequests)
+  const remainingFree = Math.max(0, FREE_TIER_DAILY_LIMIT - sessionAiRequests)
 
   return (
-    <div className="app-wrapper">
-      {/* Top Brand Header */}
-      <header className="brand-header">
-        <div className="brand-badge">
-          <span className="badge-pulse"></span>
-          <span>FastAPI + Google Gemini 2.5 Hybrid</span>
-        </div>
-        <h1 className="brand-title">
-          AI-Powered <span className="gradient-text">Resume Analyzer</span>
-        </h1>
-        <p className="brand-subtitle">
-          Next-generation resume evaluation. Perform deep semantic analysis with Google Gemini or instant deterministic ATS matching in full privacy.
-        </p>
-      </header>
-
-      {/* BYOK Security & API Key Section with Quota Tracker */}
-      <section className="glass-card api-key-card">
-        <div className="api-key-header">
-          <div className="api-key-title">
-            <span className="key-icon">🔑</span>
-            <div>
-              <h3>Gemini API Key (BYOK — Optional)</h3>
-              <p className="privacy-note">
-                🔒 <strong>100% In-Memory:</strong> Your key is held only in React RAM and never stored in localStorage, cookies, or databases.
-              </p>
-            </div>
+    <div className="app-container">
+      {/* Top Floating Glass Navigation */}
+      <nav className="top-nav-bar">
+        <div className="nav-brand">
+          <div className="gemini-sparkle-logo">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+              <path d="M12 2L14.4 9.6L22 12L14.4 14.4L12 22L9.6 14.4L2 12L9.6 9.6L12 2Z" fill="url(#sparkle-grad)" />
+              <defs>
+                <linearGradient id="sparkle-grad" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+                  <stop stopColor="#38bdf8" />
+                  <stop offset="0.5" stopColor="#818cf8" />
+                  <stop offset="1" stopColor="#c084fc" />
+                </linearGradient>
+              </defs>
+            </svg>
           </div>
-          <div className="mode-indicator-pill">
-            <span className={`status-dot ${apiKey.trim() ? 'dot-active' : 'dot-fallback'}`}></span>
-            <span>{apiKey.trim() ? 'Gemini 2.5 AI Ready' : 'Deterministic Mode (No Key)'}</span>
-          </div>
+          <span className="nav-title">ResumeAI Studio</span>
+          <span className="nav-version-tag">v2.0 Hybrid</span>
         </div>
 
-        <div className="api-key-input-wrap">
-          <div className="input-group">
-            <input
-              type={showApiKey ? 'text' : 'password'}
-              placeholder="Paste Google Gemini API Key (e.g. AIzaSy...)"
-              value={apiKey}
-              onChange={(e) => setApiKey(e.target.value)}
-              className="modern-key-input"
-              autoComplete="off"
-              spellCheck="false"
-            />
-            <button
-              type="button"
-              onClick={() => setShowApiKey(!showApiKey)}
-              className="btn-toggle-key"
-              title={showApiKey ? 'Hide API Key' : 'Show API Key'}
-            >
-              {showApiKey ? '👁️ Hide' : '👁️ Show'}
-            </button>
-            {apiKey.trim() && (
-              <button
-                type="button"
-                onClick={() => setApiKey('')}
-                className="btn-clear-key"
-                title="Clear API Key"
-              >
-                ✕ Clear
-              </button>
-            )}
+        <div className="nav-badges-group">
+          <div className="nav-status-pill">
+            <span className="live-pulse-dot"></span>
+            <span>API Online • 127.0.0.1:8000</span>
           </div>
           <a
-            href="https://aistudio.google.com/app/apikey"
+            href="https://github.com/Shivansh-mishraji/AI-Powered-Resume-Analyzer"
             target="_blank"
             rel="noopener noreferrer"
-            className="get-key-link"
+            className="nav-github-link"
           >
-            Get Free Gemini Key ↗
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+              <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
+            </svg>
+            <span>GitHub</span>
           </a>
         </div>
+      </nav>
 
-        {/* Live Quota & Billing Monitor Bar */}
-        <div className="quota-monitor-bar">
-          <div className="quota-col">
-            <span className="quota-label">Current Active Key</span>
-            <span className="quota-val key-val">
-              {apiKey.trim() ? getMaskedKey(apiKey) : 'None (Using Rule-Based Fallback)'}
-            </span>
+      {/* Main Hero Header */}
+      <header className="hero-section">
+        <div className="hero-highlight-tag">
+          <span className="sparkle-icon">✨</span>
+          <span>Next-Gen ATS Semantic Evaluation Engine</span>
+        </div>
+        <h1 className="hero-title">
+          Smart Resume Intelligence & <span className="hero-gradient-text">Skill Matching</span>
+        </h1>
+        <p className="hero-subtitle">
+          Benchmark technical resumes against real-world job specifications. Leverage Google Gemini 2.5 multimodal semantic reasoning with an in-memory deterministic fallback engine.
+        </p>
+
+        <div className="hero-features-bar">
+          <div className="hero-feature-item">
+            <span className="feature-icon">🔒</span>
+            <span>RAM-Only Privacy</span>
+          </div>
+          <div className="hero-feature-item">
+            <span className="feature-icon">⚡</span>
+            <span>Deterministic ATS Rule-Engine</span>
+          </div>
+          <div className="hero-feature-item">
+            <span className="feature-icon">🤖</span>
+            <span>Gemini 2.5 Structured Reasoning</span>
+          </div>
+        </div>
+      </header>
+
+      {/* BYOK Google Gemini Security Hub */}
+      <section className="glass-panel api-hub-panel">
+        <div className="api-hub-glow"></div>
+        <div className="api-hub-content">
+          <div className="api-hub-header">
+            <div className="api-hub-title-group">
+              <div className="key-shield-badge">🔑</div>
+              <div>
+                <h2>Gemini API Key (BYOK — Bring Your Own Key)</h2>
+                <p className="api-hub-subtext">
+                  Your key is held strictly in browser memory for this session. It is never persisted, logged, or saved to localStorage.
+                </p>
+              </div>
+            </div>
+            <div className={`engine-mode-tag ${apiKey.trim() ? 'mode-ai' : 'mode-rule'}`}>
+              <span className="mode-dot"></span>
+              <span>{apiKey.trim() ? 'Google Gemini 2.5 Mode' : 'Deterministic Mode (No Key)'}</span>
+            </div>
           </div>
 
-          <div className="quota-col">
-            <span className="quota-label">Free Tier Daily Quota</span>
-            <span className="quota-val">
-              <strong>{remainingFreeRequests}</strong> / {FREE_TIER_DAILY_LIMIT} requests left today
-            </span>
+          <div className="api-hub-input-row">
+            <div className="key-input-container">
+              <span className="input-lock-icon">🔐</span>
+              <input
+                type={showApiKey ? 'text' : 'password'}
+                placeholder="Paste Gemini API Key (e.g. AIzaSy...)"
+                value={apiKey}
+                onChange={(e) => setApiKey(e.target.value)}
+                className="sleek-key-input"
+                autoComplete="off"
+                spellCheck="false"
+              />
+              <button
+                type="button"
+                onClick={() => setShowApiKey(!showApiKey)}
+                className="btn-key-action"
+                title={showApiKey ? 'Hide Key' : 'Show Key'}
+              >
+                {showApiKey ? 'Hide' : 'Show'}
+              </button>
+              {apiKey.trim() && (
+                <button
+                  type="button"
+                  onClick={() => setApiKey('')}
+                  className="btn-key-clear"
+                  title="Clear Key"
+                >
+                  ✕ Clear
+                </button>
+              )}
+            </div>
+            <a
+              href="https://aistudio.google.com/app/apikey"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-get-key"
+            >
+              <span>Get Free Key at Google AI Studio</span>
+              <span className="external-arrow">↗</span>
+            </a>
           </div>
 
-          <div className="quota-col">
-            <span className="quota-label">Rate Limits</span>
-            <span className="quota-val">{FREE_TIER_RPM_LIMIT} Requests / Min</span>
-          </div>
-
-          <div className="quota-col">
-            <span className="quota-label">Billing & Cost Risk</span>
-            <span className="quota-val badge-zero-cost">
-              $0.00 (100% Free Tier • No Auto-Charge)
-            </span>
+          {/* Real-time Free Tier Monitor Strip */}
+          <div className="quota-strip">
+            <div className="quota-metric">
+              <span className="q-label">Current Key</span>
+              <span className="q-value mono-val">{getMaskedKey(apiKey)}</span>
+            </div>
+            <div className="quota-metric">
+              <span className="q-label">Free Tier Daily Quota</span>
+              <span className="q-value highlight-cyan">
+                <strong>{remainingFree}</strong> / {FREE_TIER_DAILY_LIMIT} free requests left today
+              </span>
+            </div>
+            <div className="quota-metric">
+              <span className="q-label">Rate Limit</span>
+              <span className="q-value">{FREE_TIER_RPM_LIMIT} Requests / Min</span>
+            </div>
+            <div className="quota-metric">
+              <span className="q-label">Cost & Billing Protection</span>
+              <span className="q-value zero-risk-badge">
+                $0.00 (Zero Auto-Billing Risk)
+              </span>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Main Input Grid */}
-      <main className="input-grid">
-        {/* Step 1: Upload Resume Card */}
-        <section className="glass-card upload-section">
-          <div className="card-header-bar">
-            <div className="step-num">01</div>
+      {/* Main Workspace (Upload & Job Description) */}
+      <main className="workspace-grid">
+        {/* Step 1: Upload Card */}
+        <section className="glass-panel workspace-card">
+          <div className="panel-header">
+            <div className="step-pill">01</div>
             <div>
-              <h2>Upload Resume</h2>
-              <p>Supported: PDF, DOCX (Max 5MB • RAM-Only)</p>
+              <h3>Upload Candidate Resume</h3>
+              <p>Supported: PDF, DOCX (Up to 5MB • RAM-Only)</p>
             </div>
           </div>
 
           <div
-            className={`dropzone ${isDragging ? 'dropzone-active' : ''} ${file ? 'dropzone-filled' : ''}`}
+            className={`dropzone-box ${isDragging ? 'dropzone-dragover' : ''} ${file ? 'dropzone-has-file' : ''}`}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
           >
             <input
               type="file"
-              id="resume-upload"
+              id={fileInputId}
               accept=".pdf,.docx"
               onChange={handleFileChange}
-              className="hidden-file-input"
+              className="sr-only-input"
             />
 
             {!file ? (
-              <label htmlFor="resume-upload" className="dropzone-label">
-                <div className="upload-icon-bubble">
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <label htmlFor={fileInputId} className="dropzone-inner-label">
+                <div className="upload-icon-sphere">
+                  <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                     <polyline points="17 8 12 3 7 8" />
                     <line x1="12" y1="3" x2="12" y2="15" />
                   </svg>
                 </div>
-                <span className="dropzone-primary-text">
-                  <strong>Click to browse</strong> or drag & drop resume
-                </span>
-                <span className="dropzone-hint">PDF or Word DOCX (Multi-Column Supported)</span>
+                <div className="dropzone-text-group">
+                  <span className="dropzone-headline">
+                    <strong>Click to upload</strong> or drag & drop resume
+                  </span>
+                  <span className="dropzone-meta">PDF or Word DOCX (Multi-Column Layouts Supported)</span>
+                </div>
               </label>
             ) : (
-              <div className="file-preview-card">
-                <div className="file-icon-box">
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                    <polyline points="14 2 14 8 20 8" />
-                  </svg>
+              <div className="file-active-card">
+                <div className="file-type-icon">
+                  {file.name.endsWith('.pdf') ? '📄 PDF' : '📝 DOCX'}
                 </div>
-                <div className="file-details">
-                  <span className="file-name">{file.name}</span>
-                  <span className="file-meta">{(file.size / 1024).toFixed(1)} KB • Ready for memory parse</span>
+                <div className="file-info-group">
+                  <span className="active-file-name">{file.name}</span>
+                  <span className="active-file-meta">
+                    {(file.size / 1024).toFixed(1)} KB • In-Memory Safe
+                  </span>
                 </div>
                 <button
                   type="button"
@@ -366,13 +424,10 @@ Missing Skills (${result.missing_skills.length}): ${result.missing_skills.join('
                     setFile(null)
                     setResult(null)
                   }}
-                  className="btn-icon-remove"
-                  title="Remove file"
+                  className="btn-remove-active-file"
+                  title="Remove uploaded resume"
                 >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <line x1="18" y1="6" x2="6" y2="18" />
-                    <line x1="6" y1="6" x2="18" y2="18" />
-                  </svg>
+                  ✕
                 </button>
               </div>
             )}
@@ -380,65 +435,80 @@ Missing Skills (${result.missing_skills.length}): ${result.missing_skills.join('
         </section>
 
         {/* Step 2: Job Description Card */}
-        <section className="glass-card jd-section">
-          <div className="card-header-bar">
-            <div className="step-num">02</div>
+        <section className="glass-panel workspace-card">
+          <div className="panel-header">
+            <div className="step-pill">02</div>
             <div>
-              <h2>Job Description</h2>
-              <p>Paste requirements or choose a sample role</p>
+              <h3>Target Job Description</h3>
+              <p>Paste role requirements or use a quick template</p>
             </div>
           </div>
 
-          {/* Quick Auto-Fill Chips */}
-          <div className="sample-chips-bar">
-            <span className="chip-label">⚡ Quick Fill:</span>
+          <div className="sample-template-bar">
+            <span className="template-label">⚡ Quick Roles:</span>
             {SAMPLE_JDS.map((sample) => (
               <button
                 key={sample.title}
                 type="button"
-                className="sample-chip"
+                className="template-chip"
                 onClick={() => setJobDescription(sample.text)}
               >
-                {sample.title}
+                {sample.role}
               </button>
             ))}
           </div>
 
-          <textarea
-            rows={7}
-            placeholder="Paste target job responsibilities, skills, and qualifications here..."
-            value={jobDescription}
-            onChange={(e) => setJobDescription(e.target.value)}
-            className="modern-textarea"
-          />
+          <div className="textarea-wrap">
+            <textarea
+              rows={7}
+              placeholder="Paste responsibilities, required technical skills, and experience criteria here..."
+              value={jobDescription}
+              onChange={(e) => setJobDescription(e.target.value)}
+              className="sleek-textarea"
+            />
+            <div className="textarea-footer">
+              <span>{jobDescription.length} / 5,000 characters</span>
+              {jobDescription && (
+                <button
+                  type="button"
+                  onClick={() => setJobDescription('')}
+                  className="btn-clear-textarea"
+                >
+                  Clear Text
+                </button>
+              )}
+            </div>
+          </div>
         </section>
       </main>
 
-      {/* Error Alert Box */}
+      {/* Error Notification */}
       {error && (
-        <div className="error-banner">
-          <div className="error-icon">⚠️</div>
-          <div>{error}</div>
+        <div className="alert-error-card">
+          <span className="alert-icon">⚠️</span>
+          <div className="alert-text">{error}</div>
         </div>
       )}
 
-      {/* Action CTA Bar */}
-      <div className="cta-bar">
+      {/* Action Execution Hub */}
+      <div className="action-hub-bar">
         <button
           type="button"
           onClick={handleAnalyze}
-          className={`btn-primary-action ${loading ? 'btn-loading' : ''}`}
+          className={`btn-execute-analysis ${loading ? 'btn-executing' : ''}`}
           disabled={loading}
         >
           {loading ? (
-            <div className="spinner-wrap">
-              <div className="neon-spinner"></div>
+            <div className="loading-execution-state">
+              <div className="cyber-spinner"></div>
               <span>{loadingStep}</span>
+              <span className="progress-num">[{loadingProgress}%]</span>
             </div>
           ) : (
             <>
-              <span>⚡ Analyze Resume Compatibility</span>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <span className="btn-lightning-icon">⚡</span>
+              <span>Analyze Resume Compatibility</span>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                 <line x1="5" y1="12" x2="19" y2="12" />
                 <polyline points="12 5 19 12 12 19" />
               </svg>
@@ -447,258 +517,271 @@ Missing Skills (${result.missing_skills.length}): ${result.missing_skills.join('
         </button>
 
         {result && (
-          <button type="button" onClick={handleReset} className="btn-secondary-reset">
-            🔄 Reset
+          <button type="button" onClick={handleReset} className="btn-reset-workspace">
+            <span>🔄 New Audit</span>
           </button>
         )}
       </div>
 
-      {/* Step 3: Analysis Results View */}
+      {/* Results Executive Analytics Dashboard */}
       {result && (
-        <section className="glass-card results-dashboard">
-          {/* Top Status and Header */}
-          <div className="results-header-bar">
-            <div className="results-header-left">
-              <div className="header-badges-row">
-                <span className={`engine-badge ${result.is_ai_powered ? 'badge-ai' : 'badge-fallback'}`}>
-                  {result.is_ai_powered ? '🤖 Google Gemini 2.5 AI' : '⚡ Deterministic Fallback'}
+        <section className="glass-panel results-studio">
+          {/* Studio Header Bar */}
+          <div className="studio-header">
+            <div className="studio-header-left">
+              <div className="studio-badge-row">
+                <span className={`engine-flag ${result.is_ai_powered ? 'flag-ai' : 'flag-rule'}`}>
+                  {result.is_ai_powered ? '🤖 Google Gemini 2.5 Semantic AI' : '⚡ Deterministic Keyword Engine'}
                 </span>
-                <span className={`conf-badge ${getConfidenceBadge(result.analysis_confidence).class}`}>
-                  {getConfidenceBadge(result.analysis_confidence).label}
+                <span className="confidence-flag">
+                  Confidence: <strong>{result.analysis_confidence.toUpperCase()}</strong>
                 </span>
               </div>
-              <h2>Match Performance Breakdown</h2>
-              <p className="results-subtitle">Evaluated document: <strong>{result.filename}</strong></p>
+              <h2 className="studio-title">Candidate Evaluation Breakdown</h2>
+              <p className="studio-doc-name">Audited File: <strong>{result.filename}</strong></p>
             </div>
-            <div className="results-header-actions">
-              <button type="button" onClick={handlePrintReport} className="btn-print">
-                🖨️ Print / Save PDF
+
+            <div className="studio-header-actions">
+              <button type="button" onClick={handlePrintReport} className="btn-action-outline">
+                <span>🖨️ Export PDF Report</span>
               </button>
-              <button type="button" onClick={handleCopySummary} className="btn-copy">
-                {copied ? '✅ Copied!' : '📋 Copy Summary'}
+              <button type="button" onClick={handleCopySummary} className="btn-action-primary">
+                <span>{copied ? '✅ Copied to Clipboard!' : '📋 Copy Summary'}</span>
               </button>
             </div>
           </div>
 
-          {/* Warnings Banner if any */}
+          {/* Warnings Alert Banner if any */}
           {result.warnings && result.warnings.length > 0 && (
-            <div className="warnings-container">
-              {result.warnings.map((warn, idx) => (
-                <div key={idx} className="warning-item">
-                  <span className="warn-icon">ℹ️</span>
+            <div className="studio-warnings-box">
+              {result.warnings.map((warn, i) => (
+                <div key={i} className="warning-line">
+                  <span className="warning-icon">ℹ️</span>
                   <span>{warn}</span>
                 </div>
               ))}
             </div>
           )}
 
-          {/* Metrics Top Row */}
-          <div className="metrics-row">
+          {/* Top Score & Metric Pillars */}
+          <div className="metric-pillars-grid">
             {/* Radial Score Gauge Card */}
-            <div className="metric-box gauge-box">
-              <div className="gauge-svg-wrap">
-                <svg className="radial-gauge" width="140" height="140">
+            <div className="score-pillar-card">
+              <div className="gauge-container">
+                <svg className="radial-svg" width="160" height="160">
                   <circle
-                    className="gauge-bg"
-                    cx="70"
-                    cy="70"
+                    className="radial-track"
+                    cx="80"
+                    cy="80"
                     r={radius}
-                    strokeWidth="12"
+                    strokeWidth="14"
                   />
                   <circle
-                    className="gauge-progress"
-                    cx="70"
-                    cy="70"
+                    className="radial-bar"
+                    cx="80"
+                    cy="80"
                     r={radius}
-                    strokeWidth="12"
+                    strokeWidth="14"
                     stroke={getScoreColor(result.score)}
                     strokeDasharray={circumference}
                     strokeDashoffset={strokeDashoffset}
                   />
                 </svg>
-                <div className="gauge-text-overlay">
-                  <span className="gauge-number" style={{ color: getScoreColor(result.score) }}>
+                <div className="radial-center-text">
+                  <span className="radial-score-num" style={{ color: getScoreColor(result.score) }}>
                     {result.score}%
                   </span>
-                  <span className="gauge-caption">MATCH</span>
+                  <span className="radial-score-label">MATCH SCORE</span>
                 </div>
               </div>
 
-              <div className="gauge-info">
-                <span className={`status-badge ${getScoreBadge(result.score).class}`}>
-                  {getScoreBadge(result.score).label}
-                </span>
-                <p className="gauge-explanation">
-                  Candidate meets <strong>{result.matched_skills.length}</strong> verified qualifications with <strong>{result.missing_skills.length}</strong> identified skill gaps.
+              <div className="score-pillar-info">
+                <div className={`score-tier-badge ${getScoreTier(result.score).class}`}>
+                  {getScoreTier(result.score).tier}
+                </div>
+                <p className="tier-explanation">
+                  {getScoreTier(result.score).label}
                 </p>
               </div>
             </div>
 
-            {/* Stat Counter Cards */}
-            <div className="stat-card stat-matched">
-              <div className="stat-icon-bubble">✅</div>
-              <div className="stat-content">
-                <span className="stat-big-num">{result.matched_skills.length}</span>
-                <span className="stat-label">Matched Skills</span>
-                <span className="stat-sub">Verified in resume</span>
+            {/* Stat Counter Pillar 1 */}
+            <div className="stat-pillar-card pillar-matched">
+              <div className="stat-pillar-header">
+                <span className="stat-symbol">✅</span>
+                <span className="stat-heading">Verified Skills</span>
               </div>
+              <div className="stat-pillar-big">{result.matched_skills.length}</div>
+              <p className="stat-pillar-desc">Technical qualifications proven in resume</p>
             </div>
 
-            <div className="stat-card stat-missing">
-              <div className="stat-icon-bubble">❌</div>
-              <div className="stat-content">
-                <span className="stat-big-num">{result.missing_skills.length}</span>
-                <span className="stat-label">Missing Skills</span>
-                <span className="stat-sub">Required by job</span>
+            {/* Stat Counter Pillar 2 */}
+            <div className="stat-pillar-card pillar-missing">
+              <div className="stat-pillar-header">
+                <span className="stat-symbol">❌</span>
+                <span className="stat-heading">Skill Gaps</span>
               </div>
+              <div className="stat-pillar-big">{result.missing_skills.length}</div>
+              <p className="stat-pillar-desc">Required qualifications with missing evidence</p>
             </div>
           </div>
 
-          {/* Executive Candidate Summary Card */}
+          {/* Executive Candidate Assessment Card */}
           {result.candidate_summary && (
-            <div className="insight-card summary-card">
-              <div className="insight-header">
-                <span className="insight-icon">📝</span>
-                <h3>Executive Candidate Assessment</h3>
+            <div className="qualitative-assessment-card">
+              <div className="qualitative-header">
+                <div className="qualitative-icon-box">📝</div>
+                <div>
+                  <h3>Executive Candidate Assessment</h3>
+                  <p>Comprehensive qualitative evaluation against role criteria</p>
+                </div>
               </div>
-              <p className="summary-text">{result.candidate_summary}</p>
+              <div className="assessment-body">
+                <p>{result.candidate_summary}</p>
+              </div>
             </div>
           )}
 
-          {/* Qualitative AI Cards Grid (Strengths, Weaknesses, Suggestions) */}
+          {/* Deep Qualitative AI Cards (Strengths, Weaknesses, Suggestions) */}
           {result.is_ai_powered && (
-            <div className="ai-insights-grid">
+            <div className="qualitative-triad-grid">
               {/* Strengths */}
-              <div className="insight-card strengths-card">
-                <div className="insight-header">
-                  <span className="insight-icon">💪</span>
-                  <h3>Competitive Strengths</h3>
+              <div className="triad-card triad-strengths">
+                <div className="triad-header">
+                  <span className="triad-icon">💪</span>
+                  <h4>Competitive Strengths</h4>
                 </div>
-                <ul className="insight-list">
+                <ul className="triad-list">
                   {result.strengths && result.strengths.length > 0 ? (
                     result.strengths.map((str, idx) => (
-                      <li key={idx} className="strength-item">
-                        <span className="bullet-icon">✓</span>
+                      <li key={idx} className="triad-item-strength">
+                        <span className="bullet-glow">✓</span>
                         <span>{str}</span>
                       </li>
                     ))
                   ) : (
-                    <li className="empty-subtext">No distinct competitive strengths highlighted.</li>
+                    <li className="triad-empty">No stand-out competitive strengths noted.</li>
                   )}
                 </ul>
               </div>
 
-              {/* Weaknesses / Gaps */}
-              <div className="insight-card weaknesses-card">
-                <div className="insight-header">
-                  <span className="insight-icon">🔍</span>
-                  <h3>Areas for Alignment</h3>
+              {/* Weaknesses */}
+              <div className="triad-card triad-weaknesses">
+                <div className="triad-header">
+                  <span className="triad-icon">🔍</span>
+                  <h4>Skill Gaps & Discrepancies</h4>
                 </div>
-                <ul className="insight-list">
+                <ul className="triad-list">
                   {result.weaknesses && result.weaknesses.length > 0 ? (
                     result.weaknesses.map((weak, idx) => (
-                      <li key={idx} className="weakness-item">
-                        <span className="bullet-icon">!</span>
+                      <li key={idx} className="triad-item-weakness">
+                        <span className="bullet-glow">!</span>
                         <span>{weak}</span>
                       </li>
                     ))
                   ) : (
-                    <li className="empty-subtext">No severe domain mismatches identified.</li>
+                    <li className="triad-empty">No major domain conflicts detected.</li>
                   )}
                 </ul>
               </div>
 
-              {/* Actionable Suggestions */}
-              <div className="insight-card suggestions-card">
-                <div className="insight-header">
-                  <span className="insight-icon">💡</span>
-                  <h3>Resume Optimization Recommendations</h3>
+              {/* Suggestions */}
+              <div className="triad-card triad-suggestions">
+                <div className="triad-header">
+                  <span className="triad-icon">💡</span>
+                  <h4>Actionable ATS Improvements</h4>
                 </div>
-                <ul className="insight-list">
+                <ul className="triad-list">
                   {result.suggestions && result.suggestions.length > 0 ? (
                     result.suggestions.map((sug, idx) => (
-                      <li key={idx} className="suggestion-item">
-                        <span className="bullet-icon">➜</span>
+                      <li key={idx} className="triad-item-suggestion">
+                        <span className="bullet-glow">➜</span>
                         <span>{sug}</span>
                       </li>
                     ))
                   ) : (
-                    <li className="empty-subtext">Resume is well tailored to this job specification.</li>
+                    <li className="triad-empty">Resume is tightly aligned with role specifications.</li>
                   )}
                 </ul>
               </div>
             </div>
           )}
 
-          {/* Skill Tag Filters */}
-          <div className="skills-filter-nav">
-            <button
-              className={`filter-btn ${filterTab === 'all' ? 'active' : ''}`}
-              onClick={() => setFilterTab('all')}
-            >
-              All Skills ({result.matched_skills.length + result.missing_skills.length})
-            </button>
-            <button
-              className={`filter-btn ${filterTab === 'matched' ? 'active' : ''}`}
-              onClick={() => setFilterTab('matched')}
-            >
-              ✅ Matched ({result.matched_skills.length})
-            </button>
-            <button
-              className={`filter-btn ${filterTab === 'missing' ? 'active' : ''}`}
-              onClick={() => setFilterTab('missing')}
-            >
-              ❌ Missing Gap ({result.missing_skills.length})
-            </button>
-          </div>
-
-          {/* Skills Grid */}
-          <div className="skills-sections-grid">
-            {/* Matched Skills Column */}
-            {(filterTab === 'all' || filterTab === 'matched') && (
-              <div className="skill-bucket bucket-matched">
-                <div className="bucket-title">
-                  <div className="bucket-dot dot-emerald"></div>
-                  <h3>Verified Matched Skills ({result.matched_skills.length})</h3>
-                </div>
-                <div className="tags-flex">
-                  {result.matched_skills.length > 0 ? (
-                    result.matched_skills.map((skill) => (
-                      <div key={skill} className="modern-tag tag-verified">
-                        <span className="tag-check">✓</span>
-                        <span>{skill}</span>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="empty-skill-msg">No exact matching technical skills detected yet.</div>
-                  )}
-                </div>
+          {/* Interactive Skill Breakdown Filter Matrix */}
+          <div className="skill-matrix-section">
+            <div className="matrix-nav-bar">
+              <div className="matrix-nav-title">
+                <h4>Technical Skill Breakdown Matrix</h4>
               </div>
-            )}
-
-            {/* Missing Skills Column */}
-            {(filterTab === 'all' || filterTab === 'missing') && (
-              <div className="skill-bucket bucket-missing">
-                <div className="bucket-title">
-                  <div className="bucket-dot dot-rose"></div>
-                  <h3>Skill Gap Recommendations ({result.missing_skills.length})</h3>
-                </div>
-                <div className="tags-flex">
-                  {result.missing_skills.length > 0 ? (
-                    result.missing_skills.map((skill) => (
-                      <div key={skill} className="modern-tag tag-gap">
-                        <span className="tag-cross">+</span>
-                        <span>{skill}</span>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="empty-skill-msg success-msg">
-                      🎉 Outstanding! Your resume covers all required skills for this job description.
-                    </div>
-                  )}
-                </div>
+              <div className="matrix-tabs">
+                <button
+                  className={`matrix-tab ${filterTab === 'all' ? 'tab-active' : ''}`}
+                  onClick={() => setFilterTab('all')}
+                >
+                  All Skills ({result.matched_skills.length + result.missing_skills.length})
+                </button>
+                <button
+                  className={`matrix-tab ${filterTab === 'matched' ? 'tab-active' : ''}`}
+                  onClick={() => setFilterTab('matched')}
+                >
+                  ✅ Matched ({result.matched_skills.length})
+                </button>
+                <button
+                  className={`matrix-tab ${filterTab === 'missing' ? 'tab-active' : ''}`}
+                  onClick={() => setFilterTab('missing')}
+                >
+                  ❌ Missing ({result.missing_skills.length})
+                </button>
               </div>
-            )}
+            </div>
+
+            <div className="matrix-grid">
+              {/* Matched Column */}
+              {(filterTab === 'all' || filterTab === 'matched') && (
+                <div className="matrix-column col-matched">
+                  <div className="column-header">
+                    <span className="col-indicator-dot dot-green"></span>
+                    <h5>Verified Qualifications ({result.matched_skills.length})</h5>
+                  </div>
+                  <div className="tags-cloud">
+                    {result.matched_skills.length > 0 ? (
+                      result.matched_skills.map((skill) => (
+                        <div key={skill} className="cloud-tag tag-verified">
+                          <span className="tag-glyph">✓</span>
+                          <span>{skill}</span>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="cloud-empty-msg">No exact matching skills detected.</div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Missing Column */}
+              {(filterTab === 'all' || filterTab === 'missing') && (
+                <div className="matrix-column col-missing">
+                  <div className="column-header">
+                    <span className="col-indicator-dot dot-red"></span>
+                    <h5>Unmatched Requirements ({result.missing_skills.length})</h5>
+                  </div>
+                  <div className="tags-cloud">
+                    {result.missing_skills.length > 0 ? (
+                      result.missing_skills.map((skill) => (
+                        <div key={skill} className="cloud-tag tag-missing">
+                          <span className="tag-glyph">+</span>
+                          <span>{skill}</span>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="cloud-empty-msg success-highlight">
+                        🎉 Full Coverage! All detected required skills were satisfied.
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </section>
       )}
