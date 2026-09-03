@@ -1,9 +1,14 @@
-# AGENTS.md — Testing & QA
-# Member: Vishal
+# Quality Assurance Guidelines — Testing & QA
+# Member: Vishal Patel
+# GitHub Username: patelvishal-ji
+# Git Author Name: Vishal Patel
+# Git Email: patelvishal7800023@gmail.com
 # Role: Testing & Quality Checking
 # Project: AI-Powered Resume & Job Description Analyzer
 
 ---
+
+
 
 ## Your Responsibilities
 

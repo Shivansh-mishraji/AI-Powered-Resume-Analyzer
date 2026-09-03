@@ -144,6 +144,7 @@ source .venv/bin/activate
 # Install dependencies
 pip install -r requirements.txt
 ```
+👉 *Backend API Swagger Docs:* **`http://127.0.0.1:8000/docs`**
 
 ### 3. Start the Backend Server
 
@@ -167,6 +168,7 @@ cd frontend
 npm install
 npm run dev
 ```
+👉 *Frontend App Live:* **`http://localhost:5173/`**
 
 ✅ Frontend running at → `http://localhost:5173`
 

@@ -1,9 +1,14 @@
-# AGENTS.md — Research & Documentation
-# Member: Sujeet
+# Role Guidelines — Research & Documentation
+# Member: Sujeet Kannaujiya
+# GitHub Username: sujeet-official
+# Git Author Name: Sujeet Kannaujiya
+# Git Email: sujeetkannujiya2004@bbdu.ac.in
 # Role: Research Lead + Documentation
 # Project: AI-Powered Resume & Job Description Analyzer
 
 ---
+
+
 
 ## Your Responsibilities
 
