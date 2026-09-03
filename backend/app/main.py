@@ -16,6 +16,7 @@ ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
     "https://ai-powered-resume-analyzer.vercel.app",
+    "https://ai-powered-resume-analyzer-pi.vercel.app",
     "https://ai-powered-resume-analyzer-shivansh-mishraji.vercel.app",
     os.getenv("FRONTEND_URL", ""),
 ]
