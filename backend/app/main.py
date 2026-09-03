@@ -15,8 +15,9 @@ app = FastAPI(
 ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "https://resume-analyzer-ai.vercel.app",
-    os.getenv("FRONTEND_URL", ""),  # set this in Render env vars if using custom domain
+    "https://ai-powered-resume-analyzer.vercel.app",
+    "https://ai-powered-resume-analyzer-shivansh-mishraji.vercel.app",
+    os.getenv("FRONTEND_URL", ""),
 ]
 
 app.add_middleware(
