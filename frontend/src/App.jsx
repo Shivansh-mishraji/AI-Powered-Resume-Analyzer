@@ -94,7 +94,8 @@ function App() {
     formData.append('job_description', jobDescription)
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/analyze', {
+      const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'
+      const response = await fetch(`${API_URL}/analyze`, {
         method: 'POST',
         body: formData
       })
@@ -107,7 +108,7 @@ function App() {
 
       setResult(data)
     } catch {
-      setError('Could not connect to FastAPI backend on http://127.0.0.1:8000. Please ensure uvicorn is running.')
+      setError(`Could not connect to backend at ${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}. Please ensure the server is running.`)
     } finally {
       clearTimeout(stepTimer1)
       clearTimeout(stepTimer2)

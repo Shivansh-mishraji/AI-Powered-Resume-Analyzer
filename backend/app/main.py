@@ -1,12 +1,30 @@
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from app.services.resume_parser import extract_text_from_pdf, extract_text_from_docx
 from app.services.skill_extractor import extract_skills
 from app.services.score_calculator import calculate_score
+import os
 
 app = FastAPI(
-    title = "AI Resume Analyzer",
-    description = "Analyze resumes against job descriptions",
-    version = "1.0.0"
+    title="AI Resume Analyzer",
+    description="Analyze resumes against job descriptions",
+    version="1.0.0"
+)
+
+# CORS — allow local dev + Vercel production frontend
+ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "https://resume-analyzer-ai.vercel.app",
+    os.getenv("FRONTEND_URL", ""),  # set this in Render env vars if using custom domain
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[o for o in ALLOWED_ORIGINS if o],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 @app.get("/health")
