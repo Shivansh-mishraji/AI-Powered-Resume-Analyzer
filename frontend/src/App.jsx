@@ -287,7 +287,7 @@ export default function App() {
         onClose={() => setIsTelemetryOpen(false)}
         isOnline={isBackendOnline}
         pingLatency={pingLatency}
-        apiKeyPresent={Boolean(apiKey && apiKey.trim())}
+        apiKeyPresent={Boolean(activeKey && activeKey.trim())}
       />
       <HowItWorksModal isOpen={isHowItWorksOpen} onClose={() => setIsHowItWorksOpen(false)} />
       <AboutModal isOpen={isAboutOpen} onClose={() => setIsAboutOpen(false)} />
