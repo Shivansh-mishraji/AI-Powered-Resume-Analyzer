@@ -14,6 +14,7 @@ import HowItWorksModal from './components/HowItWorksModal';
 import AboutModal from './components/AboutModal';
 import { analyzeResume, checkHealth } from './services/api';
 import { useSecureApiKey } from './hooks/useSecureApiKey';
+import AuroraBackground from './components/AuroraBackground';
 import './App.css';
 
 export default function App() {
@@ -111,7 +112,9 @@ export default function App() {
   };
 
   return (
-    <div className="bg-mesh text-on-background min-h-screen flex flex-col font-body-md overflow-x-hidden">
+    <div className="bg-mesh text-on-background min-h-screen flex flex-col font-body-md overflow-x-hidden" style={{ position: 'relative' }}>
+      {/* Animated aurora orbs + particles */}
+      <AuroraBackground />
       {/* Top Navigation Bar */}
       <TopNavBar
         isOnline={isBackendOnline}
@@ -161,9 +164,9 @@ export default function App() {
             <Hero isAiPowered={Boolean(activeKey)} />
 
             {/* Workspace Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-stack-md relative items-stretch">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-stack-md relative items-stretch" style={{ position: 'relative', zIndex: 1 }}>
               {/* Left Column: Upload & BYOK Hub */}
-              <div className="lg:col-span-5 flex flex-col gap-4 md:gap-stack-md z-10">
+              <div className="lg:col-span-5 flex flex-col gap-4 md:gap-stack-md z-10 animate-stagger-2">
                 <ResumeUploadCard
                   file={resumeFile}
                   onFileSelect={handleFileSelect}
@@ -184,7 +187,7 @@ export default function App() {
               </div>
 
               {/* Right Column: Job Description Card */}
-              <div className="lg:col-span-7 flex flex-col gap-4 md:gap-stack-md z-10">
+              <div className="lg:col-span-7 flex flex-col gap-4 md:gap-stack-md z-10 animate-stagger-3">
                 <JobDescriptionCard
                   value={jobDescription}
                   onChange={setJobDescription}
@@ -202,12 +205,15 @@ export default function App() {
             />
           </div>
         ) : (
+          <div className="animate-dashboard-reveal">
           <ResultsDashboard
             result={analysisResult}
             onReset={handleReset}
             onOpenTeam={() => setIsTeamOpen(true)}
           />
+          </div>
         )}
+
       </main>
 
       {/* Footer for Workspace View */}

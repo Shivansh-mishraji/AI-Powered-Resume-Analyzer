@@ -351,6 +351,222 @@
 }
 .animate-fade-in { animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 
+/* ================================================================
+   PREMIUM ANIMATION LIBRARY — Nebula Aurora
+   ================================================================ */
+
+/* ── 1. Page Entry: Hero slide-up ── */
+@keyframes fadeInUp {
+  0%   { opacity: 0; transform: translateY(40px) scale(0.97); }
+  100% { opacity: 1; transform: translateY(0)    scale(1); }
+}
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ── 2. Shimmer gradient text (hero heading) ── */
+@keyframes shimmerText {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+.animate-shimmer-text {
+  background: linear-gradient(
+    90deg,
+    #f0f0ff 0%,
+    #a5b4fc 20%,
+    #e879f9 40%,
+    #38bdf8 60%,
+    #a5b4fc 80%,
+    #f0f0ff 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmerText 4s linear infinite;
+}
+
+/* ── 3. Floating aurora background orbs ── */
+@keyframes floatA {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.7; }
+  33%       { transform: translate(30px, -40px) scale(1.08); opacity: 0.9; }
+  66%       { transform: translate(-20px, 20px) scale(0.95); opacity: 0.6; }
+}
+@keyframes floatB {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.5; }
+  50%       { transform: translate(-40px, -30px) scale(1.1); opacity: 0.8; }
+}
+@keyframes floatC {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.4; }
+  40%       { transform: translate(25px, 35px) scale(1.05); opacity: 0.65; }
+  70%       { transform: translate(-15px, -15px) scale(0.97); opacity: 0.5; }
+}
+
+.aurora-orb-1 {
+  position: fixed; pointer-events: none; z-index: 0;
+  width: 600px; height: 600px; border-radius: 50%;
+  top: -150px; left: -150px;
+  background: radial-gradient(circle, rgba(99,102,241,0.22) 0%, transparent 70%);
+  filter: blur(60px);
+  animation: floatA 12s ease-in-out infinite;
+}
+.aurora-orb-2 {
+  position: fixed; pointer-events: none; z-index: 0;
+  width: 500px; height: 500px; border-radius: 50%;
+  top: -100px; right: -100px;
+  background: radial-gradient(circle, rgba(217,70,239,0.18) 0%, transparent 70%);
+  filter: blur(70px);
+  animation: floatB 15s ease-in-out infinite;
+}
+.aurora-orb-3 {
+  position: fixed; pointer-events: none; z-index: 0;
+  width: 400px; height: 400px; border-radius: 50%;
+  bottom: -100px; left: 40%;
+  background: radial-gradient(circle, rgba(56,189,248,0.12) 0%, transparent 70%);
+  filter: blur(80px);
+  animation: floatC 18s ease-in-out infinite;
+}
+
+/* ── 4. Pulsing glow ring (score gauge / AI badge) ── */
+@keyframes pulseRing {
+  0%   { box-shadow: 0 0 0 0 rgba(99,102,241,0.5); }
+  70%  { box-shadow: 0 0 0 14px rgba(99,102,241,0); }
+  100% { box-shadow: 0 0 0 0 rgba(99,102,241,0); }
+}
+.animate-pulse-ring { animation: pulseRing 2.5s ease-out infinite; }
+
+/* ── 5. Card hover lift with glow ── */
+.card-hover-lift {
+  transition: transform 0.3s cubic-bezier(0.16,1,0.3,1),
+              box-shadow 0.3s ease,
+              border-color 0.3s ease;
+}
+.card-hover-lift:hover {
+  transform: translateY(-4px) scale(1.005);
+  box-shadow: 0 20px 60px rgba(99,102,241,0.2),
+              0 0 0 1px rgba(99,102,241,0.2);
+}
+
+/* ── 6. Skill badge pop-in ── */
+@keyframes badgePop {
+  0%   { opacity: 0; transform: scale(0.6) translateY(6px); }
+  70%  { transform: scale(1.08) translateY(-2px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+.animate-badge-pop {
+  animation: badgePop 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+
+/* ── 7. Gradient CTA button breathing glow ── */
+@keyframes breatheGlow {
+  0%, 100% { box-shadow: 0 0 25px rgba(99,102,241,0.4), 0 4px 15px rgba(0,0,0,0.3); }
+  50%       { box-shadow: 0 0 50px rgba(217,70,239,0.5), 0 8px 30px rgba(99,102,241,0.3); }
+}
+.btn-gradient-cta {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #d946ef 100%);
+  background-size: 200% 200%;
+  animation: gradientShift 3s ease infinite, breatheGlow 3s ease-in-out infinite;
+  transition: transform 0.2s ease;
+}
+.btn-gradient-cta:hover {
+  transform: translateY(-3px) scale(1.02);
+}
+.btn-gradient-cta:active { transform: translateY(0) scale(0.99); }
+
+/* ── 8. Typing cursor blink ── */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+.animate-cursor { animation: blink 1s step-end infinite; }
+
+/* ── 9. Result dashboard entrance ── */
+@keyframes dashboardReveal {
+  0%   { opacity: 0; transform: translateY(60px) scale(0.95); filter: blur(4px); }
+  100% { opacity: 1; transform: translateY(0)    scale(1);    filter: blur(0); }
+}
+.animate-dashboard-reveal {
+  animation: dashboardReveal 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ── 10. Rotating gradient border ── */
+@keyframes rotateBorder {
+  0%   { --border-angle: 0deg; }
+  100% { --border-angle: 360deg; }
+}
+.gradient-border-animate {
+  position: relative;
+  border-radius: 16px;
+  padding: 1px;
+  background: linear-gradient(var(--border-angle, 0deg), #6366f1, #e879f9, #38bdf8, #6366f1);
+  animation: rotateBorder 4s linear infinite;
+}
+.gradient-border-animate > * {
+  border-radius: 15px;
+  background: #070a18;
+}
+
+/* ── 11. Loading shimmer (skeleton) ── */
+@keyframes skeletonShimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position:  400px 0; }
+}
+.skeleton-shimmer {
+  background: linear-gradient(90deg,
+    rgba(30,36,64,0.8) 25%,
+    rgba(99,102,241,0.15) 50%,
+    rgba(30,36,64,0.8) 75%
+  );
+  background-size: 400px 100%;
+  animation: skeletonShimmer 1.6s ease-in-out infinite;
+}
+
+/* ── 12. Navbar slide-down ── */
+@keyframes navSlideDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-nav-down {
+  animation: navSlideDown 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ── 13. Sidebar items stagger ── */
+@keyframes sidebarItem {
+  from { opacity: 0; transform: translateX(-16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.animate-sidebar-1 { animation: sidebarItem 0.4s 0.1s ease-out both; }
+.animate-sidebar-2 { animation: sidebarItem 0.4s 0.18s ease-out both; }
+.animate-sidebar-3 { animation: sidebarItem 0.4s 0.26s ease-out both; }
+.animate-sidebar-4 { animation: sidebarItem 0.4s 0.34s ease-out both; }
+
+/* ── 14. Score number count-up visual pulse ── */
+@keyframes scorePop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.12); }
+  70%  { transform: scale(0.97); }
+  100% { transform: scale(1); }
+}
+.animate-score-pop { animation: scorePop 0.7s cubic-bezier(0.34,1.56,0.64,1) 1.5s both; }
+
+/* ── 15. Particle dots in background ── */
+@keyframes particleDrift {
+  0%   { transform: translateY(0) translateX(0); opacity: 0; }
+  10%  { opacity: 0.6; }
+  90%  { opacity: 0.3; }
+  100% { transform: translateY(-120vh) translateX(30px); opacity: 0; }
+}
+.particle {
+  position: fixed;
+  width: 2px; height: 2px;
+  border-radius: 50%;
+  background: rgba(99,102,241,0.7);
+  pointer-events: none;
+  z-index: 0;
+  animation: particleDrift linear infinite;
+}
+
+
 /* ── Print Styles ── */
 @media print {
   body, .bg-mesh {
