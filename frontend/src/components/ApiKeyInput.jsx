@@ -4,9 +4,10 @@ import { maskKey, validateKey } from '../hooks/useSecureApiKey';
 function detectProvider(key) {
   if (!key || !key.trim()) return null;
   const k = key.trim();
-  if (k.startsWith('AIza'))    return { name: 'Google Gemini', emoji: '🤖', model: 'gemini-3.6-flash', color: '#4285F4', link: 'https://aistudio.google.com/app/apikey' };
+  if (k.startsWith('AIza') || k.startsWith('AQ.')) return { name: 'Google Gemini', emoji: '🤖', model: 'gemini-3.6-flash', color: '#4285F4', link: 'https://aistudio.google.com/app/apikey' };
   if (k.startsWith('sk-ant-')) return { name: 'Anthropic Claude', emoji: '🧠', model: 'claude-opus-4', color: '#D4A574', link: 'https://console.anthropic.com/keys' };
   if (k.startsWith('sk-'))    return { name: 'OpenAI GPT-4o', emoji: '⚡', model: 'gpt-4o', color: '#10A37F', link: 'https://platform.openai.com/api-keys' };
+  if (k.length >= 15)         return { name: 'AI Key (BYOK)', emoji: '✨', model: 'Auto-Routing', color: '#A855F7', link: 'https://aistudio.google.com/app/apikey' };
   return null;
 }
 
@@ -82,7 +83,7 @@ export default function ApiKeyInput({ value, onChange, onClear, isEnabled, saveT
           <input
             id={inputId}
             type={showKey ? 'text' : 'password'}
-            placeholder="AIza... (Gemini)  ·  sk-... (OpenAI)  ·  sk-ant-... (Claude)"
+            placeholder="AQ... / AIza... (Gemini)  ·  sk-... (OpenAI)  ·  sk-ant-... (Claude)"
             value={value}
             onChange={(e) => onChange(e.target.value)}
             className="byok-text-input"

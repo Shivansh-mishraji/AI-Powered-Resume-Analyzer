@@ -120,3 +120,13 @@ def test_ai_service_retry_on_transient_failure():
 
         assert result.score == 85
         assert mock_client.models.generate_content.call_count == 2
+
+def test_detect_provider_prefixes():
+    """Verify detect_provider correctly routes Gemini AQ./AIza, Anthropic sk-ant-, and OpenAI sk-."""
+    from app.services.ai_service import detect_provider
+    assert detect_provider("AQ.Ab8RN6KIdll1ghVGpxYNrj12345") == "gemini"
+    assert detect_provider("AIzaSyB_1234567890abcdef") == "gemini"
+    assert detect_provider("sk-ant-api03-12345") == "anthropic"
+    assert detect_provider("sk-proj-1234567890") == "openai"
+    assert detect_provider("custom-random-key") == "gemini"
+

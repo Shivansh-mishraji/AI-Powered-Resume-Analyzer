@@ -61,7 +61,7 @@ def detect_provider(api_key: str) -> str:
     Returns: 'gemini' | 'anthropic' | 'openai' | 'unknown'
     """
     key = api_key.strip()
-    if key.startswith("AIza"):
+    if key.startswith("AIza") or key.startswith("AQ."):
         return "gemini"
     if key.startswith("sk-ant-"):
         return "anthropic"

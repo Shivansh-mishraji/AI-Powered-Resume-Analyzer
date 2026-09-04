@@ -30,12 +30,12 @@ export function maskKey(key) {
 export function validateKey(key) {
   if (!key || !key.trim()) return { valid: false, error: 'No key provided.' };
   const k = key.trim();
-  if (k.length < 20) return { valid: false, error: 'Key is too short to be valid.' };
-  if (k.includes(' ')) return { valid: false, error: 'Key should not contain spaces.' };
-  if (k.startsWith('AIza') || k.startsWith('sk-ant-') || k.startsWith('sk-')) {
-    return { valid: true, error: null };
+  if (k.length < 15) return { valid: false, error: 'Key is too short to be valid.' };
+  if (k.includes(' ') || k.includes('\n') || k.includes('\r')) {
+    return { valid: false, error: 'Key should not contain spaces or line breaks.' };
   }
-  return { valid: false, error: 'Unknown key format. Use a Gemini (AIza...), OpenAI (sk-...), or Claude (sk-ant-...) key.' };
+  // Accepts Google Gemini (AIza... or AQ....), Anthropic (sk-ant-...), OpenAI (sk-...), or custom provider keys
+  return { valid: true, error: null };
 }
 
 export function useSecureApiKey() {
