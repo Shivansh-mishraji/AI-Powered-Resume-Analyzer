@@ -13,6 +13,7 @@ import ApiTelemetryDrawer from './components/ApiTelemetryDrawer';
 import HowItWorksModal from './components/HowItWorksModal';
 import AboutModal from './components/AboutModal';
 import { analyzeResume, checkHealth } from './services/api';
+import { useSecureApiKey } from './hooks/useSecureApiKey';
 import './App.css';
 
 export default function App() {
@@ -20,7 +21,10 @@ export default function App() {
   const [jobDescription, setJobDescription] = useState(
     'We are seeking a Senior Full-Stack Engineer to join our core product team. You will be responsible for designing and implementing scalable backend services in Node.js and building responsive frontends using React and Tailwind CSS. Experience with PostgreSQL and cloud deployments (AWS/GCP) is required.'
   );
-  const [apiKey, setApiKey] = useState('');
+  const {
+    rawKey, activeKey, isEnabled, saveToSession,
+    setKey, clearKey, toggleEnabled, toggleSave
+  } = useSecureApiKey();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [analysisResult, setAnalysisResult] = useState(null);
@@ -82,7 +86,7 @@ export default function App() {
     setError(null);
 
     try {
-      const data = await analyzeResume(resumeFile, jobDescription, apiKey);
+      const data = await analyzeResume(resumeFile, jobDescription, activeKey);
       setAnalysisResult(data);
 
       setSessionHistory((prev) => [
@@ -125,7 +129,7 @@ export default function App() {
         onOpenTeam={() => setIsTeamOpen(true)}
         onOpenAbout={() => setIsAboutOpen(true)}
         onOpenHowItWorks={() => setIsHowItWorksOpen(true)}
-        isAiPowered={Boolean(apiKey && apiKey.trim())}
+        isAiPowered={Boolean(activeKey)}
         isMobileOpen={isMobileMenuOpen}
         onCloseMobile={() => setIsMobileMenuOpen(false)}
       />
@@ -154,7 +158,7 @@ export default function App() {
         {!analysisResult ? (
           <div className="workspace-container">
             {/* Hero Section */}
-            <Hero isAiPowered={Boolean(apiKey && apiKey.trim())} />
+            <Hero isAiPowered={Boolean(activeKey)} />
 
             {/* Workspace Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-stack-md relative items-stretch">
@@ -168,9 +172,13 @@ export default function App() {
                 />
 
                 <ByokCard
-                  value={apiKey}
-                  onChange={setApiKey}
-                  onClear={() => setApiKey('')}
+                  value={rawKey}
+                  onChange={setKey}
+                  onClear={clearKey}
+                  isEnabled={isEnabled}
+                  saveToSession={saveToSession}
+                  onToggleEnabled={toggleEnabled}
+                  onToggleSave={toggleSave}
                   disabled={loading}
                 />
               </div>

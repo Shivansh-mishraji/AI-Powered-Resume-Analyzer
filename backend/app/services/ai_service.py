@@ -20,6 +20,21 @@ from app.config import GEMINI_MODEL_FALLBACK_CHAIN
 from app.schemas.analysis_schema import AnalysisResult
 
 # ──────────────────────────────────────────────
+# Key Security Utilities
+# ──────────────────────────────────────────────
+
+def mask_key(key: str) -> str:
+    """Mask API key for safe logging — never expose full key in logs or errors."""
+    if not key or len(key) < 10:
+        return "****"
+    return f"{key[:4]}{'*' * min(len(key) - 8, 12)}{key[-4:]}"
+
+def sanitize_key(key: str) -> str:
+    """Strip whitespace, quotes, and newlines from key input."""
+    return key.strip().strip('"').strip("'").replace('\n', '').replace('\r', '')
+
+
+# ──────────────────────────────────────────────
 # Custom Exceptions
 # ──────────────────────────────────────────────
 
@@ -266,7 +281,7 @@ def generate_ai_analysis(
       OpenAI  (sk-...)     → gpt-4o (best) → gpt-4o-mini → gpt-3.5-turbo
       Claude  (sk-ant-...) → claude-opus-4 (best) → sonnet → haiku
     """
-    key = (api_key or "").strip()
+    key = sanitize_key(api_key or "")
     if not key:
         raise GeminiAuthError("No API key provided.")
 
