@@ -3,7 +3,7 @@
  * Connects to the FastAPI backend with structured error handling.
  */
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
 
 /**
  * Silently wakes up the Render free-tier backend on app load.

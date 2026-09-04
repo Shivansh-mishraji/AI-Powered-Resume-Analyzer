@@ -3,32 +3,35 @@
 # 🚀 AI-Powered Resume & Job Description Analyzer
 ### *Hybrid AI Career Intelligence Platform & ATS Semantic Analyzer*
 
+[![Live Website](https://img.shields.io/badge/🌐_Live_Website-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://ai-powered-resume-analyzer-pi.vercel.app)
+[![Backend API](https://img.shields.io/badge/⚡_Backend_API-Render-46E3B7?style=for-the-badge&logo=render&logoColor=black)](https://resume-analyzer-api.onrender.com)
 [![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![React](https://img.shields.io/badge/React_19-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
-[![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
+[![Vite](https://img.shields.io/badge/Vite_6-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
 [![Python](https://img.shields.io/badge/Python_3.13-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
-[![Gemini AI](https://img.shields.io/badge/Google_Gemini-BYOK_Enabled-orange?style=for-the-badge&logo=google&logoColor=white)](https://ai.google.dev/)
-[![Pytest](https://img.shields.io/badge/Pytest-29_Tests_Passed-success?style=for-the-badge&logo=pytest&logoColor=white)](https://docs.pytest.org/)
-[![CI](https://github.com/Shivansh-mishraji/AI-Powered-Resume-Analyzer/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/Shivansh-mishraji/AI-Powered-Resume-Analyzer/actions/workflows/ci.yml)
+[![Multi-Provider AI](https://img.shields.io/badge/AI_BYOK-Gemini_·_OpenAI_·_Claude-orange?style=for-the-badge)](https://aistudio.google.com/)
+[![Pytest](https://img.shields.io/badge/Pytest-39_Tests_Passed-success?style=for-the-badge&logo=pytest&logoColor=white)](https://docs.pytest.org/)
 
 <br/>
 
-<img src="./assets/architecture_banner.jpg" alt="AI Resume Analyzer Architecture" width="100%" style="border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.4);" />
+> 🌐 **Live Production Website:** [https://ai-powered-resume-analyzer-pi.vercel.app](https://ai-powered-resume-analyzer-pi.vercel.app)  
+> ⚡ **Live Production API:** [https://resume-analyzer-api.onrender.com](https://resume-analyzer-api.onrender.com)
+
+<br/>
+
+<img src="./assets/banner.jpg" alt="AI Resume Analyzer Banner" width="100%" style="border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.4);" />
 
 <p align="center">
-  <b>Upload your resume (PDF/DOCX) + Job Description + Optional Gemini API Key → Deep Semantic Matching, Skill Gaps, Strengths, Weaknesses, and Actionable AI Suggestions!</b>
+  <b>Upload your resume (PDF/DOCX) + Job Description + Optional Multi-Provider API Key → Deep Semantic Matching, Skill Gaps, Strengths, Weaknesses, and Actionable AI Suggestions!</b>
 </p>
 
 <p align="center">
-  <strong>Upload your resume. Paste a job description. Get an AI-powered match score, skill gap analysis, and personalized improvement suggestions — instantly.</strong>
-</p>
-
-<p align="center">
-  <img src="https://img.shields.io/badge/Google%20Gemini-2.5%20Flash-blue?logo=google&logoColor=white" />
+  <img src="https://img.shields.io/badge/AI%20Engine-Gemini%203.6%20%2F%202.5%20%2F%20GPT--4o%20%2F%20Claude-blue?logo=google&logoColor=white" />
   <img src="https://img.shields.io/badge/FastAPI-0.115+-green?logo=fastapi" />
   <img src="https://img.shields.io/badge/React-19-61DAFB?logo=react" />
-  <img src="https://img.shields.io/badge/Tests-38%2F38%20Passing-brightgreen" />
+  <img src="https://img.shields.io/badge/Tests-39%2F39%20Passing-brightgreen" />
   <img src="https://img.shields.io/badge/Zero%20Disk%20Storage-Privacy%20First-purple" />
+  <img src="https://img.shields.io/badge/Performance-60%2F120%20FPS%20GPU-cyan" />
 </p>
 
 ---
@@ -37,12 +40,22 @@
 
 Job hunting is competitive, and standard keyword matchers fail to understand real-world engineering context (e.g. recognizing that *AWS ECS + Terraform* fulfills *Container Orchestration & IaC*).
 
-The **AI-Powered Resume Analyzer** is a **Hybrid AI Intelligence Platform**:
-1. 🤖 **Primary Engine (Google Gemini AI via BYOK):** Performs deep contextual semantic matching, dynamic skill extraction, candidate profiling, strengths & weaknesses analysis, and personalized resume improvement advice.
-2. ⚙️ **Fallback Engine (Deterministic Rule-Based Analyzer):** If an API key is unprovided or AI service is unavailable, automatically falls back to our fast, 29-test-verified keyword extraction and set-intersection scoring engine.
-3. 📄 **Secure In-Memory Parsing:** Parses PDF (`PyMuPDF` with block sorting) and DOCX directly in memory with zero disk persistence.
-4. 🔐 **Privacy-First BYOK Model:** Users can provide their own Google Gemini API key. The key stays strictly in React component memory and is never logged or stored by the backend.
-5. 📊 **Unified Data Contract:** Both AI and Fallback engines return a standardized JSON response, ensuring zero frontend crashes.
+The **AI-Powered Resume Analyzer** is a **Hybrid Multi-Model Career Intelligence Platform**:
+1. 🤖 **Primary Engine (Multi-Provider AI via BYOK):**
+   - **Google Gemini**: Auto-detects legacy `AIza...` and modern `AQ....` developer keys with automatic model fallback chain (`gemini-3.6-flash` → `gemini-2.5-flash` → `gemini-1.5-flash`).
+   - **OpenAI**: Auto-detects `sk-...` keys and routes to `gpt-4o` / `gpt-4o-mini`.
+   - **Anthropic Claude**: Auto-detects `sk-ant-...` keys and routes to `claude-opus-4` / `claude-3-5-sonnet`.
+   - Generates deep contextual semantic matching, dynamic skill extraction, candidate profiling, strengths & weaknesses analysis, and personalized resume improvement advice.
+2. ⚙️ **Fallback Engine (Deterministic Rule-Based Analyzer):** If an API key is unprovided or third-party AI services are unreachable, automatically falls back to our fast, 39-test-verified keyword extraction and set-intersection scoring engine.
+3. 🔒 **Enterprise-Grade Client Security:**
+   - Keys are obfuscated in `sessionStorage` (auto-cleared on tab close).
+   - Never logged, never written to disk, and never stored in any database.
+   - Master toggle allows users to pause AI analysis without clearing their saved key.
+4. ⚡ **Zero-Lag & 60/120 FPS Performance:**
+   - Score counting uses `requestAnimationFrame` with an ease-out cubic animation curve.
+   - Background aurora effects are GPU-accelerated with tab-visibility awareness (`document.hidden`) and `prefers-reduced-motion` compliance.
+   - Silent backend pre-warming (`warmUpBackend()`) automatically wakes Render free-tier instances on page load.
+5. 📊 **Unified Data Contract:** Both AI and Fallback engines return a standardized Pydantic JSON response, guaranteeing zero frontend crashes.
 
 ---
 
@@ -52,16 +65,16 @@ The **AI-Powered Resume Analyzer** is a **Hybrid AI Intelligence Platform**:
                       👤 USER
                          │
                          ▼
-                🎨 REACT FRONTEND
+          🎨 REACT 19 + VITE FRONTEND (Vercel)
                          │
          ┌───────────────┼───────────────┐
          ▼               ▼               ▼
-    📄 Resume       📋 Job JD       🔑 Gemini Key
-    (PDF/DOCX)                        (Optional)
+    📄 Resume       📋 Job JD       🔑 AI Key (BYOK)
+    (PDF/DOCX)                      (Gemini AQ./AIza, OpenAI, Claude)
          │               │               │
          └───────────────┼───────────────┘
                          ▼
-                ⚙️ FASTAPI BACKEND
+          ⚙️ FASTAPI BACKEND (Render Cloud)
                          │
                   🛡️ VALIDATION
              (File Size ≤ 5MB, MIME)
@@ -73,14 +86,14 @@ The **AI-Powered Resume Analyzer** is a **Hybrid AI Intelligence Platform**:
                          │
                 🔀 ANALYSIS ROUTER
                          │
-                API Key Available?
+                API Key Provided?
                  /              \
                YES              NO
                 │                │
                 ▼                ▼
-          🤖 GEMINI AI     ⚙️ RULE ENGINE
-            PRIMARY          FALLBACK
-          (Structured)     (Deterministic)
+          🤖 MULTI-MODEL   ⚙️ RULE ENGINE
+             PRIMARY          FALLBACK
+        (Gemini/GPT/Claude) (Deterministic)
                 │                │
                 └───────┬────────┘
                         ▼
@@ -172,46 +185,44 @@ Our project is divided among 4 specialized members following Agile/Scrum enginee
 
 ---
 
-### 🔄 Active Sprint (Week 5 — Hybrid Gemini AI Upgrade)
-- [ ] **Phase 1 (Docs First):** Comprehensive documentation update for Hybrid AI & BYOK model.
-- [ ] **Phases 2 – 9 (Backend & AI):** Central configuration, unified Pydantic response contract, Gemini AI service with rubric scoring, and analysis router.
-- [ ] **Phases 10 – 11 (Testing):** Mocked AI service unit tests, router fallback tests, and QA audit report update.
-- [ ] **Phases 12 – 13 (Frontend):** In-memory BYOK key input, AI/Fallback status indicators, and candidate strengths/weaknesses/suggestions display.
-
-### Prerequisites
-
-### 🚀 Upcoming Sprint (Week 6 — Deployment & Submission)
-- [ ] **Phase 14 (Manual Verification):** Stress testing with real-world resumes, scanned PDFs, and rate limits.
-- [ ] **Phase 15 (Deployment):** Frontend deployed to Vercel, Backend deployed to Render.
-- [ ] **Phase 16 (Final Polish):** Final documentation sync from "Planned" to "Implemented" and viva defense prep.
+### ✅ Completed Sprints (Weeks 1 – 6)
+- [x] **Week 1 (Foundation):** FastAPI backend initialized, `/health` endpoint, strict PDF/DOCX validation, initial React Vite frontend.
+- [x] **Week 2 (Text Cleaning & Skill Extraction):** In-memory text extraction, regex text normalization, and 50+ tech skills dictionary.
+- [x] **Week 3 (Scoring & Full-Stack Integration):** Set-intersection score calculator, connected `POST /analyze`, 29 unit tests passing.
+- [x] **Week 4 (UI Overhaul, QA & CI/CD):** Glassmorphic dark mode UI, radial score gauge, QA test audit logging system, and GitHub Actions CI pipeline.
+- [x] **Week 5 (Hybrid Multi-Provider AI Upgrade):** Central config, unified Pydantic response contract, Gemini AI service with fallback chain, OpenAI/Claude support, and analysis router.
+- [x] **Week 6 (Production Deployment & Performance Optimization):** Frontend deployed to Vercel, Backend deployed to Render, 60/120 FPS rAF counters, GPU-accelerated Nebula Aurora design, cold-start silent pre-warming, and AQ./AIza key compatibility.
 
 ---
 
-## 🔑 BYOK — Bring Your Own Key
+## 🔑 Multi-Provider BYOK — Bring Your Own Key
 
-This project uses a **BYOK (Bring Your Own Key)** model for privacy and security:
+This project implements an enterprise **BYOK (Bring Your Own Key)** architecture for maximum privacy, security, and flexibility:
 
-- Your Gemini API key is passed directly in the request header per-session
-- It is **never stored** on the server or in any database
-- Without a key → system **automatically falls back** to deterministic keyword matching
-- Get a free key at → [Google AI Studio](https://aistudio.google.com/app/apikey)
+- **Supported Key Formats:**
+  - 🤖 **Google Gemini**: Accepts both legacy `AIza...` and modern `AQ....` developer keys ([Google AI Studio](https://aistudio.google.com/app/apikey)).
+  - ⚡ **OpenAI**: Accepts `sk-...` keys for GPT-4o / GPT-4o-mini ([OpenAI Platform](https://platform.openai.com/api-keys)).
+  - 🧠 **Anthropic Claude**: Accepts `sk-ant-...` keys for Claude 3.5 Sonnet / Opus ([Anthropic Console](https://console.anthropic.com/keys)).
+- **Zero Server Persistence:** API keys are never stored on disk, never saved to any database, and never written to server logs.
+- **Client Session Isolation:** Keys are obfuscated in browser `sessionStorage` and cleared automatically when the tab closes.
+- **Flexible Mode Control:** Master toggle allows pausing AI mode anytime to test deterministic rule-based analysis without losing your key.
 
 ---
 
 ## 🧪 Running Tests
 
 ```bash
-cd testing
-python run_tests.py
+cd backend
+pytest
 ```
 
-**38/38 tests passing ✅ — 100% pass rate in 3.66s**
+**39/39 tests passing ✅ — 100% pass rate in 2.60s**
 
 | Module | Tests | Status |
 |--------|-------|--------|
 | File Parser (PDF/DOCX) | 12 | ✅ All Pass |
 | Skill Extractor & Text Cleaner | 10 | ✅ All Pass |
-| API Integration (/analyze) | 16 | ✅ All Pass |
+| API Integration & AI Multi-Provider | 17 | ✅ All Pass |
 
 ---
 

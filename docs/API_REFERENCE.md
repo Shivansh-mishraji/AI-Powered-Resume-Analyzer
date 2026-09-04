@@ -2,14 +2,16 @@
 
 > Documented by: Sujeet Kannaujiya (Research & Documentation Lead)
 
-Base URL: `http://127.0.0.1:8000`
+- **Local Base URL:** `http://127.0.0.1:8000`
+- **Cloud Production URL:** `https://resume-analyzer-api.onrender.com`
+- **Live Frontend Web App:** `https://ai-powered-resume-analyzer-pi.vercel.app`
 
 ---
 
 ## Endpoints
 
 ### 1. GET `/health`
-Health check endpoint to verify backend operational status.
+Health check endpoint to verify backend operational status and warm up serverless / free-tier containers.
 
 **Response (200 OK):**
 ```json
@@ -21,12 +23,12 @@ Health check endpoint to verify backend operational status.
 ---
 
 ### 2. POST `/analyze`
-Analyzes a resume against a target job description using either the **Google Gemini AI Engine** (if API key provided) or the **Deterministic Rule-Based Engine** (fallback mode).
+Analyzes a resume against a target job description using either the **Multi-Provider AI Engine** (Google Gemini, OpenAI, or Anthropic Claude) or the **Deterministic Rule-Based Engine** (fallback mode).
 
 #### Request Headers:
 | Header | Type | Required | Description |
 |---|---|---|---|
-| `X-Gemini-API-Key` | string | ❌ Optional | User's Google Gemini API Key for AI semantic analysis (BYOK). |
+| `X-Gemini-API-Key` | string | ❌ Optional | Multi-Provider BYOK key. Auto-detects Google Gemini (`AQ.` or `AIza...`), OpenAI (`sk-...`), Anthropic Claude (`sk-ant-...`), or custom keys. |
 
 #### Request Body (`multipart/form-data`):
 | Field | Type | Required | Description |

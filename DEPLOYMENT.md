@@ -4,17 +4,21 @@ This guide details how to deploy the **FastAPI Backend** and **React Frontend** 
 
 ---
 
-## 🏗️ Architecture Overview
+## 🏗️ Architecture & Live Deployment URLs
+ 
+ ```
+ [ User Browser ] 
+        │
+        ├────► Frontend (React 19 + Vite) on Vercel
+        │      Live URL: https://ai-powered-resume-analyzer-pi.vercel.app
+        │
+        └────► Backend (FastAPI + PyMuPDF + Multi-Model AI) on Render
+               Live URL: https://resume-analyzer-api.onrender.com
+ ```
 
-```
-[ User Browser ] 
-       │
-       ├────► Frontend (React + Vite) on Vercel / Render Static
-       │      URL: https://resume-analyzer.vercel.app
-       │
-       └────► Backend (FastAPI + PyMuPDF + Gemini 2.5) on Render
-              URL: https://resume-analyzer-backend.onrender.com
-```
+> 🚀 **Live Production Application:** [https://ai-powered-resume-analyzer-pi.vercel.app](https://ai-powered-resume-analyzer-pi.vercel.app)  
+> ⚡ **Live Production Backend Docs:** [https://resume-analyzer-api.onrender.com/docs](https://resume-analyzer-api.onrender.com/docs)  
+> 🌿 **Synchronized Deployment Branches:** `master` · `main` · `feature/gemini-ai-upgrade`
 
 ---
 
@@ -40,14 +44,14 @@ If you prefer using **Vercel** for the frontend and **Render** for the backend:
 1. Go to [Render Dashboard](https://dashboard.render.com/) ➔ **New +** ➔ **Web Service**.
 2. Connect your GitHub repo: `Shivansh-mishraji/AI-Powered-Resume-Analyzer`.
 3. Configure the following settings:
-   - **Name:** `resume-ai-backend`
+   - **Name:** `resume-analyzer-api`
    - **Root Directory:** `backend`
    - **Environment:** `Python 3`
    - **Build Command:** `pip install -r requirements.txt`
    - **Start Command:** `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
    - **Plan:** Free
 4. Click **Deploy Web Service**.
-5. Once deployed, copy your backend URL (e.g., `https://resume-ai-backend.onrender.com`).
+5. Once deployed, copy your backend URL (`https://resume-analyzer-api.onrender.com`).
 
 ---
 
@@ -58,10 +62,10 @@ If you prefer using **Vercel** for the frontend and **Render** for the backend:
    - **Framework Preset:** `Vite`
    - **Root Directory:** `frontend`
 4. Expand **Environment Variables** and add:
-   - **Key:** `VITE_API_BASE_URL`
-   - **Value:** `https://resume-ai-backend.onrender.com` (Your Render backend URL from Step 1)
+   - **Key:** `VITE_API_URL` (or `VITE_API_BASE_URL` — both are supported)
+   - **Value:** `https://resume-analyzer-api.onrender.com`
 5. Click **Deploy**.
-6. Vercel will build and assign your live production URL (e.g., `https://ai-powered-resume-analyzer.vercel.app`).
+6. Vercel builds and deploys to `https://ai-powered-resume-analyzer-pi.vercel.app`.
 
 ---
 

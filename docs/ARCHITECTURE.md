@@ -2,30 +2,34 @@
 
 > Documented by: Sujeet Kannaujiya (Research & Documentation Lead)
 
+- **Live Application:** [https://ai-powered-resume-analyzer-pi.vercel.app](https://ai-powered-resume-analyzer-pi.vercel.app)
+- **Live Backend API:** [https://resume-analyzer-api.onrender.com](https://resume-analyzer-api.onrender.com)
+
 ---
 
 ## 🏛️ High-Level System Architecture
 
-The AI-Powered Resume Analyzer implements a **Hybrid AI & Deterministic Architecture** using a Bring-Your-Own-Key (BYOK) model. 
+The AI-Powered Resume Analyzer implements a **Hybrid Multi-Model & Deterministic Architecture** using a Bring-Your-Own-Key (BYOK) model. 
 
 ```
 ┌────────────────────────────────────────────────────────────────────────┐
 │                                 USER                                   │
-│                     (Browser at localhost:5173)                        │
+│             (Browser at ai-powered-resume-analyzer-pi.vercel.app)       │
 └───────────────────────────────────┬────────────────────────────────────┘
                                     │ HTTP POST /analyze
-                                    │ Headers: 'X-Gemini-API-Key' (Optional)
+                                    │ Headers: 'X-Gemini-API-Key' (Optional multi-provider key)
                                     │ Body: multipart/form-data (Resume, JD)
                                     ▼
 ┌────────────────────────────────────────────────────────────────────────┐
 │                        FRONTEND (React 19 + Vite)                      │
 │                                                                        │
 │   App.jsx                                                              │
-│   ├── In-Memory BYOK Key Input (Password field, zero disk storage)     │
-│   ├── Drag-and-Drop File Upload (PDF / DOCX)                           │
-│   ├── Target Job Description Textarea                                  │
-│   ├── Request Debounce & State Controller                              │
-│   └── Unified Dashboard (Score, Confidence, Skills, AI Insights)       │
+│   ├── Multi-Provider BYOK (Gemini AQ./AIza, OpenAI, Claude)            │
+│   ├── Drag-and-Drop File Upload (PDF / DOCX in-memory)                 │
+│   ├── Target Job Description Textarea & Quick Templates                │
+│   ├── Silent Backend Warmup Trigger (warmUpBackend on mount)           │
+│   ├── GPU-Accelerated Nebula Aurora Background & Reduced-Motion Guard  │
+│   └── 60/120 FPS rAF Score Dashboard (Score, Skills, Strengths, Advice)│
 └───────────────────────────────────┬────────────────────────────────────┘
                                     │ HTTP Request (CORS scoped to origin)
                                     ▼

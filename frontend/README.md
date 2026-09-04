@@ -1,43 +1,68 @@
 # Frontend — AI-Powered Resume Analyzer
 
-React 19 + Vite frontend for the AI-Powered Resume Analyzer project.
+> 🌐 **Live Website:** [https://ai-powered-resume-analyzer-pi.vercel.app](https://ai-powered-resume-analyzer-pi.vercel.app)  
+> ⚡ **Production Backend:** [https://resume-analyzer-api.onrender.com](https://resume-analyzer-api.onrender.com)
+
+React 19 + Vite frontend featuring a GPU-accelerated **Nebula Aurora** design system, 60/120 FPS hardware-synced counter animations, and an enterprise **Multi-Provider BYOK** security model.
+
+---
 
 ## Tech Stack
 
-- **React 19** — UI framework
-- **Vite 6** — Build tool & dev server
-- **Axios** — HTTP client for backend API calls
-- **D3.js** — Data visualization (Radar Chart — Week 6)
-- **CSS** — Custom Deep Space glassmorphism design system
+- **React 19** — Modern component lifecycle & state management
+- **Vite 6 / 8** — Fast ES module bundler
+- **Native Fetch API** — Streamlined HTTP client with silent cold-start warmup and 45s request timeout
+- **CSS3 / GPU Compositing** — Custom Nebula Aurora glassmorphism with `translateZ(0)` compositing
+- **Hardware-Synced Animation** — Cubic ease-out score counters via `requestAnimationFrame`
+
+---
 
 ## Project Structure
 
 ```
 frontend/
 ├── src/
-│   ├── App.jsx                  # Root component, layout manager
-│   ├── index.css                # Global Deep Space design tokens
-│   └── components/
-│       ├── TopNavBar.jsx        # Fixed top navbar + hamburger (mobile)
-│       ├── Sidebar.jsx          # Desktop sidebar / Mobile slide-out drawer
-│       ├── Hero.jsx             # Upload dropzone + JD input panel
-│       ├── BYOKHub.jsx          # API key input (Bring Your Own Key)
-│       └── ResultsDashboard.jsx # Score gauge, KPI tiles, skill matrix, insights
-├── public/
-│   ├── favicon.svg
-│   └── icons.svg
+│   ├── App.jsx                  # Root orchestrator & modal state controller
+│   ├── App.css                  # Nebula Aurora glassmorphic theme & micro-animations
+│   ├── index.css                # Global CSS resets & design tokens
+│   ├── components/
+│   │   ├── TopNavBar.jsx        # Fixed top navigation + status indicator
+│   │   ├── Sidebar.jsx          # Desktop sidebar & drawer manager
+│   │   ├── Hero.jsx             # Headline banner & quick action triggers
+│   │   ├── ResumeUploadCard.jsx # Drag-and-drop file upload zone (PDF/DOCX)
+│   │   ├── ByokCard.jsx         # Card wrapper for multi-provider API key
+│   │   ├── ApiKeyInput.jsx      # Key input with masking, provider detection, & toggles
+│   │   ├── JobDescriptionCard.jsx # Target JD textarea + quick role templates
+│   │   ├── AnalyzeButton.jsx    # CTA button with cycling progress messages
+│   │   ├── ResultsDashboard.jsx # 60/120fps score gauge, KPI tiles, & AI insights
+│   │   ├── ScoreCard.jsx        # Radial score meter with ease-out cubic animation
+│   │   ├── AuroraBackground.jsx # Lightweight GPU aurora particles with tab-pause
+│   │   ├── ApiTelemetryDrawer.jsx # Latency meter & system status drawer
+│   │   ├── SessionHistoryDrawer.jsx # Client-side scan history drawer
+│   │   └── TeamModal.jsx        # Project team attribution modal
+│   ├── hooks/
+│   │   └── useSecureApiKey.js   # SessionStorage obfuscation & key validation
+│   ├── services/
+│   │   └── api.js               # Backend communicator & cold-start warmup
+│   └── main.jsx                 # Application entry point with silent pre-warming
+├── vercel.json                  # Single-page app rewrite rules
 ├── package.json
 └── vite.config.js
 ```
 
+---
+
 ## Running Locally
 
 ```bash
+cd frontend
 npm install
 npm run dev
 ```
 
 Dev server starts at → `http://localhost:5173`
+
+---
 
 ## Build for Production
 
@@ -45,33 +70,28 @@ Dev server starts at → `http://localhost:5173`
 npm run build
 ```
 
-Output goes to `dist/` folder.
+Production bundle compiles into `dist/` in under 800ms.
 
-## Design System
+---
 
-The app uses a custom **Deep Space** theme defined in `index.css`:
+## Design System: Nebula Aurora
 
-- Background: `#0a0f1e` (Deep Space)
-- Primary Accent: Emerald Green `hsl(158, 64%, 52%)`
-- Secondary Accent: Amber `hsl(43, 96%, 56%)`
-- Cards: Glassmorphism with `backdrop-filter: blur(12px)`
-- Font: System sans-serif stack, modern weights
+The app utilizes a custom **Nebula Aurora** dark theme:
 
-## Responsive Breakpoints
+- **Background:** Deep cosmic obsidian (`#080914`)
+- **Primary Accent:** Electric Indigo (`#6366f1`)
+- **Secondary Accent:** Sky Blue (`#38bdf8`) & Neon Fuchsia (`#d946ef`)
+- **Success Accent:** Emerald (`#10b981`)
+- **Glassmorphism:** `backdrop-filter: blur(16px)` with GPU compositing (`transform: translateZ(0)`)
+- **Accessibility:** Full `prefers-reduced-motion` compliance; auto-pauses decorative particles when tab is hidden (`visibilitychange`).
 
-| Breakpoint | Layout |
-|---|---|
-| `< 768px` | Mobile — slide-out navigation drawer via `☰` hamburger |
-| `768px – 1024px` | Tablet — collapsed sidebar |
-| `> 1024px` | Desktop — fixed `260px` sidebar, dual-column grid |
+---
 
 ## API Integration
 
-The frontend communicates with the FastAPI backend at `http://127.0.0.1:8000`:
+The frontend automatically connects to the FastAPI backend:
+- **Local Dev:** `http://127.0.0.1:8000`
+- **Cloud Production:** `https://resume-analyzer-api.onrender.com` (configured via `VITE_API_URL` or `VITE_API_BASE_URL`)
 
-| Endpoint | Method | Purpose |
-|---|---|---|
-| `/health` | GET | Check if backend is running |
-| `/analyze` | POST | Submit resume + JD for analysis |
+The API key (Google Gemini `AQ.`/`AIza`, OpenAI `sk-`, or Claude `sk-ant-`) is sent securely per-session via the `X-Gemini-API-Key` request header.
 
-The Gemini API key (if provided) is sent via the `X-Gemini-API-Key` request header.
