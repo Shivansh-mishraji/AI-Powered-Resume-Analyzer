@@ -34,4 +34,5 @@ ALLOWED_CORS_ORIGINS = [
 ]
 
 # Primary Gemini AI Model
-DEFAULT_GEMINI_MODEL = "gemini-2.5-flash"
+DEFAULT_GEMINI_MODEL = "gemini-2.0-flash"
+
