@@ -58,12 +58,21 @@ def test_ai_service_missing_key():
             api_key=""
         )
 
+import json
+import requests
+
+def _make_genai_error(err_cls, code: int, message: str):
+    r = requests.Response()
+    r.status_code = code
+    r._content = json.dumps({"error": {"code": code, "message": message}}).encode("utf-8")
+    return err_cls(code, r)
+
 def test_ai_service_invalid_key():
     """Verify AI service catches auth error and raises GeminiAuthError."""
     with patch("google.genai.Client") as mock_client_cls:
         mock_client = MagicMock()
-        mock_client.models.generate_content.side_effect = ClientError(
-            401, {"message": "API_KEY_INVALID: User unauthenticated"}
+        mock_client.models.generate_content.side_effect = _make_genai_error(
+            ClientError, 401, "API_KEY_INVALID: User unauthenticated"
         )
         mock_client_cls.return_value = mock_client
 
@@ -78,8 +87,8 @@ def test_ai_service_rate_limit():
     """Verify AI service catches 429 and raises GeminiRateLimitError."""
     with patch("google.genai.Client") as mock_client_cls:
         mock_client = MagicMock()
-        mock_client.models.generate_content.side_effect = ClientError(
-            429, {"message": "RESOURCE_EXHAUSTED: Rate limit exceeded"}
+        mock_client.models.generate_content.side_effect = _make_genai_error(
+            ClientError, 429, "RESOURCE_EXHAUSTED: Rate limit exceeded"
         )
         mock_client_cls.return_value = mock_client
 
@@ -98,7 +107,7 @@ def test_ai_service_retry_on_transient_failure():
     with patch("google.genai.Client") as mock_client_cls:
         mock_client = MagicMock()
         mock_client.models.generate_content.side_effect = [
-            ServerError(503, {"message": "Service Unavailable"}),
+            _make_genai_error(ServerError, 503, "Service Unavailable"),
             mock_success
         ]
         mock_client_cls.return_value = mock_client

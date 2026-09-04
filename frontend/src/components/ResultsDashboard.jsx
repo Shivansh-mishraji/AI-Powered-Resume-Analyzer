@@ -9,27 +9,26 @@ export default function ResultsDashboard({
   const [copied, setCopied] = useState(false);
   const [animatedScore, setAnimatedScore] = useState(0);
 
-  // Score Count-Up Animation
+  // Score Count-Up Animation (60/120fps hardware synced)
   useEffect(() => {
     if (result && result.score !== undefined) {
-      let current = 0;
-      const target = result.score;
-      const duration = 1200;
-      const steps = 30;
-      const increment = target / steps;
-      const stepTime = duration / steps;
+      let animId;
+      const start = performance.now();
+      const duration = 1000;
+      const target = Math.max(0, Math.min(100, Number(result.score) || 0));
 
-      const timer = setInterval(() => {
-        current += increment;
-        if (current >= target) {
-          setAnimatedScore(target);
-          clearInterval(timer);
-        } else {
-          setAnimatedScore(Math.round(current));
+      const step = (now) => {
+        const elapsed = now - start;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        setAnimatedScore(Math.round(eased * target));
+        if (progress < 1) {
+          animId = requestAnimationFrame(step);
         }
-      }, stepTime);
+      };
 
-      return () => clearInterval(timer);
+      animId = requestAnimationFrame(step);
+      return () => cancelAnimationFrame(animId);
     }
   }, [result]);
 

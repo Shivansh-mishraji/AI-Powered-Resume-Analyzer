@@ -1,4 +1,26 @@
+import { useState, useEffect } from 'react';
+
+const LOADING_MESSAGES = [
+  'Analyzing Resume Compatibility...',
+  'Extracting skills & qualifications...',
+  'Evaluating ATS rubric & alignment...',
+  'Synthesizing match report...',
+];
+
 export default function AnalyzeButton({ onClick, loading = false, disabled = false }) {
+  const [msgIndex, setMsgIndex] = useState(0);
+
+  useEffect(() => {
+    if (!loading) {
+      setMsgIndex(0);
+      return;
+    }
+    const interval = setInterval(() => {
+      setMsgIndex((prev) => (prev + 1) % LOADING_MESSAGES.length);
+    }, 2400);
+    return () => clearInterval(interval);
+  }, [loading]);
+
   return (
     <div className="mt-stack-md w-full">
       <button
@@ -14,8 +36,8 @@ export default function AnalyzeButton({ onClick, loading = false, disabled = fal
 
         {loading ? (
           <>
-            <div className="w-5 h-5 border-2 border-white/40 border-t-white rounded-full animate-spin" aria-hidden="true" />
-            <span>Analyzing Resume Compatibility...</span>
+            <div className="w-5 h-5 border-2 border-white/40 border-t-white rounded-full animate-spin flex-shrink-0" aria-hidden="true" />
+            <span className="transition-opacity duration-300 animate-fade-in">{LOADING_MESSAGES[msgIndex]}</span>
           </>
         ) : (
           <>

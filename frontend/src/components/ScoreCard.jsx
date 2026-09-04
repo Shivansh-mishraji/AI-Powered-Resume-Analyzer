@@ -4,24 +4,23 @@ export default function ScoreCard({ score = 0 }) {
   const [animatedScore, setAnimatedScore] = useState(0);
 
   useEffect(() => {
-    let current = 0;
-    const target = Math.max(0, Math.min(100, score));
+    let animId;
+    const start = performance.now();
     const duration = 1000;
-    const steps = 30;
-    const increment = target / steps;
-    const stepTime = duration / steps;
+    const target = Math.max(0, Math.min(100, Number(score) || 0));
 
-    const timer = setInterval(() => {
-      current += increment;
-      if (current >= target) {
-        setAnimatedScore(target);
-        clearInterval(timer);
-      } else {
-        setAnimatedScore(Math.round(current));
+    const step = (now) => {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setAnimatedScore(Math.round(eased * target));
+      if (progress < 1) {
+        animId = requestAnimationFrame(step);
       }
-    }, stepTime);
+    };
 
-    return () => clearInterval(timer);
+    animId = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(animId);
   }, [score]);
 
   const radius = 68;

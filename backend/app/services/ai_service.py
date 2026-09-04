@@ -105,7 +105,7 @@ Perform deep semantic evaluation and return structured analysis as JSON.
 FALLBACK_SCHEMA_HINT = """
 Return a JSON object with these exact keys:
 {
-  "overall_match_score": <int 0-100>,
+  "score": <int 0-100>,
   "is_ai_powered": true,
   "analysis_confidence": "<high|medium|low>",
   "matched_skills": ["skill1", "skill2"],
@@ -176,6 +176,27 @@ def _call_gemini(resume_text: str, job_description: str, api_key: str,
     raise GeminiServiceError(f"All Gemini models unavailable: {last_error}")
 
 
+def _normalize_and_validate_result(data: dict, filename: str, warnings: List[str]) -> AnalysisResult:
+    if "score" not in data and "overall_match_score" in data:
+        data["score"] = data["overall_match_score"]
+    try:
+        data["score"] = max(0, min(100, int(data.get("score", 70))))
+    except Exception:
+        data["score"] = 70
+
+    data["filename"] = filename
+    data["is_ai_powered"] = True
+    data["warnings"] = list(set((data.get("warnings") or []) + warnings))
+    data.setdefault("analysis_confidence", "high")
+    data.setdefault("candidate_summary", "Candidate profile evaluated against job requirements.")
+    data.setdefault("matched_skills", [])
+    data.setdefault("missing_skills", [])
+    data.setdefault("strengths", [])
+    data.setdefault("weaknesses", [])
+    data.setdefault("suggestions", [])
+    return AnalysisResult(**data)
+
+
 # ──────────────────────────────────────────────
 # OpenAI Provider
 # ──────────────────────────────────────────────
@@ -203,10 +224,7 @@ def _call_openai(resume_text: str, job_description: str, api_key: str,
             )
             raw = response.choices[0].message.content
             data = json.loads(raw)
-            data["filename"] = filename
-            data["is_ai_powered"] = True
-            data["warnings"] = warnings
-            return AnalysisResult(**data)
+            return _normalize_and_validate_result(data, filename, warnings)
 
         except AuthenticationError:
             raise GeminiAuthError("Invalid OpenAI API key. Please check your key.")
@@ -246,10 +264,7 @@ def _call_anthropic(resume_text: str, job_description: str, api_key: str,
             start = raw.find("{")
             end = raw.rfind("}") + 1
             data = json.loads(raw[start:end])
-            data["filename"] = filename
-            data["is_ai_powered"] = True
-            data["warnings"] = warnings
-            return AnalysisResult(**data)
+            return _normalize_and_validate_result(data, filename, warnings)
 
         except anthropic.AuthenticationError:
             raise GeminiAuthError("Invalid Anthropic API key. Please check your key.")

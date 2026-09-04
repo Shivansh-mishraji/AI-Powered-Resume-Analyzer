@@ -5,6 +5,19 @@
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
 
+/**
+ * Silently wakes up the Render free-tier backend on app load.
+ * Render cold-starts can take 30-50s — calling this immediately
+ * means the server is warm by the time the user clicks Analyze.
+ */
+export function warmUpBackend() {
+  fetch(`${API_BASE_URL}/health`, {
+    method: 'GET',
+    keepalive: true,
+    signal: AbortSignal.timeout(60_000),   // wait up to 60s for cold start
+  }).catch(() => { /* silent — warmup only */ });
+}
+
 export async function analyzeResume(fileOrObj, maybeJobDesc, maybeApiKey) {
   let file;
   let jobDescription;
@@ -42,8 +55,14 @@ export async function analyzeResume(fileOrObj, maybeJobDesc, maybeApiKey) {
       method: 'POST',
       headers: headers,
       body: formData,
+      signal: AbortSignal.timeout(45000),
     });
-  } catch {
+  } catch (err) {
+    if (err.name === 'TimeoutError' || err.name === 'AbortError') {
+      throw new Error(
+        'The analysis request timed out. If the server was waking up, it should be ready now — please click Analyze again.'
+      );
+    }
     throw new Error(
       'Could not connect to the analysis server. Please verify that the backend is running at ' +
         API_BASE_URL
