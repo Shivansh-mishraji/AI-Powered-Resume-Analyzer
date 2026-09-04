@@ -1,6 +1,22 @@
+<div align="center">
+
+# 🚀 AI-Powered Resume & Job Description Analyzer
+### *Hybrid AI Career Intelligence Platform & ATS Semantic Analyzer*
+
+[![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![React](https://img.shields.io/badge/React_19-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
+[![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
+[![Python](https://img.shields.io/badge/Python_3.13-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![Gemini AI](https://img.shields.io/badge/Google_Gemini-BYOK_Enabled-orange?style=for-the-badge&logo=google&logoColor=white)](https://ai.google.dev/)
+[![Pytest](https://img.shields.io/badge/Pytest-29_Tests_Passed-success?style=for-the-badge&logo=pytest&logoColor=white)](https://docs.pytest.org/)
+[![CI](https://github.com/Shivansh-mishraji/AI-Powered-Resume-Analyzer/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/Shivansh-mishraji/AI-Powered-Resume-Analyzer/actions/workflows/ci.yml)
+
+<br/>
+
+<img src="./assets/architecture_banner.jpg" alt="AI Resume Analyzer Architecture" width="100%" style="border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.4);" />
 
 <p align="center">
-  <img src="assets/banner.jpg" alt="AI-Powered Resume Analyzer Banner" width="100%"/>
+  <b>Upload your resume (PDF/DOCX) + Job Description + Optional Gemini API Key → Deep Semantic Matching, Skill Gaps, Strengths, Weaknesses, and Actionable AI Suggestions!</b>
 </p>
 
 <p align="center">
@@ -19,56 +35,111 @@
 
 ## 👥 Team
 
-| Member | Role | GitHub |
+Job hunting is competitive, and standard keyword matchers fail to understand real-world engineering context (e.g. recognizing that *AWS ECS + Terraform* fulfills *Container Orchestration & IaC*).
+
+The **AI-Powered Resume Analyzer** is a **Hybrid AI Intelligence Platform**:
+1. 🤖 **Primary Engine (Google Gemini AI via BYOK):** Performs deep contextual semantic matching, dynamic skill extraction, candidate profiling, strengths & weaknesses analysis, and personalized resume improvement advice.
+2. ⚙️ **Fallback Engine (Deterministic Rule-Based Analyzer):** If an API key is unprovided or AI service is unavailable, automatically falls back to our fast, 29-test-verified keyword extraction and set-intersection scoring engine.
+3. 📄 **Secure In-Memory Parsing:** Parses PDF (`PyMuPDF` with block sorting) and DOCX directly in memory with zero disk persistence.
+4. 🔐 **Privacy-First BYOK Model:** Users can provide their own Google Gemini API key. The key stays strictly in React component memory and is never logged or stored by the backend.
+5. 📊 **Unified Data Contract:** Both AI and Fallback engines return a standardized JSON response, ensuring zero frontend crashes.
+
+---
+
+## 🔬 System Architecture Flow
+
+```
+                      👤 USER
+                         │
+                         ▼
+                🎨 REACT FRONTEND
+                         │
+         ┌───────────────┼───────────────┐
+         ▼               ▼               ▼
+    📄 Resume       📋 Job JD       🔑 Gemini Key
+    (PDF/DOCX)                        (Optional)
+         │               │               │
+         └───────────────┼───────────────┘
+                         ▼
+                ⚙️ FASTAPI BACKEND
+                         │
+                  🛡️ VALIDATION
+             (File Size ≤ 5MB, MIME)
+                         │
+                  📄 RESUME PARSER
+             (In-Memory Stream, sort=True)
+                         │
+                  🧹 TEXT CLEANER
+                         │
+                🔀 ANALYSIS ROUTER
+                         │
+                API Key Available?
+                 /              \
+               YES              NO
+                │                │
+                ▼                ▼
+          🤖 GEMINI AI     ⚙️ RULE ENGINE
+            PRIMARY          FALLBACK
+          (Structured)     (Deterministic)
+                │                │
+                └───────┬────────┘
+                        ▼
+             📋 UNIFIED RESULT SCHEMA
+                        │
+                        ▼
+                📊 REACT DASHBOARD
+```
+
+---
+
+## 👥 The Dream Team & Role Breakdown
+
+Our project is divided among 4 specialized members following Agile/Scrum engineering workflows:
+
+<div align="center">
+
+| Member | Role | GitHub Profile |
 |---|---|---|
-| **Shivansh Mishra** | Team Lead · Backend Architecture & AI Integration | [@Shivansh-mishraji](https://github.com/Shivansh-mishraji) |
-| **Harshvardhan Sisodiya** | Frontend Development & UI/UX Design | [@harsh123-code](https://github.com/harsh123-code) |
-| **Vishal Patel** | QA Lead · Testing & Security | [@patelvishal-ji](https://github.com/patelvishal-ji) |
-| **Sujeet Kannaujiya** | Research Lead & Technical Documentation | [@sujeet-official](https://github.com/sujeet-official) |
+| **Shivansh Mishra** | Backend Lead + AI Engineer + Scrum Master | [@Shivansh-mishraji](https://github.com/Shivansh-mishraji) |
+| **Harshvardhan Sisodiya** | Frontend Developer (UI/UX) | [@harsh123-code](https://github.com/harsh123-code) |
+| **Vishal Patel** | Testing & QA Automation Specialist | [@patelvishal-ji](https://github.com/patelvishal-ji) |
+| **Sujeet Kannaujiya** | Research Lead & Technical Writer | [@sujeet-official](https://github.com/sujeet-official) |
+
+</div>
 
 ---
 
 ## 🖥️ Dashboard Preview
 
-<p align="center">
-  <img src="assets/dashboard.jpg" alt="Results Dashboard - Score Gauge, Skill Matrix, AI Insights" width="100%"/>
-</p>
-
-> The results dashboard shows your **Match Score** as an animated radial gauge, a **Skill Matrix** with matched/missing skills, and **AI Insights** with Strengths, Gaps, and Recommendations.
-
----
-
-## 📱 Mobile Responsive
-
-<p align="center">
-  <img src="assets/mobile.jpg" alt="Mobile View - Resume Analyzer on Smartphone" width="350px"/>
-</p>
-
-> Fully responsive across all screen sizes. Mobile users get a slide-out navigation drawer triggered by the **☰** hamburger menu.
+#### ⚡ **Shivansh Mishra** — *Backend & AI Lead*
+* ✅ **Done:** Built FastAPI backend architecture, in-memory PDF/DOCX binary parsers, text cleaner service, skill extractor, score calculator, and CI workflow.
+* 🔄 **Doing Now:** Building the central `config.py`, unified Pydantic schemas, `rule_based_service.py`, `ai_service.py` (Gemini rubric), and `analysis_service.py` router.
+* 🚀 **Will Do:** Production CORS hardening and deployment on Render.
 
 ---
 
-## ✨ Features
-
-- 📄 **Resume Upload** — PDF and DOCX supported, drag-and-drop or click
-- 📋 **Job Description Input** — Paste any JD with quick-fill role templates
-- 🤖 **Gemini AI Analysis** — 7-rubric semantic scoring using Google Gemini 2.5 Flash
-- 🔄 **Smart Fallback** — Auto-switches to rule-based engine if no API key provided
-- 🔑 **BYOK** — Bring Your Own Key. No API keys ever stored on the server
-- 📊 **Animated Score Dashboard** — Radial gauge, KPI tiles, skill matrix
-- 💡 **Improvement Suggestions** — AI-generated resume rewrites *(Week 6 — Coming Soon)*
-- 🕸️ **Radar Chart** — Visual skills coverage map *(Week 6 — Coming Soon)*
-- 📦 **Batch Mode** — Rank up to 5 resumes against one JD *(Week 7 — Coming Soon)*
-- 📈 **Industry Benchmarking** — Compare score vs. industry average *(Week 7 — Coming Soon)*
-- 📱 **Fully Responsive** — Mobile drawer + Desktop sidebar layout
+#### 🎨 **Harshvardhan Sisodiya** — *Frontend Developer*
+* ✅ **Done:** Built the React + Vite frontend layout, dark glassmorphism styling, drag-and-drop file upload, and animated score gauge.
+* 🔄 **Doing Now:** Adding the in-memory BYOK Gemini API key input (`type="password"` with show/hide), loading state debounce, and AI insight cards.
+* 🚀 **Will Do:** Build production bundle and deploy frontend on Vercel.
 
 ---
 
-## 🏗️ Architecture
+#### 🧪 **Vishal Patel** — *Testing & QA Specialist*
+* ✅ **Done:** Created automated test suite (29/29 passing tests) and `testing/run_tests.py` QA test runner with narrative audit reports.
+* 🔄 **Doing Now:** Writing unit tests for the AI service (`test_ai_service.py` with mocks) and Analysis Router (`test_analysis_service.py` for schema parity).
+* 🚀 **Will Do:** Execute manual edge-case testing (scanned PDFs, corrupted files, rate limits) and sign off on final QA audit trail.
 
-<p align="center">
-  <img src="assets/architecture.jpg" alt="System Architecture Diagram" width="420px"/>
-</p>
+---
+
+#### 📚 **Sujeet Kannaujiya** — *Research & Documentation*
+* ✅ **Done:** Authored [`API_REFERENCE.md`](./docs/API_REFERENCE.md), [`ARCHITECTURE.md`](./docs/ARCHITECTURE.md), and [`RESEARCH.md`](./docs/RESEARCH.md).
+* 🔄 **Doing Now:** Updating all technical documentation for the Hybrid AI Architecture, security guidelines, and schema contracts.
+* 🚀 **Will Do:** Final documentation synchronization, viva cheat sheets, and project presentation slides.
+
+---
+
+## 🗺️ 6-Week Project Roadmap
 
 ```
 📄 Resume (PDF/DOCX) + 📋 Job Description
@@ -93,92 +164,26 @@
    🖥️ Interactive Results Dashboard
 ```
 
----
-
-## 🛠️ Tech Stack
-
-| Layer | Technology | Version |
-|-------|-----------|---------|
-| AI Engine | Google Gemini 2.5 Flash | Latest |
-| Backend | Python + FastAPI | 3.12 / 0.115+ |
-| PDF Parsing | PyMuPDF (fitz) | 1.24+ |
-| DOCX Parsing | python-docx | 1.1+ |
-| Data Validation | Pydantic v2 | 2.x |
-| Frontend | React | 19 |
-| Build Tool | Vite | 6.x |
-| HTTP Client | Axios | 1.x |
-| Testing | pytest + pytest-asyncio | Latest |
-| CI/CD | GitHub Actions | — |
+### ✅ Completed Sprints (Weeks 1 – 4)
+- [x] **Week 1 (Foundation):** FastAPI backend initialized, `/health` endpoint, strict PDF/DOCX validation, initial React Vite frontend.
+- [x] **Week 2 (Text Cleaning & Skill Extraction):** In-memory text extraction, regex text normalization, and 50+ tech skills dictionary.
+- [x] **Week 3 (Scoring & Full-Stack Integration):** Set-intersection score calculator, connected `POST /analyze`, 29 unit tests passing.
+- [x] **Week 4 (UI Overhaul, QA & CI/CD):** Glassmorphic dark mode UI, radial score gauge, QA test audit logging system, and GitHub Actions CI pipeline.
 
 ---
 
-## 🚀 Getting Started
+### 🔄 Active Sprint (Week 5 — Hybrid Gemini AI Upgrade)
+- [ ] **Phase 1 (Docs First):** Comprehensive documentation update for Hybrid AI & BYOK model.
+- [ ] **Phases 2 – 9 (Backend & AI):** Central configuration, unified Pydantic response contract, Gemini AI service with rubric scoring, and analysis router.
+- [ ] **Phases 10 – 11 (Testing):** Mocked AI service unit tests, router fallback tests, and QA audit report update.
+- [ ] **Phases 12 – 13 (Frontend):** In-memory BYOK key input, AI/Fallback status indicators, and candidate strengths/weaknesses/suggestions display.
 
 ### Prerequisites
 
-- Python 3.12+
-- Node.js 20+
-- A free Google Gemini API key → [Get one here](https://aistudio.google.com/app/apikey)
-
-### 1. Clone the Repository
-
-```bash
-git clone https://github.com/Shivansh-mishraji/AI-Powered-Resume-Analyzer.git
-cd AI-Powered-Resume-Analyzer
-```
-
-### 2. Set Up the Backend
-
-```bash
-cd backend
-
-# Create and activate virtual environment
-python -m venv .venv
-
-# Windows
-.venv\Scripts\activate
-
-# macOS / Linux
-source .venv/bin/activate
-
-# Install dependencies
-pip install -r requirements.txt
-```
-👉 *Backend API Swagger Docs:* **`http://127.0.0.1:8000/docs`**
-
-### 3. Start the Backend Server
-
-```bash
-uvicorn app.main:app --reload --port 8000
-```
-
-✅ Backend running at → `http://127.0.0.1:8000`
-
-Verify:
-```bash
-curl http://127.0.0.1:8000/health
-# {"status": "ok", "timestamp": "..."}
-```
-
-### 4. Set Up & Start the Frontend
-
-```bash
-# Open a new terminal tab
-cd frontend
-npm install
-npm run dev
-```
-👉 *Frontend App Live:* **`http://localhost:5173/`**
-
-✅ Frontend running at → `http://localhost:5173`
-
-### 5. Use the App
-
-1. Open `http://localhost:5173` in your browser
-2. Upload a PDF or DOCX resume
-3. Paste a job description (or use a quick-fill template)
-4. *(Optional)* Enter your Gemini API key for AI-powered analysis
-5. Click **Analyze** — view your score, skill matrix, and AI insights
+### 🚀 Upcoming Sprint (Week 6 — Deployment & Submission)
+- [ ] **Phase 14 (Manual Verification):** Stress testing with real-world resumes, scanned PDFs, and rate limits.
+- [ ] **Phase 15 (Deployment):** Frontend deployed to Vercel, Backend deployed to Render.
+- [ ] **Phase 16 (Final Polish):** Final documentation sync from "Planned" to "Implemented" and viva defense prep.
 
 ---
 
@@ -215,79 +220,97 @@ python run_tests.py
 ```
 AI-Powered-Resume-Analyzer/
 │
-├── backend/                    # FastAPI backend
+├── .github/
+│   └── workflows/
+│       └── ci.yml                  # GitHub Actions CI pipeline
+│
+├── backend/
 │   ├── app/
-│   │   ├── main.py            # App entry point, CORS, routes
-│   │   ├── config.py          # Settings & CORS origins
-│   │   ├── models.py          # Pydantic request/response models
-│   │   ├── routes/
-│   │   │   └── analyze.py     # /analyze, /health endpoints
+│   │   ├── main.py                 # FastAPI application & HTTP Gateway
+│   │   ├── config.py               # Central limits, origins, & constants
+│   │   ├── schemas/
+│   │   │   └── analysis_schema.py  # Unified Pydantic response contract
 │   │   └── services/
-│   │       ├── parser.py      # In-memory PDF/DOCX parser
-│   │       ├── matcher.py     # Rule-based keyword matcher
-│   │       └── gemini.py      # Gemini AI integration
-│   └── requirements.txt
+│   │       ├── resume_parser.py    # In-memory PDF (sort=True) & DOCX parser
+│   │       ├── text_cleaner.py     # Regex-based text normalization
+│   │       ├── skill_extractor.py  # 50+ tech skill keyword matcher
+│   │       ├── score_calculator.py # Set-intersection match score engine
+│   │       ├── rule_based_service.py # Deterministic fallback wrapper
+│   │       ├── ai_service.py       # Google Gemini AI semantic service
+│   │       └── analysis_service.py # Analysis Router & Orchestrator
+│   ├── tests/
+│   │   ├── test_main.py
+│   │   ├── test_analyze.py
+│   │   ├── test_score_calculator.py
+│   │   ├── test_skill_extractor.py
+│   │   ├── test_text_cleaner.py
+│   │   ├── test_ai_service.py      # Mocked Gemini AI tests
+│   │   └── test_analysis_service.py# Router & fallback tests
+│   ├── conftest.py
+│   ├── requirements.txt
+│   └── GUIDELINES.md
 │
-├── frontend/                   # React + Vite frontend
-│   └── src/
-│       ├── App.jsx
-│       ├── components/
-│       │   ├── TopNavBar.jsx
-│       │   ├── Sidebar.jsx
-│       │   ├── Hero.jsx
-│       │   ├── BYOKHub.jsx
-│       │   └── ResultsDashboard.jsx
-│       └── index.css           # Deep Space design system
+├── frontend/
+│   ├── src/
+│   │   ├── App.jsx                 # Main React component (BYOK + AI UI)
+│   │   ├── App.css                 # Dark mode glassmorphism styles
+│   │   └── index.css               # Global typography & variables
+│   ├── index.html
+│   ├── vite.config.js
+│   └── GUIDELINES.md
 │
-├── docs/                       # Documentation
-│   ├── ARCHITECTURE.md
-│   ├── API_REFERENCE.md
-│   └── RESEARCH.md
+├── testing/
+│   ├── run_tests.py                # QA test runner with narrative logs
+│   └── reports/                    # Timestamped test execution history
 │
-├── testing/                    # QA test suite
-├── assets/                     # Screenshots & diagrams
-│   ├── banner.jpg
-│   ├── dashboard.jpg
-│   ├── mobile.jpg
-│   └── architecture.jpg
+├── docs/
+│   ├── API_REFERENCE.md            # Endpoint documentation & payloads
+│   ├── ARCHITECTURE.md             # System architecture & component design
+│   └── RESEARCH.md                 # Technical decisions & algorithmic research
 │
-└── .github/workflows/          # GitHub Actions CI
+├── assets/                         # Architecture diagrams & pipeline visuals
+├── README.md
+└── .gitignore
 ```
 
 ---
 
-## 📅 Project Roadmap
+## ⚡ Quick Start Guide (Run Locally)
 
-| Week | Theme | Status |
-|------|-------|--------|
-| Week 1 | Project Setup & Foundation | ✅ Complete |
-| Week 2 | Core Parsing & Skill Extraction | ✅ Complete |
-| Week 3 | First Full Working Application | ✅ Complete |
-| Week 4 | UI Redesign, Testing & CI/CD | ✅ Complete |
-| Week 5 | Hybrid Gemini AI Upgrade & Full Dashboard | ✅ Complete |
-| Week 6 *(Sep 5)* | Improvement Suggestions + Radar Chart | 🔜 In Progress |
-| Week 7 *(Sep 12)* | Batch Mode + Industry Benchmarking | 🔜 Planned |
-| Week 8 *(Sep 26)* | Final Features + Viva Submission | 🔜 Planned |
+### 1️⃣ Clone the Repository & Checkout Branch
+```bash
+git clone https://github.com/Shivansh-mishraji/AI-Powered-Resume-Analyzer.git
+cd "AI-Powered-Resume-Analyzer"
+git checkout feature/gemini-ai-upgrade
+```
+
+### 2️⃣ Start the Backend Server
+```bash
+cd backend
+python -m venv .venv
+.venv\Scripts\activate      # On macOS/Linux: source .venv/bin/activate
+pip install -r requirements.txt
+python -m uvicorn app.main:app --reload
+```
+👉 *Swagger API Docs:* **`http://127.0.0.1:8000/docs`**
+
+### 3️⃣ Start the Frontend App
+```bash
+# In a new terminal window:
+cd frontend
+npm install
+npm run dev
+```
+👉 *Frontend UI Live:* **`http://localhost:5173/`**
+
+### 4️⃣ Run Automated QA Test Suite
+```bash
+# Run from project root — generates timestamped report in testing/reports/
+python testing/run_tests.py
+```
 
 ---
 
-## 🔒 Privacy & Security
-
-| | |
-|---|---|
-| ✅ Zero disk storage | All file processing in RAM — uploaded files are never saved |
-| ✅ No key storage | Gemini API keys are per-request, never persisted |
-| ✅ No database | Fully stateless backend — no user data retained |
-| ✅ CORS protected | Backend only accepts requests from approved origins |
-
----
-
-## 📄 License
-
-MIT License — free to use, modify, and distribute.
-
----
-
-<p align="center">
-  <em>B.Tech Major Project · Computer Science & Engineering · BBDU Lucknow · 2026</em>
-</p>
+<div align="center">
+  <sub>Built with ❤️ by Shivansh, Harshwardhan, Vishal & Sujeet | Academic Minor Project 2026</sub>
+</div>

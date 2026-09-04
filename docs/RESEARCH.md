@@ -1,143 +1,73 @@
 # Research & Technical Decisions — AI-Powered Resume Analyzer
 
-This document records the key research findings, benchmark results, and technical decisions made during the project.
+> Researched & Documented by: Sujeet Kannaujiya (Research & Documentation Lead)
 
 ---
 
-## 1. PDF Parsing Library Comparison
+## 1. Why Google Gemini for Semantic Analysis?
 
-We evaluated three Python PDF parsing libraries before selecting one.
+We evaluated multiple LLM and NLP options for the primary intelligence engine:
 
-| Library | Avg Time/Page | Text Quality | Reading Order | Memory Usage | Decision |
-|---------|--------------|--------------|---------------|--------------|----------|
-| **PyMuPDF** | ~2.8ms | ✅ Excellent | ✅ `sort=True` | Low | ✅ **Selected** |
-| pdfplumber | ~142ms | Good | ❌ Inconsistent | High | ❌ Rejected |
-| pypdf | ~18ms | Poor | ❌ No control | Medium | ❌ Rejected |
+| Approach | Contextual Reasoning | Structured Output Support | Latency | Infrastructure Cost |
+|---|---|---|---|---|
+| **Google Gemini (Flash)** | ⭐⭐⭐ High | ✅ Built-in Pydantic JSON schema | ~1.0 – 2.0s | $0 (Free Tier / BYOK) |
+| OpenAI GPT-4o-mini | ⭐⭐⭐ High | ✅ Structured Outputs | ~1.5 – 2.5s | Pay-per-token required |
+| Local LLM (Llama 3 / Ollama) | ⭐⭐ Medium | ⚠️ Inconsistent JSON parsing | ~5 – 15s | High RAM/GPU requirement |
+| Traditional NLP (spaCy NER) | ⭐ Low | ❌ Unstructured entities | < 500ms | CPU only |
 
-**Why PyMuPDF?**
-- **50× faster** than pdfplumber per page
-- Correct reading-order reconstruction for multi-column resumes via `sort=True` flag
-- In-memory stream support: `fitz.open(stream=file_bytes, filetype="pdf")` — no disk writes
-- Best handling of special characters in skill names (C++, C#, .NET)
-
----
-
-## 2. Backend Framework Comparison
-
-| Framework | Language | Async | Req/sec (benchmark) | Auto Docs | Decision |
-|-----------|----------|-------|---------------------|-----------|----------|
-| **FastAPI** | Python | ✅ Native | ~24,500 | ✅ OpenAPI | ✅ **Selected** |
-| Flask | Python | ❌ No | ~8,200 | ❌ No | ❌ Rejected |
-| Django REST | Python | Partial | ~6,100 | Partial | ❌ Rejected |
-| Express.js | Node.js | ✅ Yes | ~28,000 | ❌ No | ❌ Rejected |
-
-**Why FastAPI?**
-- Native `async/await` support — perfect for concurrent file processing
-- Automatic Pydantic v2 request validation — type-safe API contracts
-- Built-in Swagger UI at `/docs` for easy testing
-- Team's existing Python expertise aligned with backend stack
+### Key Findings:
+1. **Dynamic Skill Extraction:** Gemini extracts unlisted and emerging technologies dynamically without relying on a static 50-word dictionary.
+2. **Semantic Equivalence:** Understands technical relationships (e.g. *AWS ECS + Terraform* fulfills *Container Orchestration & Infrastructure as Code*).
+3. **Structured Outputs:** Gemini's official `google-genai` SDK supports strict JSON schema mapping via Pydantic (`response_schema=AnalysisResult`), ensuring consistent response structures.
 
 ---
 
-## 3. AI Model Comparison
+## 2. Why Not a 5-Agent Multi-Agent Swarm?
 
-We evaluated three LLM options for resume analysis before selecting one.
+During architectural planning, a Multi-Agent Swarm (Agent 1: Extract, Agent 2: Match, Agent 3: Audit, Agent 4: Rewrite, Agent 5: Prep) was evaluated.
 
-| Model | Cost | Speed | Quality | Structured Output | Privacy | Decision |
-|-------|------|-------|---------|-------------------|---------|----------|
-| **Gemini 2.5 Flash** | Free tier | ~1.2s | Excellent | ✅ JSON mode | BYOK | ✅ **Selected** |
-| GPT-4o-mini | ~$0.01/req | ~1.8s | Excellent | ✅ JSON mode | Stored | ❌ Cost |
-| Llama 3 (Local) | Free | ~8s | Good | ❌ Unreliable | Local | ❌ Speed |
+### Trade-Off Analysis:
 
-**Why Gemini 2.5 Flash?**
-- **Free tier** available via Google AI Studio — zero cost for students
-- Fast inference (~1.2s per analysis)
-- Reliable structured JSON output mode — critical for parsing AI responses
-- BYOK model — users bring their own key, no cost to the project
-
----
-
-## 4. Keyword Matching Algorithm
-
-The deterministic (fallback) matching engine works as follows:
-
-**Formula:**
 ```
-Score = (matched_keywords / total_jd_keywords) × 100
+[Multi-Agent Swarm (Rejected)]
+Request ──> Agent 1 ──> Agent 2 ──> Agent 3 ──> Agent 4 ──> Agent 5 ──> Response
+Latency: 8–15 seconds | Failure Points: 5 sequential network hops | Token Cost: 5x
+
+[Single Unified AI Pipeline (Selected)]
+Request ──> Structured Gemini Call (Rubric-Grounded Prompt) ──> Unified Pydantic Response
+Latency: ~1.5 seconds | Failure Points: 1 hop with 1 retry | Token Cost: 1x
 ```
 
-**Special handling:**
-- Case-insensitive matching — `python` matches `Python`, `PYTHON`
-- Synonym normalization — `ML` → `Machine Learning`, `JS` → `JavaScript`
-- Special character preservation — C++, C#, .NET tokenized correctly using regex
-- Partial match prevention — `Java` does NOT match `JavaScript` (full word boundary)
-
-**Synonym Map (sample):**
-```python
-synonyms = {
-    "ml": "machine learning",
-    "ai": "artificial intelligence",
-    "js": "javascript",
-    "ts": "typescript",
-    "db": "database",
-    "k8s": "kubernetes",
-}
-```
+**Decision:** A single, well-prompted Gemini call with structured JSON schema output provides identical analytical depth with significantly lower latency, lower token overhead, and greater reliability.
 
 ---
 
-## 5. Gemini AI Rubric Design
+## 3. Why the BYOK (Bring Your Own Key) Model?
 
-The AI scoring prompt evaluates resumes on 7 dimensions:
-
-| Rubric | Weight | What It Measures |
-|--------|--------|------------------|
-| Skills Match | High | Technical skills present in resume vs JD |
-| Experience Relevance | High | Work experience alignment with JD requirements |
-| Education Fit | Medium | Degree and certifications match |
-| Communication Clarity | Medium | Writing quality and professional tone |
-| Achievement Quantification | Medium | Numbers, metrics, and measurable results |
-| Industry Keywords | High | ATS-optimized terminology from the JD |
-| Career Progression | Low | Growth trajectory suitability for the role |
-
-**Final score** is a weighted average of all 7 rubric scores (0–100 per rubric).
+1. **Zero Database & Zero Credential Storage:** Eliminates the need to build and maintain user authentication systems, password hashing, and database encryption.
+2. **Privacy Preservation:** The API key is stored only in React component memory for the current browser session and is discarded immediately after request processing.
+3. **Sustainability:** Eliminates API hosting costs for the project maintainer while allowing any user to test the application using their personal Google AI Studio free-tier quota.
 
 ---
 
-## 6. Privacy Architecture — In-Memory Processing
+## 4. Why Preserve the Deterministic Rule-Based Fallback?
 
-**Problem:** Traditional resume analyzers save uploaded files to disk — a major privacy risk.
+No cloud AI API is immune to transient network outages, invalid user keys, or rate limits (HTTP 429). 
 
-**Our solution:** Pure in-memory stream processing.
-
-```python
-# PDF — never touches disk
-file_bytes = await file.read()
-doc = fitz.open(stream=file_bytes, filetype="pdf")
-
-# DOCX — never touches disk
-docx_stream = io.BytesIO(file_bytes)
-doc = Document(docx_stream)
-```
-
-**Benefits:**
-- No uploaded files ever written to server storage
-- File data exists only in RAM during the request lifecycle
-- Automatically garbage collected after response is sent
-- Zero GDPR/data retention risk
+Preserving our 29-test-verified **Regex Keyword Extractor & Set-Intersection Calculator** guarantees that:
+* The application **never crashes or returns a dead screen**.
+* If AI analysis is unavailable, the user receives an honest, transparent rule-based match score accompanied by an explanatory warning in the response payload.
 
 ---
 
-## 7. Responsive Design Research
+## 5. Technical Limits & Boundary Decisions
 
-We analyzed 10 resume analyzer tools (Jobscan, Resumeworded, Zety, etc.) and found:
+To protect the server from memory bloat and malicious payloads, the following constraints are enforced:
 
-- **68% had no mobile support** — resume uploads failed on phones
-- **All used light themes** — poor readability in low-light conditions
-- **None used glassmorphism** — all felt dated (2018–2020 design language)
-
-**Our design decisions based on research:**
-- Dark Deep Space theme — modern, reduces eye strain, stands out
-- Glassmorphism cards — premium, trendy 2024–2025 design language
-- Mobile-first responsive layout — hamburger drawer navigation
-- Emerald + Amber palette — high contrast, accessible, distinctive
+| Parameter | Limit | Rationale |
+|---|---|---|
+| `MAX_FILE_SIZE_BYTES` | `5 MB` | Ample for any standard PDF/DOCX resume while preventing RAM exhaustion. |
+| `MAX_PDF_PAGES` | `10 Pages` | Rejects multi-volume thesis documents; typical resumes are 1–3 pages. |
+| `MIN_EXTRACTED_CHARS` | `50 Chars` | Detects scanned image PDFs that contain no selectable text layer. |
+| `MAX_RESUME_CHARS` | `15,000 Chars` | Bounds the LLM prompt payload; resumes exceeding this are truncated with a warning. |
+| `MAX_JD_CHARS` | `5,000 Chars` | Prevents overly long job description submissions. |

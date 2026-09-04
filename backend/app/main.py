@@ -1,65 +1,60 @@
-from fastapi import FastAPI, UploadFile, File, Form, HTTPException
+from fastapi import FastAPI, UploadFile, File, Form, Header, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from typing import Optional
+
+from app.config import (
+    ALLOWED_MIME_TYPES,
+    ALLOWED_CORS_ORIGINS,
+    MAX_FILE_SIZE_BYTES
+)
+from app.schemas.analysis_schema import AnalysisResult
 from app.services.resume_parser import extract_text_from_pdf, extract_text_from_docx
-from app.services.skill_extractor import extract_skills
-from app.services.score_calculator import calculate_score
-import os
+from app.services.analysis_service import analyze_resume_content
+from app.services.ai_service import GeminiAuthError, GeminiRateLimitError
 
 app = FastAPI(
-    title="AI Resume Analyzer",
-    description="Analyze resumes against job descriptions",
-    version="1.0.0"
+    title="AI-Powered Resume Analyzer",
+    description="Hybrid AI and Deterministic Resume & Job Description Semantic Analyzer",
+    version="2.0.0"
 )
 
-# CORS — allow local dev + Vercel production frontend
-ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-    "https://ai-powered-resume-analyzer.vercel.app",
-    "https://ai-powered-resume-analyzer-pi.vercel.app",
-    "https://ai-powered-resume-analyzer-shivansh-mishraji.vercel.app",
-    os.getenv("FRONTEND_URL", ""),
-]
-
+# Configure CORS for frontend access
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[o for o in ALLOWED_ORIGINS if o],
+    allow_origins=ALLOWED_CORS_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"],
+    allow_headers=["*", "X-Gemini-API-Key"],
 )
 
 @app.get("/health")
 def health_check():
+    """Health check endpoint to verify backend operational status."""
     return {"status": "ok"}
-
-
-ALLOWED_TYPES = {
-    "application/pdf",
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-}
 
 @app.post("/resume/upload")
 async def upload_resume(file: UploadFile = File(...)):
-    if file.content_type not in ALLOWED_TYPES:
+    """Extracts raw text from an uploaded resume file in memory."""
+    if file.content_type not in ALLOWED_MIME_TYPES:
         raise HTTPException(
             status_code=400,
-            detail=f"Invalid file type {file.content_type}. Only PDF and DOCX files are allowed."
+            detail=f"Invalid file type '{file.content_type}'. Only PDF and DOCX files are allowed."
         )
-    # Read binary contents of the uploaded file
+
     file_bytes = await file.read()
-
-    # Extract text based on file type
-    if file.content_type == "application/pdf":
-        extracted_text = extract_text_from_pdf(file_bytes)
-    else:
-        extracted_text = extract_text_from_docx(file_bytes)
-
-    if not extracted_text:
+    if len(file_bytes) > MAX_FILE_SIZE_BYTES:
         raise HTTPException(
-            status_code=400,
-            detail="Could not extract any readable text from the file."
+            status_code=413,
+            detail="Uploaded file exceeds the maximum allowed size of 5 MB."
         )
+
+    try:
+        if file.content_type == "application/pdf":
+            extracted_text = extract_text_from_pdf(file_bytes)
+        else:
+            extracted_text = extract_text_from_docx(file_bytes)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
     return {
         "filename": file.filename,
@@ -68,18 +63,22 @@ async def upload_resume(file: UploadFile = File(...)):
         "preview": extracted_text[:200]
     }
 
-#-------------------------------------------------------------
-
-@app.post("/analyze")
+@app.post("/analyze", response_model=AnalysisResult)
 async def analyze_resume(
     resume: UploadFile = File(...),
-    job_description: str = Form(...)
+    job_description: str = Form(...),
+    x_gemini_api_key: Optional[str] = Header(None, alias="X-Gemini-API-Key")
 ):
-    if resume.content_type not in ALLOWED_TYPES:
+    """
+    Analyzes an uploaded resume against a job description.
+    Uses Gemini AI if X-Gemini-API-Key is provided, with graceful fallback to rule-based engine.
+    """
+    if resume.content_type not in ALLOWED_MIME_TYPES:
         raise HTTPException(
             status_code=400,
-            detail=f"Invalid file type. Only PDF and DOCX allowed."
+            detail="Invalid file type. Only PDF and DOCX documents are allowed."
         )
+
     if not job_description.strip():
         raise HTTPException(
             status_code=400,
@@ -87,28 +86,31 @@ async def analyze_resume(
         )
 
     file_bytes = await resume.read()
-
-    if resume.content_type == "application/pdf":
-        resume_text = extract_text_from_pdf(file_bytes)
-    else:
-        resume_text = extract_text_from_docx(file_bytes)
-
-    if not resume_text:
+    if len(file_bytes) > MAX_FILE_SIZE_BYTES:
         raise HTTPException(
-            status_code=400,
-            detail="Could not extract text from resume."
+            status_code=413,
+            detail="Uploaded file exceeds the maximum allowed size of 5 MB."
         )
 
-    resume_skills = extract_skills(resume_text)
-    jd_skills = extract_skills(job_description)
-    score_result = calculate_score(resume_skills, jd_skills)
+    try:
+        if resume.content_type == "application/pdf":
+            resume_text = extract_text_from_pdf(file_bytes)
+        else:
+            resume_text = extract_text_from_docx(file_bytes)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
-    return {
-        "filename": resume.filename,
-        "resume_skills": resume_skills,
-        "jd_skills": jd_skills,
-        "score": score_result["score"],
-        "matched_skills": score_result["matched_skills"],
-        "missing_skills": score_result["missing_skills"],
-        "total_jd_skills": score_result["total_jd_skills"]
-    }
+    try:
+        result = analyze_resume_content(
+            resume_text=resume_text,
+            job_description=job_description,
+            api_key=x_gemini_api_key,
+            filename=resume.filename or "resume.pdf"
+        )
+        return result
+    except GeminiAuthError as e:
+        raise HTTPException(status_code=401, detail=str(e))
+    except GeminiRateLimitError as e:
+        raise HTTPException(status_code=429, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Analysis processing error: {str(e)}")

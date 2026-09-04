@@ -1,160 +1,160 @@
 # System Architecture — AI-Powered Resume Analyzer
 
-## Overview
-
-The AI-Powered Resume Analyzer is a full-stack web application built with a clean separation of concerns. The backend is a stateless Python FastAPI service, the frontend is a React 19 SPA, and Google Gemini 2.5 Flash provides the AI intelligence layer.
+> Documented by: Sujeet Kannaujiya (Research & Documentation Lead)
 
 ---
 
-## High-Level Architecture
+## 🏛️ High-Level System Architecture
+
+The AI-Powered Resume Analyzer implements a **Hybrid AI & Deterministic Architecture** using a Bring-Your-Own-Key (BYOK) model. 
 
 ```
-┌─────────────────────────────────────────────────────┐
-│                   USER BROWSER                       │
-│              http://localhost:5173                   │
-│                                                      │
-│  ┌──────────┐  ┌─────────┐  ┌───────────────────┐  │
-│  │ TopNavBar│  │ Sidebar │  │      Hero Panel    │  │
-│  │ (fixed)  │  │ (260px) │  │  Upload + JD Input │  │
-│  └──────────┘  └─────────┘  └───────────────────┘  │
-│                              ┌───────────────────┐  │
-│                              │ Results Dashboard  │  │
-│                              │ Gauge | KPI | Grid │  │
-│                              └───────────────────┘  │
-└────────────────────┬────────────────────────────────┘
-                     │  HTTP POST /analyze
-                     │  Header: X-Gemini-API-Key
-                     ▼
-┌─────────────────────────────────────────────────────┐
-│               FASTAPI BACKEND                        │
-│              http://127.0.0.1:8000                   │
-│                                                      │
-│  ┌──────────────────────────────────────────────┐   │
-│  │               Request Pipeline               │   │
-│  │  1. Validate file type (PDF/DOCX only)       │   │
-│  │  2. Check file size (≤ 5MB)                  │   │
-│  │  3. Extract API key from header              │   │
-│  └──────────────────┬───────────────────────────┘   │
-│                     │                               │
-│  ┌──────────────────▼───────────────────────────┐   │
-│  │           In-Memory Parser Service           │   │
-│  │  PDF  → PyMuPDF (fitz.open stream)           │   │
-│  │  DOCX → python-docx (io.BytesIO stream)      │   │
-│  │  ⚠️  Files never written to disk              │   │
-│  └──────────────────┬───────────────────────────┘   │
-│                     │                               │
-│  ┌──────────────────▼───────────────────────────┐   │
-│  │         Text Cleaning & Skill Extraction     │   │
-│  │  - Regex noise removal                        │   │
-│  │  - 50+ keyword dictionary                     │   │
-│  │  - C++/C#/.NET symbol preservation            │   │
-│  │  - Synonym normalization (ML = Machine       │   │
-│  │    Learning, JS = JavaScript)                 │   │
-│  └──────────────────┬───────────────────────────┘   │
-│                     │                               │
-│         ┌───────────▼──────────┐                   │
-│         │   API Key present?   │                   │
-│         └──────┬───────┬───────┘                   │
-│                │ YES   │ NO                         │
-│                ▼       ▼                           │
-│  ┌──────────────┐ ┌──────────────┐                 │
-│  │  Gemini AI   │ │ Rule-Based   │                 │
-│  │  Service     │ │ Matcher      │                 │
-│  │  7-rubric    │ │  keyword /   │                 │
-│  │  scoring     │ │  total × 100 │                 │
-│  └──────┬───────┘ └──────┬───────┘                 │
-│         └───────┬─────────┘                        │
-│                 ▼                                  │
-│  ┌──────────────────────────────────────────────┐   │
-│  │         Unified Pydantic Response            │   │
-│  │  { score, matched_skills, missing_skills,    │   │
-│  │    insights, mode, rubric_scores }           │   │
-│  └──────────────────────────────────────────────┘   │
-└─────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────────────────┐
+│                                 USER                                   │
+│                     (Browser at localhost:5173)                        │
+└───────────────────────────────────┬────────────────────────────────────┘
+                                    │ HTTP POST /analyze
+                                    │ Headers: 'X-Gemini-API-Key' (Optional)
+                                    │ Body: multipart/form-data (Resume, JD)
+                                    ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│                        FRONTEND (React 19 + Vite)                      │
+│                                                                        │
+│   App.jsx                                                              │
+│   ├── In-Memory BYOK Key Input (Password field, zero disk storage)     │
+│   ├── Drag-and-Drop File Upload (PDF / DOCX)                           │
+│   ├── Target Job Description Textarea                                  │
+│   ├── Request Debounce & State Controller                              │
+│   └── Unified Dashboard (Score, Confidence, Skills, AI Insights)       │
+└───────────────────────────────────┬────────────────────────────────────┘
+                                    │ HTTP Request (CORS scoped to origin)
+                                    ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│                        BACKEND (FastAPI + Uvicorn)                     │
+│                                                                        │
+│   HTTP Gateway (`main.py`)                                             │
+│   ├── GET  /health           ──> System health check                   │
+│   └── POST /analyze          ──> Passes request to Analysis Service    │
+│                                                                        │
+│   Configuration Layer (`config.py`)                                    │
+│   ├── MAX_FILE_SIZE_BYTES    ──> 5 MB                                  │
+│   ├── MAX_RESUME_CHARS       ──> 15,000 characters                     │
+│   ├── MAX_JD_CHARS           ──> 5,000 characters                      │
+│   └── ALLOWED_CORS_ORIGINS   ──> Explicit frontend origins             │
+│                                                                        │
+│   Parsing & In-Memory Extraction Layer (`resume_parser.py`)            │
+│   ├── PyMuPDF (`fitz` / `pymupdf`) with `sort=True` block sorting      │
+│   ├── python-docx for Word document streams                            │
+│   └── Scanned PDF detection (rejection if extractable text < 50 chars) │
+│                                                                        │
+│   Analysis Router (`services/analysis_service.py`)                     │
+│   ├── Decides engine execution based on API key availability           │
+│   ├── Calls AI Service (with 1-retry policy for transient errors)      │
+│   └── Triggers Rule-Based Service on missing key or service failure    │
+│                                                                        │
+│   Primary Engine (`services/ai_service.py`)                            │
+│   ├── Google Gemini LLM (via official `google-genai` SDK)              │
+│   ├── Strict Rubric-Grounded System Prompting                          │
+│   └── Structured JSON Output Validation via Pydantic                   │
+│                                                                        │
+│   Fallback Engine (`services/rule_based_service.py`)                   │
+│   ├── Text Cleaner (`text_cleaner.py`)                                 │
+│   ├── 50+ Skill Keyword Extractor (`skill_extractor.py`)               │
+│   └── Set-Intersection Scorer (`score_calculator.py`)                 │
+│                                                                        │
+│   Unified Schema Contract (`schemas/analysis_schema.py`)               │
+│   └── AnalysisResult (Single response format for both engines)         │
+└────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## Data Flow — Step by Step
-
-| Step | Component | Action |
-|------|-----------|--------|
-| 1 | Browser | User drops resume file + pastes JD + optionally enters API key |
-| 2 | React Frontend | Sends `multipart/form-data` POST to `/analyze` with `X-Gemini-API-Key` header |
-| 3 | FastAPI Router | Validates file type, size, extracts text content |
-| 4 | Parser Service | Opens file as byte stream in RAM (never touches disk) |
-| 5 | Cleaner | Strips noise, normalizes text, extracts skills |
-| 6 | Router Logic | If API key present → Gemini AI. Else → Rule-based |
-| 7 | AI/Matcher | Scores resume against JD on 7 rubrics (AI) or keyword ratio (rule) |
-| 8 | Response | Returns unified JSON with score, skills, insights |
-| 9 | Dashboard | Animates score gauge, renders skill matrix, displays insights |
-
----
-
-## Privacy & Security Model
-
-| Concern | Implementation |
-|---------|---------------|
-| **File Storage** | Zero — files read via `fitz.open(stream=bytes)` directly into RAM |
-| **API Key** | Never stored — passed as `X-Gemini-API-Key` header, used in-request only |
-| **User Data** | No database — fully stateless, data lost after response |
-| **CORS** | Configured to only accept `localhost:5173` in dev |
-| **Input Validation** | Pydantic v2 strict models reject malformed requests with `422` |
-| **Text Truncation** | 15,000 char limit prevents LLM token overflow attacks |
-
----
-
-## Dual-Engine Design
-
-The key architectural decision is the **dual-engine fallback system**:
+## 🔄 End-to-End Data Flow (`POST /analyze`)
 
 ```
-User provides API Key?
-    ├── YES → Gemini AI Mode
-    │          7-rubric semantic scoring
-    │          Qualitative insights (strengths, gaps, recommendations)
-    │          Natural language improvement suggestions
-    │
-    └── NO  → Rule-Based Mode (Deterministic)
-               Score = (matched_keywords / total_jd_keywords) × 100
-               Keyword-level skill matching
-               Basic matched/missing skill lists
-               Always works — no external dependency
-```
-
-This ensures **100% uptime** — the app never fails even when the Gemini API is unavailable, over quota, or the user has no key.
-
----
-
-## Responsiveness Architecture (Frontend)
-
-```
-Viewport Width
-│
-├── < 768px   → Mobile
-│               Sidebar hidden
-│               TopNavBar shows ☰ hamburger
-│               Click ☰ → slide-out drawer with navigation
-│               Results in single-column stacked layout
-│
-├── 768–1024px → Tablet
-│               Compact sidebar
-│               2-column results grid
-│
-└── > 1024px   → Desktop
-                Fixed 260px sidebar always visible
-                3-column Bento Grid results layout
+User uploads Resume + pastes Job Description + optional Gemini Key
+                             │
+                             ▼
+     [1. Request Gateway & Validation]
+     ├── Validate Content-Type (application/pdf or docx)
+     ├── Enforce file size limit (≤ 5MB)
+     └── Read binary stream directly into RAM
+                             │
+                             ▼
+     [2. Parsing & Text Normalization]
+     ├── Extract text stream in memory (sort=True)
+     ├── Scanned image check (len(text) ≥ 50 chars)
+     ├── Normalize whitespace & format bounds
+     └── Check text length limits (warn if truncated)
+                             │
+                             ▼
+     [3. Analysis Router Decision]
+                    │
+            API Key Provided?
+             /             \
+           YES              NO
+            │                │
+            ▼                ▼
+     [4. Gemini AI Service]  [4b. Rule-Based Engine]
+     ├── Rubric-based prompt ├── Clean text (regex)
+     ├── Structured JSON     ├── Extract 50+ keywords
+     ├── 1-retry on failure  └── Calculate set score
+     │                       │
+     ├── Success ────┐       │
+     └── Failure ─┐  │       │
+                  │  │       │
+                  ▼  ▼       ▼
+     [5. Unified Result Builder]
+     ├── Maps output to `AnalysisResult` Pydantic model
+     ├── Sets `is_ai_powered`: true / false
+     ├── Sets `analysis_confidence`: "high" | "medium" | "low" | "not_applicable"
+     └── Populates `warnings` array for transparency
+                             │
+                             ▼
+     [6. JSON Response ──> React Dashboard]
 ```
 
 ---
 
-## Technology Decisions
+## 🔐 Security & Privacy Architecture (BYOK Model)
 
-| Decision | Choice | Reason |
-|----------|--------|--------|
-| Backend Framework | FastAPI | Async-native, auto OpenAPI docs, fastest Python framework |
-| PDF Parser | PyMuPDF | 50× faster than pdfplumber, correct reading-order sorting |
-| AI Model | Gemini 2.5 Flash | Free tier, fast inference, structured JSON output support |
-| Frontend | React 19 + Vite | Latest stable, fastest HMR dev experience |
-| No Database | sessionStorage (planned) | Keeps system stateless, privacy-first, no GDPR concerns |
-| BYOK | Per-request header | Zero server-side credential risk |
+1. **In-Memory Lifespan:** The user's Gemini API key is accepted via the `X-Gemini-API-Key` HTTP header. It resides only in temporary process memory for the duration of the request.
+2. **Zero Storage / Zero Logging:** The key is never written to disk, never saved to a database, and never printed in server or access logs.
+3. **Frontend Memory State:** In React, the key is held in component runtime state (`useState`) with an optional clear button. It is not saved in `localStorage`.
+4. **CORS Boundary:** The API only allows requests from verified frontend origins, preventing unauthorized cross-site invocations.
+
+---
+
+## 📦 Unified Data Contract
+
+Both engines return the identical Pydantic schema:
+
+```python
+class AnalysisResult(BaseModel):
+    filename: str
+    score: int                              # 0 to 100
+    is_ai_powered: bool
+    analysis_confidence: Literal["high", "medium", "low", "not_applicable"]
+    candidate_summary: str
+    matched_skills: List[str]
+    missing_skills: List[str]
+    strengths: List[str]                    # Empty list in fallback mode
+    weaknesses: List[str]                   # Empty list in fallback mode
+    suggestions: List[str]                  # Empty list in fallback mode
+    warnings: List[str]
+```
+
+---
+
+## ⚙️ Component Responsibilities
+
+| Component | File Path | Core Responsibility |
+|---|---|---|
+| **Central Config** | `backend/app/config.py` | Constants, thresholds, file bounds, CORS origins. |
+| **Pydantic Schema** | `backend/app/schemas/analysis_schema.py` | Standardized response contract for all engines. |
+| **Resume Parser** | `backend/app/services/resume_parser.py` | In-memory text extraction, reading order sorting, image scan detection. |
+| **Rule-Based Engine** | `backend/app/services/rule_based_service.py` | Deterministic keyword extraction, set-math scoring, fallback schema mapping. |
+| **Gemini AI Service** | `backend/app/services/ai_service.py` | Gemini LLM integration, rubric-grounded prompt, structured JSON validation, 1-retry logic. |
+| **Analysis Router** | `backend/app/services/analysis_service.py` | Orchestration, engine routing, graceful error recovery, fallback tagging. |
+| **HTTP Gateway** | `backend/app/main.py` | FastAPI routes, CORS middleware, multipart request receiving. |
+| **Frontend UI** | `frontend/src/App.jsx` | BYOK key input, debounce handling, unified dashboard visualizer. |

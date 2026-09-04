@@ -1,130 +1,133 @@
 # API Reference — AI-Powered Resume Analyzer
 
-Base URL (Local): `http://127.0.0.1:8000`
+> Documented by: Sujeet Kannaujiya (Research & Documentation Lead)
+
+Base URL: `http://127.0.0.1:8000`
 
 ---
 
 ## Endpoints
 
-### `GET /health`
+### 1. GET `/health`
+Health check endpoint to verify backend operational status.
 
-Check if the backend server is running.
-
-**Request**
-```bash
-curl http://127.0.0.1:8000/health
-```
-
-**Response `200 OK`**
+**Response (200 OK):**
 ```json
 {
-  "status": "ok",
-  "timestamp": "2026-09-03T20:00:00.000Z"
+  "status": "ok"
 }
 ```
 
 ---
 
-### `POST /analyze`
+### 2. POST `/analyze`
+Analyzes a resume against a target job description using either the **Google Gemini AI Engine** (if API key provided) or the **Deterministic Rule-Based Engine** (fallback mode).
 
-Submit a resume and job description for full AI-powered analysis.
+#### Request Headers:
+| Header | Type | Required | Description |
+|---|---|---|---|
+| `X-Gemini-API-Key` | string | ❌ Optional | User's Google Gemini API Key for AI semantic analysis (BYOK). |
 
-**Request Headers**
-
-| Header | Required | Description |
-|--------|----------|-------------|
-| `Content-Type` | Yes | `multipart/form-data` |
-| `X-Gemini-API-Key` | No | Your Google Gemini API key. If omitted, rule-based fallback is used |
-
-**Request Body (multipart/form-data)**
-
+#### Request Body (`multipart/form-data`):
 | Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `file` | File | Yes | Resume file — PDF or DOCX, max 5MB |
-| `job_description` | string | Yes | Full job description text |
+|---|---|---|---|
+| `resume` | File | ✅ Required | PDF or DOCX file (Max 5MB, max 10 pages). |
+| `job_description` | string | ✅ Required | Target job description text (Max 5,000 characters). |
 
-**Example Request**
-```bash
-curl -X POST http://127.0.0.1:8000/analyze \
-  -H "X-Gemini-API-Key: YOUR_GEMINI_KEY" \
-  -F "file=@resume.pdf" \
-  -F "job_description=We are looking for a Python developer with FastAPI and SQL experience..."
-```
+---
 
-**Response `200 OK` — AI Mode**
+### Success Responses (200 OK)
+
+#### Scenario A: AI-Powered Mode (Valid Key Provided)
 ```json
 {
-  "score": 87,
-  "mode": "ai",
-  "matched_skills": ["Python", "FastAPI", "SQL", "React", "Docker"],
-  "missing_skills": ["Kubernetes", "Go"],
-  "rubric_scores": {
-    "skills_match": 90,
-    "experience_relevance": 85,
-    "education_fit": 80,
-    "communication_clarity": 88,
-    "achievement_quantification": 75,
-    "industry_keywords": 92,
-    "career_progression": 87
-  },
-  "insights": {
-    "strengths": [
-      "Strong backend skills with Python and FastAPI",
-      "Solid database experience with SQL"
-    ],
-    "gaps": [
-      "Missing container orchestration skills (Kubernetes)",
-      "No Go language experience mentioned"
-    ],
-    "recommendations": [
-      "Add Kubernetes certification or project to your resume",
-      "Quantify achievements with metrics (e.g., reduced load time by 30%)"
-    ]
-  }
+  "filename": "john_doe_resume.pdf",
+  "score": 88,
+  "is_ai_powered": true,
+  "analysis_confidence": "high",
+  "candidate_summary": "Strong backend developer with 3+ years of experience in Python, FastAPI, and PostgreSQL. Demonstrates relevant cloud deployment and containerization expertise.",
+  "matched_skills": [
+    "Python",
+    "FastAPI",
+    "Docker",
+    "PostgreSQL",
+    "REST APIs",
+    "CI/CD"
+  ],
+  "missing_skills": [
+    "Kubernetes",
+    "Redis"
+  ],
+  "strengths": [
+    "Direct hands-on experience architecting scalable REST APIs using FastAPI.",
+    "Demonstrated database design and optimization with PostgreSQL.",
+    "Active CI/CD automation experience matching job requirements."
+  ],
+  "weaknesses": [
+    "No direct evidence of Kubernetes container orchestration found in resume.",
+    "Lacks mentioned experience with Redis in-memory caching."
+  ],
+  "suggestions": [
+    "Add a bullet point explaining your experience with container orchestration or Docker Compose.",
+    "Highlight any caching strategies or performance optimizations implemented in your backend projects."
+  ],
+  "warnings": []
 }
 ```
 
-**Response `200 OK` — Rule-Based Fallback Mode**
+#### Scenario B: Fallback Mode (No Key / AI Unavailable)
 ```json
 {
-  "score": 72,
-  "mode": "rule-based",
-  "matched_skills": ["Python", "FastAPI", "SQL"],
-  "missing_skills": ["Kubernetes", "Go", "React", "Docker"],
-  "rubric_scores": null,
-  "insights": {
-    "strengths": [],
-    "gaps": [],
-    "recommendations": []
-  }
+  "filename": "john_doe_resume.pdf",
+  "score": 75,
+  "is_ai_powered": false,
+  "analysis_confidence": "not_applicable",
+  "candidate_summary": "Analyzed using deterministic rule-based keyword matching engine.",
+  "matched_skills": [
+    "Docker",
+    "Fastapi",
+    "Python"
+  ],
+  "missing_skills": [
+    "Kubernetes"
+  ],
+  "strengths": [],
+  "weaknesses": [],
+  "suggestions": [],
+  "warnings": [
+    "No Gemini API key provided. Ran deterministic rule-based analysis."
+  ]
 }
 ```
 
 ---
 
-## Error Responses
+## Standard Error Codes
 
-| Status Code | Meaning | When It Happens |
-|-------------|---------|-----------------|
-| `400` | Bad Request | File is corrupted, unreadable, or scanned-only PDF with no text |
-| `401` | Unauthorized | Provided Gemini API key is invalid or expired |
-| `413` | Payload Too Large | Uploaded file exceeds 5MB size limit |
-| `422` | Unprocessable Entity | Missing required fields (no file or no job description) |
-| `429` | Too Many Requests | Gemini API rate limit exceeded — system retries, then falls back |
-| `500` | Internal Server Error | Unexpected server-side error |
-
-**Example Error Response**
-```json
-{
-  "detail": "File type not supported. Please upload a PDF or DOCX file."
-}
-```
+| Status Code | Error Message / Scenario | Reason |
+|---|---|---|
+| `400 Bad Request` | `Invalid file type. Only PDF and DOCX allowed.` | Uploaded file MIME type or extension is invalid. |
+| `400 Bad Request` | `Job description cannot be empty.` | Job description text contains only whitespace. |
+| `400 Bad Request` | `The uploaded document appears to be an image scan.` | PDF extractable text is under the minimum threshold (50 chars). |
+| `413 Payload Too Large` | `File size exceeds the 5MB limit.` | Uploaded resume file is larger than 5,242,880 bytes. |
+| `422 Unprocessable Entity` | `Validation error in request payload.` | Form data format is invalid or missing required keys. |
+| `429 Too Many Requests` | `Gemini API rate limit reached.` | User's free-tier Gemini API key exceeded request quota. |
+| `500 Internal Server Error` | `Unexpected server error occurred.` | Unhandled internal exception occurred. |
 
 ---
 
-## Notes
+## Response Field Definitions
 
-- **BYOK**: The `X-Gemini-API-Key` header is used per-request and never stored server-side.
-- **Fallback**: If the key is missing, invalid, or Gemini returns `429/5xx`, the system automatically falls back to rule-based scoring.
-- **Text Limit**: Resume text is truncated to 15,000 characters before sending to Gemini to prevent token overflow.
-- **File Privacy**: Uploaded files are processed entirely in RAM and never saved to disk.
+| Field | Type | Description |
+|---|---|---|
+| `filename` | string | Original filename of the uploaded resume. |
+| `score` | integer | Contextual or set-based match score between 0 and 100. |
+| `is_ai_powered` | boolean | `true` if processed by Google Gemini; `false` if rule-based fallback. |
+| `analysis_confidence` | string | `high`, `medium`, `low` (for AI mode) or `not_applicable` (for fallback). |
+| `candidate_summary` | string | 2-3 sentence overview of candidate profile and role alignment. |
+| `matched_skills` | array of strings | Skills required by JD that the candidate possesses. |
+| `missing_skills` | array of strings | Critical skills/qualifications required by JD absent from resume. |
+| `strengths` | array of strings | Key competitive advantages for this specific role. |
+| `weaknesses` | array of strings | Specific gaps or missing qualifications for this role. |
+| `suggestions` | array of strings | Actionable resume optimization advice without hallucinating facts. |
+| `warnings` | array of strings | Non-blocking alerts (e.g. text truncation, fallback trigger reason). |
