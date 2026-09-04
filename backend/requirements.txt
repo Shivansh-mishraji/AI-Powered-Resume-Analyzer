@@ -7,3 +7,5 @@ pytest
 httpx
 python-multipart
 google-genai
+openai
+anthropic
