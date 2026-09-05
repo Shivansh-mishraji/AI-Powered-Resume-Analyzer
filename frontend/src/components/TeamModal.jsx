@@ -1,143 +1,179 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 const TEAM_CARDS = [
   {
     id: 'shivansh',
+    number: '01',
     isLeader: true,
-    tabLabel: '👑 Shivansh (Lead)',
+    tabLabel: '👑 Shivansh',
     badgeText: '👑 Team Leader & Principal Architect',
     name: 'Shivansh Mishra',
     initials: 'SM',
     avatar: 'https://github.com/Shivansh-mishraji.png',
     role: 'Team Lead • Backend & AI System Architect',
-    title: 'Principal System Architect',
     themeColor: 'text-secondary',
-    borderClass: 'border-secondary/60',
-    glowClass: 'shadow-glow-cyan',
-    ringClass: 'ring-4 ring-secondary/50',
+    borderClass: 'border-secondary/70',
+    glowClass: 'shadow-[0_0_40px_rgba(56,189,248,0.35)]',
+    ringClass: 'ring-4 ring-secondary/70 shadow-glow-cyan',
+    orbBg: 'bg-secondary',
     badgeClass: 'bg-secondary/20 border-secondary/60 text-secondary',
-    accentGradient: 'from-secondary/20 via-surface-container/95 to-primary/15',
-    avatarBg: 'from-cyan-400 via-teal-500 to-blue-600',
+    verticalBg: 'from-secondary/15 via-surface-card/95 to-primary/10',
     github: 'https://github.com/Shivansh-mishraji',
     email: 'tgsmishra@gmail.com',
     summary:
-      'Conceived, engineered, and steered the complete system architecture: FastAPI REST Gateway, Multi-Provider AI Rubric Engine, in-memory PDF/DOCX byte streaming with zero disk persistence, deterministic fallback orchestration, and production deployments on Render & Vercel.',
-    modules: [
-      'FastAPI REST Gateway, Routing & CORS Security Architecture',
-      'Multi-Provider AI Engine (Gemini 2.5/3.6, GPT-4o, Claude 3.5, Groq)',
-      'In-Memory PyMuPDF Document Streaming (sort=True) & Zero Disk Retention',
-      'Deterministic Rule-Based Fallback Orchestration & System Reliability',
+      'Conceived, engineered, and steered the complete platform architecture: FastAPI REST Gateway, Multi-Provider AI Rubric Engine, in-memory zero-disk document streaming, and production cloud deployments on Render & Vercel.',
+    deliverables: [
+      { icon: 'bolt', text: 'FastAPI REST Gateway & Routing Architecture' },
+      { icon: 'psychology', text: 'Multi-Provider AI Engine (Gemini 3.6, GPT-4o, Claude)' },
+      { icon: 'memory', text: 'In-Memory Zero-Disk PyMuPDF Stream (sort=True)' },
+      { icon: 'shield', text: 'Deterministic Rule-Based Fallback Orchestration' },
     ],
-    techStack: ['Python 3.13', 'FastAPI', 'Gemini 3.6', 'PyMuPDF', 'Pydantic', 'Render Cloud', 'REST Gateway'],
+    techStack: ['Python 3.13', 'FastAPI', 'Gemini 3.6', 'PyMuPDF', 'Pydantic', 'Render Cloud'],
   },
   {
     id: 'harshvardhan',
+    number: '02',
     isLeader: false,
-    tabLabel: '🎨 Harshvardhan (Frontend)',
+    tabLabel: '🎨 Harshvardhan',
     badgeText: '🎨 Frontend Architect & UI/UX Lead',
     name: 'Harshvardhan Sisodiya',
     initials: 'HS',
     avatar: 'https://github.com/harsh123-code.png',
     role: 'Frontend Architect • UI/UX Lead',
-    title: 'Frontend & Visual Experience Architect',
     themeColor: 'text-primary',
-    borderClass: 'border-primary/60',
-    glowClass: 'shadow-glow-indigo',
-    ringClass: 'ring-4 ring-primary/50',
+    borderClass: 'border-primary/70',
+    glowClass: 'shadow-[0_0_40px_rgba(99,102,241,0.35)]',
+    ringClass: 'ring-4 ring-primary/70 shadow-glow-sm',
+    orbBg: 'bg-primary',
     badgeClass: 'bg-primary/20 border-primary/60 text-primary',
-    accentGradient: 'from-primary/20 via-surface-container/95 to-secondary/15',
-    avatarBg: 'from-purple-500 to-indigo-600',
+    verticalBg: 'from-primary/15 via-surface-card/95 to-secondary/10',
     github: 'https://github.com/harsh123-code',
     email: 'hsisodiya205@bbdu.ac.in',
     summary:
-      'Designed and developed the modular React 19 single-page application: Nebula Aurora glassmorphism, 60/120 FPS hardware-synchronized score physics, interactive 180px SVG radial match gauge, multi-provider BYOK security vault, and responsive mobile drawers.',
-    modules: [
-      'React 19 + Vite Modular SPA Architecture',
-      'Nebula Aurora Glassmorphism & 60fps rAF Physics',
-      '180px SVG Radial Match Gauge & Visual Physics',
-      'Multi-Provider BYOK Security Hub & Telemetry',
+      'Architected the React 19 single-page application with GPU-accelerated Nebula Aurora glassmorphism, 60/120 FPS hardware-synchronized score physics, 180px SVG radial match gauge, and BYOK security vault.',
+    deliverables: [
+      { icon: 'web', text: 'React 19 + Vite Modular SPA Architecture' },
+      { icon: 'auto_awesome', text: 'Nebula Aurora Glassmorphism & 60fps Physics' },
+      { icon: 'speed', text: '180px SVG Radial Match Gauge & Count-Up' },
+      { icon: 'key', text: 'Multi-Provider BYOK Security Hub & Telemetry' },
     ],
-    techStack: ['React 19', 'Vite 6', 'Tailwind CSS', 'SVG Physics', 'sessionStorage Vault', 'Vercel Edge'],
+    techStack: ['React 19', 'Vite 6', 'Tailwind CSS', 'SVG Physics', 'Vercel Edge'],
   },
   {
     id: 'vishal',
+    number: '03',
     isLeader: false,
-    tabLabel: '🛡️ Vishal (QA)',
+    tabLabel: '🛡️ Vishal',
     badgeText: '🛡️ QA Lead & Security Specialist',
     name: 'Vishal Patel',
     initials: 'VP',
     avatar: 'https://github.com/patelvishal-ji.png',
     role: 'QA Lead • Security & Automated Testing',
-    title: 'QA & Security Engineer',
     themeColor: 'text-match-emerald',
-    borderClass: 'border-match-emerald/60',
-    glowClass: 'shadow-glow-emerald',
-    ringClass: 'ring-4 ring-match-emerald/50',
+    borderClass: 'border-match-emerald/70',
+    glowClass: 'shadow-[0_0_40px_rgba(52,211,153,0.35)]',
+    ringClass: 'ring-4 ring-match-emerald/70 shadow-glow-sm',
+    orbBg: 'bg-match-emerald',
     badgeClass: 'bg-match-emerald/20 border-match-emerald/60 text-match-emerald',
-    accentGradient: 'from-emerald-500/20 via-surface-container/95 to-primary/10',
-    avatarBg: 'from-emerald-500 to-teal-600',
+    verticalBg: 'from-emerald-500/15 via-surface-card/95 to-primary/10',
     github: 'https://github.com/patelvishal-ji',
     email: 'patelvishal7800023@gmail.com',
     summary:
-      'Formulated and executed the comprehensive automated testing strategy: 39/39 passing pytest test suite, mocked multi-provider AI failure handling (HTTP 401, 429, timeouts), input boundary sanitization, and automated markdown audit logging.',
-    modules: [
-      'Pytest Automated Test Suite (39/39 Passing Unit Tests)',
-      'Multi-Provider Mock Tests (401/429 Fallback)',
-      'Input Sanitization & Keyword Extraction Tests',
-      'Automated Markdown Audit Log Generator',
+      'Designed and executed automated testing infrastructure: 39/39 passing pytest test suite, mocked multi-provider AI failure handling (HTTP 401, 429, timeouts), input boundary sanitization, and automated markdown audit logging.',
+    deliverables: [
+      { icon: 'verified', text: 'Pytest 39/39 Passing Automated Test Suite' },
+      { icon: 'bug_report', text: 'Mocked Multi-Provider AI Failure Fallbacks' },
+      { icon: 'sanitizer', text: 'Input Sanitization & Keyword Extractor Tests' },
+      { icon: 'description', text: 'Automated Markdown Audit Log Generator' },
     ],
-    techStack: ['Pytest', 'Mock Engine', 'Edge Case Fuzzing', 'Audit Generator', 'CI/CD Pipelines'],
+    techStack: ['Pytest', 'Python 3.13', 'Mock Engine', 'Audit Logs', 'CI/CD'],
   },
   {
     id: 'sujeet',
+    number: '04',
     isLeader: false,
-    tabLabel: '📑 Sujeet (Docs)',
+    tabLabel: '📑 Sujeet',
     badgeText: '📑 Research Lead & Technical Writer',
     name: 'Sujeet Kannaujiya',
     initials: 'SK',
     avatar: 'https://github.com/sujeet-official.png',
     role: 'Research Lead • Technical Documentation',
-    title: 'Research Analyst & Documentation Lead',
     themeColor: 'text-match-amber',
-    borderClass: 'border-match-amber/60',
-    glowClass: 'shadow-glow-amber',
-    ringClass: 'ring-4 ring-match-amber/50',
+    borderClass: 'border-match-amber/70',
+    glowClass: 'shadow-[0_0_40px_rgba(251,191,36,0.35)]',
+    ringClass: 'ring-4 ring-match-amber/70 shadow-glow-sm',
+    orbBg: 'bg-match-amber',
     badgeClass: 'bg-match-amber/20 border-match-amber/60 text-match-amber',
-    accentGradient: 'from-amber-500/20 via-surface-container/95 to-secondary/10',
-    avatarBg: 'from-amber-500 to-orange-600',
+    verticalBg: 'from-amber-500/15 via-surface-card/95 to-secondary/10',
     github: 'https://github.com/sujeet-official',
     email: 'sujeetkannujiya2004@bbdu.ac.in',
     summary:
-      'Spearheaded academic research and comprehensive system documentation: investigated ATS text extraction methodologies, benchmarked FastAPI vs Flask throughput, authored the academic research dossier (RESEARCH.md), and codified ethical AI rubrics.',
-    modules: [
-      'ATS Parsing Strategies & In-Memory Privacy',
-      'FastAPI vs. Flask Architecture Benchmarking',
-      'Academic Research Dossier (RESEARCH.md)',
-      'Ethical AI Rubric & Bias Prevention Specs',
+      'Authored technical research and academic documentation: ATS text extraction benchmarks, FastAPI vs Flask throughput analysis, academic dossier (RESEARCH.md), and codified ethical AI non-discriminatory rubrics.',
+    deliverables: [
+      { icon: 'menu_book', text: 'ATS Parsing Strategies & In-Memory Privacy' },
+      { icon: 'compare_arrows', text: 'FastAPI vs. Flask Architecture Benchmarking' },
+      { icon: 'library_books', text: 'Academic Research Dossier (RESEARCH.md)' },
+      { icon: 'gavel', text: 'Ethical AI Rubric & Non-Bias Guidelines' },
     ],
-    techStack: ['Academic Dossier', 'ATS Benchmarks', 'FastAPI vs Flask', 'Ethical AI Specs', 'API Reference'],
+    techStack: ['Research Dossier', 'ATS Specs', 'FastAPI Benchmarks', 'Ethical AI'],
   },
 ];
 
 export default function TeamModal({ isOpen, onClose }) {
   // Always reset to Card 0 (Shivansh Mishra) whenever modal opens
   const [activeCardIndex, setActiveCardIndex] = useState(0);
+  const [animClass, setAnimClass] = useState('');
+  const [isBusy, setIsBusy] = useState(false);
+  const touchStartX = useRef(null);
 
   useEffect(() => {
     if (isOpen) {
       setActiveCardIndex(0);
+      setAnimClass('');
+      setIsBusy(false);
     }
   }, [isOpen]);
 
-  // Keyboard navigation: Escape closes modal, Left/Right arrow keys navigate cards
+  const swapCard = (newIndex, direction = 'next') => {
+    if (isBusy || newIndex === activeCardIndex) return;
+    setIsBusy(true);
+
+    // Phase 1: Animate current card out
+    setAnimClass(direction === 'next' ? 'flashcard-swap-out-next' : 'flashcard-swap-out-prev');
+
+    setTimeout(() => {
+      // Phase 2: Switch index and animate new card in
+      setActiveCardIndex(newIndex);
+      setAnimClass(direction === 'next' ? 'flashcard-swap-in-next' : 'flashcard-swap-in-prev');
+
+      setTimeout(() => {
+        setAnimClass('');
+        setIsBusy(false);
+      }, 260);
+    }, 220);
+  };
+
+  const handleNext = () => {
+    const nextIdx = (activeCardIndex + 1) % TEAM_CARDS.length;
+    swapCard(nextIdx, 'next');
+  };
+
+  const handlePrev = () => {
+    const prevIdx = (activeCardIndex - 1 + TEAM_CARDS.length) % TEAM_CARDS.length;
+    swapCard(prevIdx, 'prev');
+  };
+
+  // Keyboard navigation: Escape closes modal, Left/Right arrow keys / Space swap cards
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') onClose();
-      if (e.key === 'ArrowRight') {
-        setActiveCardIndex((prev) => (prev + 1) % TEAM_CARDS.length);
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        e.preventDefault();
+        handleNext();
       }
       if (e.key === 'ArrowLeft') {
-        setActiveCardIndex((prev) => (prev - 1 + TEAM_CARDS.length) % TEAM_CARDS.length);
+        e.preventDefault();
+        handlePrev();
       }
     };
     if (isOpen) {
@@ -148,19 +184,27 @@ export default function TeamModal({ isOpen, onClose }) {
       window.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = 'unset';
     };
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, activeCardIndex, isBusy]);
+
+  // Touch swipe support for mobile
+  const handleTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = (e) => {
+    if (touchStartX.current === null) return;
+    const diff = touchStartX.current - e.changedTouches[0].clientX;
+    if (diff > 40) {
+      handleNext();
+    } else if (diff < -40) {
+      handlePrev();
+    }
+    touchStartX.current = null;
+  };
 
   if (!isOpen) return null;
 
   const currentCard = TEAM_CARDS[activeCardIndex];
-
-  const handlePrev = () => {
-    setActiveCardIndex((prev) => (prev - 1 + TEAM_CARDS.length) % TEAM_CARDS.length);
-  };
-
-  const handleNext = () => {
-    setActiveCardIndex((prev) => (prev + 1) % TEAM_CARDS.length);
-  };
 
   return (
     <div
@@ -170,124 +214,94 @@ export default function TeamModal({ isOpen, onClose }) {
       aria-modal="true"
       aria-labelledby="team-modal-title"
     >
+      {/* Outer Centered Wrapper */}
       <div
-        className="glass-panel w-full max-w-5xl max-h-[94vh] overflow-y-auto p-5 sm:p-7 md:p-8 rounded-2xl relative border border-primary/30 shadow-2xl bg-surface-container/95 flex flex-col justify-between"
+        className="w-full max-w-[430px] flex flex-col items-center relative my-auto max-h-[96vh]"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Close Button */}
-        <button
-          type="button"
-          onClick={onClose}
-          className="absolute top-5 right-5 p-2 rounded-lg bg-surface-bright/50 text-on-surface-variant hover:text-on-background hover:bg-surface-bright transition-all z-20"
-          aria-label="Close Team Modal"
-        >
-          <span className="material-symbols-outlined text-[20px]" aria-hidden="true">close</span>
-        </button>
+        {/* Top Controls Header */}
+        <div className="w-full flex items-center justify-between px-2 mb-2 text-xs">
+          <div className="flex items-center gap-1.5">
+            <span className="material-symbols-outlined text-secondary text-[16px]" aria-hidden="true">
+              style
+            </span>
+            <span className="font-bold text-on-background tracking-wide">
+              Engineering Flashcard
+            </span>
+            <span className="text-outline">•</span>
+            <span className="font-mono text-secondary font-bold">
+              {currentCard.number} / 04
+            </span>
+          </div>
 
-        {/* Modal Top Header */}
-        <div className="mb-4 pr-12">
-          <div className="flex flex-wrap items-center gap-2 mb-2">
-            <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-primary/10 border border-primary/30 text-primary font-label-sm text-xs font-semibold">
-              <span className="material-symbols-outlined text-[14px]" aria-hidden="true">school</span>
-              <span>BBD University • Academic Capstone 2026</span>
-            </div>
+          <div className="flex items-center gap-2">
             <a
               href="https://ai-powered-resume-analyzer-pi.vercel.app"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-label-sm text-xs font-semibold hover:bg-emerald-500/20 transition-all"
+              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[11px] font-medium hover:bg-emerald-500/20 transition-all"
             >
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span>Live Website</span>
-              <span className="material-symbols-outlined text-[12px]" aria-hidden="true">open_in_new</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span>Live App</span>
             </a>
-          </div>
-
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-            <div>
-              <h2 id="team-modal-title" className="font-display-lg text-xl sm:text-2xl md:text-3xl font-bold text-on-background">
-                Engineering Team Flashcards
-              </h2>
-              <p className="text-xs sm:text-sm text-on-surface-variant mt-0.5">
-                Conceived &amp; Directed by <strong className="text-secondary font-semibold">Shivansh Mishra</strong> • Use arrow keys or click tabs to explore.
-              </p>
-            </div>
-
-            {/* Flashcard Quick Deck Navigator Pills */}
-            <div className="flex items-center gap-1 bg-surface-container-low/90 p-1 rounded-xl border border-outline-variant/40 self-start sm:self-auto overflow-x-auto max-w-full">
-              {TEAM_CARDS.map((card, idx) => (
-                <button
-                  key={card.id}
-                  type="button"
-                  onClick={() => setActiveCardIndex(idx)}
-                  className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all whitespace-nowrap flex items-center gap-1.5 ${
-                    activeCardIndex === idx
-                      ? card.isLeader
-                        ? 'bg-secondary text-surface font-bold shadow-glow-cyan'
-                        : 'bg-primary text-white font-bold shadow-glow-sm'
-                      : 'text-on-surface-variant hover:text-on-background hover:bg-surface-bright/40'
-                  }`}
-                >
-                  <span>{card.tabLabel}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Carousel Control Bar */}
-        <div className="flex items-center justify-between px-3 py-2 rounded-xl bg-surface-container-lowest/80 border border-outline-variant/30 mb-4 text-xs">
-          <div className="flex items-center gap-2">
-            <span className="font-mono text-xs font-bold text-secondary">
-              Flash Card {activeCardIndex + 1} of {TEAM_CARDS.length}
-            </span>
-            <span className="text-outline">•</span>
-            <span className="text-on-surface-variant hidden sm:inline">
-              {currentCard.isLeader ? '⭐ Primary Project Focus' : 'Core Contributor'}
-            </span>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <span className="text-[11px] text-outline font-mono hidden md:inline">
-              Use ← / → keys
-            </span>
             <button
               type="button"
-              onClick={handlePrev}
-              className="p-1.5 rounded-lg bg-surface-bright/60 hover:bg-surface-bright text-on-surface-variant hover:text-on-background transition-all flex items-center gap-1"
-              aria-label="Previous Flashcard"
+              onClick={onClose}
+              className="p-1.5 rounded-lg bg-surface-bright/70 text-on-surface-variant hover:text-on-background hover:bg-surface-bright transition-all"
+              aria-label="Close Modal"
             >
-              <span className="material-symbols-outlined text-[16px]" aria-hidden="true">chevron_left</span>
-              <span className="hidden sm:inline text-[11px] font-medium pr-1">Prev</span>
-            </button>
-            <button
-              type="button"
-              onClick={handleNext}
-              className="p-1.5 rounded-lg bg-surface-bright/60 hover:bg-surface-bright text-on-surface-variant hover:text-on-background transition-all flex items-center gap-1"
-              aria-label="Next Flashcard"
-            >
-              <span className="hidden sm:inline text-[11px] font-medium pl-1">Next</span>
-              <span className="material-symbols-outlined text-[16px]" aria-hidden="true">chevron_right</span>
+              <span className="material-symbols-outlined text-[18px]" aria-hidden="true">close</span>
             </button>
           </div>
         </div>
 
-        {/* 🌟 THE ACTIVE FLASHCARD 🌟 */}
+        {/* 🎴 3D STACKED DECK CONTAINER 🎴 */}
         <div
-          key={currentCard.id}
-          className={`p-5 sm:p-7 rounded-2xl bg-gradient-to-br ${currentCard.accentGradient} border-2 ${currentCard.borderClass} ${currentCard.glowClass} relative overflow-hidden transition-all duration-300 animate-fade-in`}
+          className="relative w-full flex justify-center py-1"
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
         >
-          {/* Ambient Glow in background */}
-          <div className="absolute top-0 right-0 w-80 h-80 bg-secondary/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
+          {/* Stacked Deck Shadow Layer 2 (Furthest behind) */}
+          <div className="absolute top-4 w-[90%] h-[94%] rounded-3xl bg-surface-container-high/40 border border-outline-variant/30 pointer-events-none transform translate-y-3 scale-[0.93] opacity-40 shadow-xl" />
 
-          <div className="relative z-10 flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-8">
-            {/* Left Column: Large Clear Avatar Photo & Profile Badges */}
-            <div className="flex flex-col items-center shrink-0 text-center w-full md:w-52">
+          {/* Stacked Deck Shadow Layer 1 (Directly behind) */}
+          <div className="absolute top-2 w-[95%] h-[97%] rounded-3xl bg-surface-container-high/60 border border-outline-variant/50 pointer-events-none transform translate-y-1.5 scale-[0.97] opacity-70 shadow-xl" />
+
+          {/* 🌟 ACTIVE VERTICAL FLASHCARD 🌟 */}
+          <div
+            onClick={handleNext}
+            className={`relative w-full rounded-3xl p-5 sm:p-6 bg-gradient-to-b ${currentCard.verticalBg} border-2 ${currentCard.borderClass} ${currentCard.glowClass} shadow-2xl overflow-hidden cursor-pointer select-none transition-all ${animClass}`}
+            title="Click card or use buttons to swap"
+          >
+            {/* Ambient Background Glow Orb */}
+            <div
+              className={`absolute -top-10 left-1/2 -translate-x-1/2 w-48 h-48 rounded-full blur-3xl opacity-25 pointer-events-none ${currentCard.orbBg}`}
+            />
+
+            {/* Card Header Pill Row */}
+            <div className="relative z-10 flex items-center justify-between mb-3">
+              <span className={`inline-flex items-center gap-1 px-3 py-0.5 rounded-full text-xs font-bold border ${currentCard.badgeClass} shadow-sm`}>
+                <span className="material-symbols-outlined text-[13px]" aria-hidden="true">
+                  {currentCard.isLeader ? 'stars' : 'verified'}
+                </span>
+                <span>{currentCard.isLeader ? 'Team Leader' : 'Core Contributor'}</span>
+              </span>
+
+              <div className="flex items-center gap-1 text-[11px] font-mono text-outline bg-surface-container-lowest/60 px-2 py-0.5 rounded-full border border-outline-variant/40">
+                <span className="material-symbols-outlined text-[13px] text-secondary animate-spin-slow" aria-hidden="true">
+                  cached
+                </span>
+                <span>Tap to Swap</span>
+              </div>
+            </div>
+
+            {/* 📸 Large Clear Centerpiece Avatar Photo 📸 */}
+            <div className="relative z-10 flex flex-col items-center text-center my-1">
               <div className="relative">
                 <img
                   src={currentCard.avatar}
                   alt={currentCard.name}
-                  className={`w-36 h-36 sm:w-44 sm:h-44 md:w-48 md:h-48 rounded-2xl object-cover shadow-2xl ${currentCard.ringClass} bg-surface-container-high`}
+                  className={`w-36 h-36 sm:w-40 sm:h-40 rounded-3xl object-cover shadow-2xl ${currentCard.ringClass} bg-surface-container-high transition-transform duration-300 hover:scale-105`}
                   onError={(e) => {
                     e.currentTarget.style.display = 'none';
                     if (e.currentTarget.nextElementSibling) {
@@ -297,182 +311,173 @@ export default function TeamModal({ isOpen, onClose }) {
                 />
                 <div
                   style={{ display: 'none' }}
-                  className={`w-36 h-36 sm:w-44 sm:h-44 md:w-48 md:h-48 rounded-2xl bg-gradient-to-br ${currentCard.avatarBg} items-center justify-center text-white font-black text-4xl shadow-2xl ${currentCard.ringClass}`}
+                  className={`w-36 h-36 sm:w-40 sm:h-40 rounded-3xl bg-gradient-to-br from-cyan-400 via-teal-500 to-blue-600 items-center justify-center text-white font-black text-4xl shadow-2xl ${currentCard.ringClass}`}
                 >
                   {currentCard.initials}
                 </div>
 
                 {currentCard.isLeader && (
-                  <span className="absolute -top-2.5 -right-2.5 px-2.5 py-1 rounded-full bg-secondary text-surface text-[11px] font-black uppercase tracking-wider shadow-lg flex items-center gap-1 border border-white/20">
-                    <span className="material-symbols-outlined text-[14px]" aria-hidden="true">stars</span>
-                    <span>Lead</span>
+                  <span className="absolute -bottom-2.5 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-secondary text-surface text-[10px] font-black uppercase tracking-wider shadow-lg border border-white/30 flex items-center gap-1 whitespace-nowrap">
+                    <span className="material-symbols-outlined text-[13px]" aria-hidden="true">crown</span>
+                    <span>Team Leader</span>
                   </span>
                 )}
               </div>
 
-              {/* Verified Attribution Badge under Photo */}
-              <div className="mt-3.5 w-full">
-                <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${currentCard.badgeClass} shadow-sm`}>
-                  <span className="material-symbols-outlined text-[14px]" aria-hidden="true">
-                    {currentCard.isLeader ? 'stars' : 'verified'}
-                  </span>
-                  <span>{currentCard.isLeader ? 'Team Leader' : 'Core Engineer'}</span>
-                </span>
-              </div>
-
-              {/* Direct Profile Action Buttons */}
-              <div className="mt-3 flex flex-col gap-1.5 w-full max-w-[180px]">
-                <a
-                  href={currentCard.github}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full px-3 py-1.5 rounded-lg bg-surface-bright/70 hover:bg-surface-bright text-on-surface-variant hover:text-on-background border border-outline-variant/60 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all shadow-sm"
-                >
-                  <span className="material-symbols-outlined text-[15px]" aria-hidden="true">code</span>
-                  <span>GitHub Profile</span>
-                </a>
-                <a
-                  href={`mailto:${currentCard.email}`}
-                  className="w-full px-3 py-1.5 rounded-lg bg-surface-container-lowest/70 hover:bg-surface-container-lowest text-on-surface-variant hover:text-on-background border border-outline-variant/40 text-xs font-medium flex items-center justify-center gap-1.5 transition-all"
-                >
-                  <span className="material-symbols-outlined text-[15px]" aria-hidden="true">mail</span>
-                  <span>Direct Contact</span>
-                </a>
+              {/* Name & Role Title */}
+              <div className="mt-4">
+                <h3 className="font-display-lg text-2xl sm:text-3xl font-extrabold text-on-background tracking-tight">
+                  {currentCard.name}
+                </h3>
+                <p className={`text-xs sm:text-sm font-bold ${currentCard.themeColor} mt-0.5`}>
+                  {currentCard.role}
+                </p>
+                <p className="text-[11px] text-outline font-medium mt-0.5">
+                  BBD University • Academic Capstone 2026
+                </p>
               </div>
             </div>
 
-            {/* Right Column: Title, Full Mission Summary, Deliverables & Tech Stack */}
-            <div className="flex-1 w-full text-left">
-              {/* Header Title & Role */}
-              <div className="mb-3">
-                <div className="flex flex-wrap items-center gap-2 mb-1">
-                  <h3 className="font-display-lg text-2xl sm:text-3xl font-extrabold text-on-background">
-                    {currentCard.name}
-                  </h3>
-                  <span className={`inline-flex items-center gap-1 px-3 py-0.5 rounded-full text-xs font-bold border ${currentCard.badgeClass}`}>
-                    <span>{currentCard.badgeText}</span>
-                  </span>
-                </div>
-                <div className={`text-sm sm:text-base font-semibold ${currentCard.themeColor}`}>
-                  {currentCard.role}
-                </div>
-              </div>
+            {/* Mission / Architecture Summary Box */}
+            <div className="relative z-10 mt-3 p-3 rounded-xl bg-surface-container-lowest/80 border border-outline-variant/40 text-left">
+              <span className="text-[10px] uppercase tracking-wider text-outline font-bold block mb-1">
+                Executive Contribution
+              </span>
+              <p className="text-[11px] sm:text-xs text-on-surface-variant leading-relaxed">
+                {currentCard.summary}
+              </p>
+            </div>
 
-              {/* Executive Architecture Summary */}
-              <div className="p-3.5 sm:p-4 rounded-xl bg-surface-container-lowest/80 border border-outline-variant/40 mb-4">
-                <span className="text-[11px] uppercase tracking-wider text-outline font-bold block mb-1">
-                  Role Overview &amp; Architectural Ownership
-                </span>
-                <p className="text-xs sm:text-sm text-on-surface-variant leading-relaxed">
-                  {currentCard.summary}
-                </p>
-              </div>
-
-              {/* Authored Modules & Deliverables */}
-              <div className="mb-4">
-                <span className="text-[11px] uppercase tracking-wider text-secondary font-bold block mb-2">
-                  Core Modules &amp; Deliverables Authored
-                </span>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                  {currentCard.modules.map((mod, idx) => (
-                    <div
-                      key={idx}
-                      className="flex items-start gap-2 bg-surface-container-low/70 p-2.5 rounded-lg border border-outline-variant/30"
-                    >
-                      <span className="material-symbols-outlined text-secondary text-[16px] shrink-0 mt-0.5" aria-hidden="true">
-                        check_circle
-                      </span>
-                      <span className="font-medium text-on-background/90">{mod}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Key Technologies Tag Strip */}
-              <div>
-                <span className="text-[10px] uppercase tracking-wider text-outline font-bold block mb-1.5">
-                  Technologies &amp; Frameworks Leveraged
-                </span>
-                <div className="flex flex-wrap gap-1.5">
-                  {currentCard.techStack.map((tech, idx) => (
-                    <span
-                      key={idx}
-                      className="px-2 py-0.5 rounded-md bg-surface-bright/50 border border-outline-variant/50 text-on-surface-variant text-[11px] font-mono"
-                    >
-                      {tech}
+            {/* Authored Deliverables Stack */}
+            <div className="relative z-10 mt-3 text-left">
+              <span className="text-[10px] uppercase tracking-wider text-secondary font-bold block mb-1.5">
+                Core Deliverables Authored
+              </span>
+              <div className="space-y-1.5">
+                {currentCard.deliverables.map((item, idx) => (
+                  <div
+                    key={idx}
+                    className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-surface-container-low/70 border border-outline-variant/30 text-xs"
+                  >
+                    <span className="material-symbols-outlined text-secondary text-[15px] shrink-0" aria-hidden="true">
+                      {item.icon}
                     </span>
-                  ))}
-                </div>
+                    <span className="font-medium text-on-background/90 text-[11px] truncate">
+                      {item.text}
+                    </span>
+                  </div>
+                ))}
               </div>
+            </div>
+
+            {/* Tech Stack Strip */}
+            <div className="relative z-10 mt-3 flex flex-wrap gap-1 justify-center">
+              {currentCard.techStack.map((tech, idx) => (
+                <span
+                  key={idx}
+                  className="px-2 py-0.5 rounded-md bg-surface-bright/50 border border-outline-variant/40 text-on-surface-variant text-[10px] font-mono"
+                >
+                  {tech}
+                </span>
+              ))}
+            </div>
+
+            {/* Card Action Buttons */}
+            <div className="relative z-10 mt-3 pt-2.5 border-t border-outline-variant/30 flex items-center justify-center gap-2">
+              <a
+                href={currentCard.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="px-3 py-1.5 rounded-lg bg-surface-bright/70 hover:bg-surface-bright text-on-surface-variant hover:text-on-background border border-outline-variant/60 text-xs font-semibold flex items-center gap-1.5 transition-all shadow-sm"
+              >
+                <span className="material-symbols-outlined text-[14px]" aria-hidden="true">code</span>
+                <span>GitHub Profile</span>
+              </a>
+              <a
+                href={`mailto:${currentCard.email}`}
+                onClick={(e) => e.stopPropagation()}
+                className="px-3 py-1.5 rounded-lg bg-surface-container-lowest/70 hover:bg-surface-container-lowest text-on-surface-variant hover:text-on-background border border-outline-variant/40 text-xs font-medium flex items-center gap-1.5 transition-all"
+              >
+                <span className="material-symbols-outlined text-[14px]" aria-hidden="true">mail</span>
+                <span>Email</span>
+              </a>
             </div>
           </div>
         </div>
 
-        {/* Bottom Thumbnail Switcher (Flashcard Deck Overview) */}
-        <div className="mt-5 pt-4 border-t border-outline-variant/30">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-[11px] uppercase tracking-wider text-outline font-bold">
-              Team Flashcard Deck ({TEAM_CARDS.length} Members)
-            </span>
-            <span className="text-[11px] text-outline">
-              Click any card to flip directly
-            </span>
+        {/* 🔄 SWAP DECK CONTROLS (Below Card) 🔄 */}
+        <div className="w-full flex flex-col items-center gap-2 mt-3">
+          {/* Main Swap & Navigation Buttons */}
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={handlePrev}
+              disabled={isBusy}
+              className="px-3 py-1.5 rounded-xl bg-surface-container-high/80 hover:bg-surface-bright text-on-surface-variant hover:text-on-background border border-outline-variant/50 text-xs font-medium flex items-center gap-1 transition-all disabled:opacity-50"
+              aria-label="Previous Flashcard"
+            >
+              <span className="material-symbols-outlined text-[16px]" aria-hidden="true">arrow_back</span>
+              <span>Prev</span>
+            </button>
+
+            {/* Big Glow Swap Button */}
+            <button
+              type="button"
+              onClick={handleNext}
+              disabled={isBusy}
+              className="px-5 py-2 rounded-xl bg-gradient-to-r from-secondary to-primary text-surface font-black text-xs flex items-center gap-2 shadow-glow-cyan hover:brightness-110 active:scale-95 transition-all disabled:opacity-50"
+              aria-label="Swap Flashcard"
+            >
+              <span className="material-symbols-outlined text-[16px] animate-spin-slow" aria-hidden="true">
+                swap_horiz
+              </span>
+              <span>Swap Next Card</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={handleNext}
+              disabled={isBusy}
+              className="px-3 py-1.5 rounded-xl bg-surface-container-high/80 hover:bg-surface-bright text-on-surface-variant hover:text-on-background border border-outline-variant/50 text-xs font-medium flex items-center gap-1 transition-all disabled:opacity-50"
+              aria-label="Next Flashcard"
+            >
+              <span>Next</span>
+              <span className="material-symbols-outlined text-[16px]" aria-hidden="true">arrow_forward</span>
+            </button>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+          {/* Quick Pill Dots */}
+          <div className="flex items-center gap-1.5 bg-surface-container-low/80 px-2.5 py-1 rounded-full border border-outline-variant/40">
             {TEAM_CARDS.map((card, idx) => {
               const isActive = activeCardIndex === idx;
               return (
                 <button
                   key={card.id}
                   type="button"
-                  onClick={() => setActiveCardIndex(idx)}
-                  className={`p-2.5 rounded-xl text-left transition-all flex items-center gap-2.5 border ${
+                  onClick={() => swapCard(idx, idx > activeCardIndex ? 'next' : 'prev')}
+                  disabled={isBusy}
+                  className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold transition-all flex items-center gap-1 ${
                     isActive
                       ? card.isLeader
-                        ? 'bg-secondary/15 border-secondary shadow-glow-cyan scale-[1.02]'
-                        : 'bg-primary/15 border-primary shadow-glow-sm scale-[1.02]'
-                      : 'bg-surface-container-low/60 border-outline-variant/40 hover:border-outline-variant hover:bg-surface-bright/30'
+                        ? 'bg-secondary text-surface shadow-glow-cyan scale-105'
+                        : 'bg-primary text-white shadow-glow-sm scale-105'
+                      : 'text-on-surface-variant hover:text-on-background hover:bg-surface-bright/40'
                   }`}
                 >
-                  <img
-                    src={card.avatar}
-                    alt={card.name}
-                    className={`w-9 h-9 rounded-lg object-cover shrink-0 ${
-                      isActive ? (card.isLeader ? 'ring-2 ring-secondary' : 'ring-2 ring-primary') : 'opacity-70'
-                    }`}
-                    onError={(e) => {
-                      e.currentTarget.style.display = 'none';
-                      if (e.currentTarget.nextElementSibling) {
-                        e.currentTarget.nextElementSibling.style.display = 'flex';
-                      }
-                    }}
-                  />
-                  <div
-                    style={{ display: 'none' }}
-                    className={`w-9 h-9 rounded-lg bg-gradient-to-br ${card.avatarBg} items-center justify-center text-white font-bold text-xs shrink-0`}
-                  >
-                    {card.initials}
-                  </div>
-
-                  <div className="truncate">
-                    <div className="flex items-center gap-1">
-                      <span className={`font-bold text-xs truncate ${isActive ? 'text-on-background' : 'text-on-surface-variant'}`}>
-                        {card.name.split(' ')[0]} {card.name.split(' ')[1] ? card.name.split(' ')[1][0] + '.' : ''}
-                      </span>
-                      {card.isLeader && <span className="text-[11px]">👑</span>}
-                    </div>
-                    <span className="text-[10px] text-outline block truncate">
-                      {card.isLeader ? 'Team Leader' : card.title.split(' ')[0]}
-                    </span>
-                  </div>
+                  <span>{card.tabLabel}</span>
                 </button>
               );
             })}
           </div>
+
+          <span className="text-[10px] text-outline font-mono">
+            Click card, use swipe, or press ← / → keys to swap
+          </span>
         </div>
       </div>
     </div>
   );
 }
+
 

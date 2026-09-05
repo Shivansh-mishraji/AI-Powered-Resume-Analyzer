@@ -605,6 +605,67 @@
 }
 
 
+/* ── 16. Vertical Flashcard Swap Animations ── */
+@keyframes flashcardSwapOutNext {
+  0% {
+    transform: translateX(0) rotate(0deg) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-90px) rotate(-8deg) scale(0.9);
+    opacity: 0;
+  }
+}
+
+@keyframes flashcardSwapInNext {
+  0% {
+    transform: translateX(90px) rotate(8deg) scale(0.9);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0) rotate(0deg) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes flashcardSwapOutPrev {
+  0% {
+    transform: translateX(0) rotate(0deg) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(90px) rotate(8deg) scale(0.9);
+    opacity: 0;
+  }
+}
+
+@keyframes flashcardSwapInPrev {
+  0% {
+    transform: translateX(-90px) rotate(-8deg) scale(0.9);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0) rotate(0deg) scale(1);
+    opacity: 1;
+  }
+}
+
+.flashcard-swap-out-next {
+  animation: flashcardSwapOutNext 0.22s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+}
+
+.flashcard-swap-in-next {
+  animation: flashcardSwapInNext 0.26s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.flashcard-swap-out-prev {
+  animation: flashcardSwapOutPrev 0.22s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+}
+
+.flashcard-swap-in-prev {
+  animation: flashcardSwapInPrev 0.26s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
 /* ── Print Styles ── */
 @media print {
   body, .bg-mesh {
