@@ -104,7 +104,7 @@ export default function TeamModal({ isOpen, onClose }) {
 
         {/* Modal Header */}
         <div className="mb-8">
-          <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+          <div className="flex flex-wrap items-center gap-2.5 mb-3 pr-10">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/30 text-primary font-label-sm text-xs font-semibold">
               <span className="material-symbols-outlined text-[14px]" aria-hidden="true">school</span>
               <span>BBD University • Academic Capstone 2026</span>
