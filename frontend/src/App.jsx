@@ -28,7 +28,51 @@ export default function App() {
   } = useSecureApiKey();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [analysisResult, setAnalysisResult] = useState(null);
+  const [analysisResult, setAnalysisResult] = useState(() => {
+    if (typeof window !== 'undefined' && window.location.search.includes('demo=true')) {
+      return {
+        score: 88,
+        filename: 'Senior_FullStack_Engineer_Resume.pdf',
+        is_ai_powered: true,
+        analysis_confidence: 'high',
+        candidate_summary:
+          'High-caliber Full-Stack & AI Systems candidate with proven mastery over FastAPI backend microservices, React 19 single-page applications, PyMuPDF stream processing, and multi-provider LLM orchestration.',
+        matched_skills: [
+          'Python',
+          'FastAPI',
+          'React 19',
+          'Tailwind CSS',
+          'Docker',
+          'REST APIs',
+          'PostgreSQL',
+          'PyMuPDF',
+          'Google Gemini AI',
+          'Vercel Edge',
+          'Render Cloud'
+        ],
+        missing_skills: [
+          'Kubernetes Clustering',
+          'GraphQL Subscriptions',
+          'AWS ECS IaC'
+        ],
+        strengths: [
+          'Enterprise-grade zero-persistence in-memory streaming with strict 5MB boundaries',
+          'Hardware-synchronized 60/120 FPS score count-up physics and GPU-accelerated glassmorphism',
+          'Automated multi-tier fallback architecture ensuring 100% uptime resilience'
+        ],
+        weaknesses: [
+          'Could document multi-region Kubernetes cluster deployment configurations',
+          'Add automated load benchmarking metrics for sustained concurrent uploads'
+        ],
+        suggestions: [
+          'Include production throughput benchmarks (requests/second under concurrent traffic)',
+          'Highlight Terraform or CloudFormation Infrastructure-as-Code scripts in deployment section'
+        ],
+        warnings: []
+      };
+    }
+    return null;
+  });
   const [sessionHistory, setSessionHistory] = useState([]);
   const [isBackendOnline, setIsBackendOnline] = useState(true);
   const [pingLatency, setPingLatency] = useState(14);
