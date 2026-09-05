@@ -79,7 +79,8 @@ Once deployed:
 ---
 
 ## 👥 Maintained by Engineering Team
-- **Shivansh Mishra** (`Backend & AI Lead`)
-- **Harshvardhan Sisodiya** (`Frontend & UI/UX Lead`)
-- **Vishal Patel** (`QA Lead & Security`)
-- **Sujeet Kannaujiya** (`Research & Technical Documentation`)
+- 👑 **Shivansh Mishra** (**Team Leader & Principal Architect**) — [`@Shivansh-mishraji`](https://github.com/Shivansh-mishraji)
+- **Harshvardhan Sisodiya** (Frontend Architect & UI/UX Lead) — [`@harsh123-code`](https://github.com/harsh123-code)
+- **Vishal Patel** (QA Lead & Security) — [`@patelvishal-ji`](https://github.com/patelvishal-ji)
+- **Sujeet Kannaujiya** (Research & Technical Documentation Lead) — [`@sujeet-official`](https://github.com/sujeet-official)
+

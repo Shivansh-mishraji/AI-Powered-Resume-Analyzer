@@ -145,10 +145,85 @@ The **AI-Powered Resume Analyzer** is a **Hybrid Multi-Model Career Intelligence
 
 BBD University • Academic Capstone 2026 • Full-Stack AI Academic Evaluation
 
-> ### 👑 **Project Leadership & Architecture**
-> **Shivansh Mishra** — *Team Leader • Backend & AI System Architect*  
-> Conceived, engineered, and spearheaded the end-to-end platform architecture: authored the FastAPI REST Gateway & security boundary, built the Multi-Provider AI Rubric Engine (Gemini 2.5/3.6, GPT-4o, Claude 3.5, Groq), implemented zero-persistence in-memory PyMuPDF binary streaming (`sort=True`), orchestrated automated deterministic fallback recovery, and drove production cloud deployments on Render & Vercel.  
-> [![GitHub](https://img.shields.io/badge/GitHub-Shivansh--mishraji-181717?style=flat&logo=github)](https://github.com/Shivansh-mishraji) [![Email](https://img.shields.io/badge/Email-tgsmishra%40gmail.com-D14836?style=flat&logo=gmail&logoColor=white)](mailto:tgsmishra@gmail.com)
+### 👑 Project Leadership & Principal Architect
+
+<table>
+  <tr>
+    <td width="130" align="center" valign="top">
+      <a href="https://github.com/Shivansh-mishraji">
+        <img src="https://github.com/Shivansh-mishraji.png" width="110" height="110" style="border-radius: 50%; border: 3px solid #00F0FF; box-shadow: 0 4px 20px rgba(0, 240, 255, 0.4);" alt="Shivansh Mishra" /><br/><br/>
+        <img src="https://img.shields.io/badge/👑_Team_Lead-00F0FF?style=flat-square&labelColor=0d1117&color=00F0FF" />
+      </a>
+    </td>
+    <td valign="top">
+      <h3>👑 <a href="https://github.com/Shivansh-mishraji">Shivansh Mishra</a></h3>
+      <b>Team Leader • Backend & AI System Architect</b><br/>
+      <em>Conceived, engineered, and steered the complete platform architecture:</em>
+      <ul>
+        <li><b>FastAPI REST Gateway &amp; Routing:</b> Architected the central routing layer, request validation, upload boundaries, and explicit CORS origin security.</li>
+        <li><b>Multi-Provider AI Rubric Engine:</b> Integrated Google Gemini (<code>AQ....</code> &amp; <code>AIza...</code> keys), OpenAI (<code>sk-...</code>), and Claude (<code>sk-ant-...</code>) with automated multi-tier model fallbacks.</li>
+        <li><b>In-Memory Document Ingestion:</b> Authored zero-persistence PyMuPDF binary streaming (<code>sort=True</code>) with zero disk retention for enterprise-grade privacy.</li>
+        <li><b>Deterministic Fallback Orchestration:</b> Built high-availability fallback engine guaranteeing uninterrupted analysis under network disconnects or API limits.</li>
+        <li><b>Cloud Production Deployments:</b> Led the cloud infrastructure deployments on Render (FastAPI) and Vercel (React).</li>
+      </ul>
+      <a href="https://github.com/Shivansh-mishraji"><img src="https://img.shields.io/badge/GitHub-Shivansh--mishraji-181717?style=flat&logo=github" /></a>
+      <a href="mailto:tgsmishra@gmail.com"><img src="https://img.shields.io/badge/Email-tgsmishra%40gmail.com-D14836?style=flat&logo=gmail&logoColor=white" /></a>
+    </td>
+  </tr>
+</table>
+
+### 🌟 Core Engineering Contributors
+
+<table>
+  <tr align="center">
+    <th width="25%">👑 Team Leader</th>
+    <th width="25%">Frontend Architect</th>
+    <th width="25%">QA &amp; Security Lead</th>
+    <th width="25%">Research &amp; Docs Lead</th>
+  </tr>
+  <tr align="center" valign="top">
+    <td>
+      <a href="https://github.com/Shivansh-mishraji">
+        <img src="https://github.com/Shivansh-mishraji.png" width="85" height="85" style="border-radius: 50%; border: 2px solid #00F0FF;" alt="Shivansh Mishra" /><br/>
+        <b>Shivansh Mishra</b>
+      </a><br/>
+      <small><b>Team Leader &amp; Principal Architect</b></small><br/><br/>
+      <small>FastAPI Gateway, Multi-Provider AI Engine, In-Memory Stream Parsing, Deterministic Fallbacks</small><br/><br/>
+      <a href="https://github.com/Shivansh-mishraji"><img src="https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github" /></a>
+      <a href="mailto:tgsmishra@gmail.com"><img src="https://img.shields.io/badge/Email-D14836?style=flat-square&logo=gmail" /></a>
+    </td>
+    <td>
+      <a href="https://github.com/harsh123-code">
+        <img src="https://github.com/harsh123-code.png" width="85" height="85" style="border-radius: 50%; border: 2px solid #8B5CF6;" alt="Harshvardhan Sisodiya" /><br/>
+        <b>Harshvardhan Sisodiya</b>
+      </a><br/>
+      <small>Frontend Architect &amp; UI/UX Lead</small><br/><br/>
+      <small>React 19 SPA, Nebula Aurora Glassmorphism, 60fps rAF Animation Physics, BYOK Hub</small><br/><br/>
+      <a href="https://github.com/harsh123-code"><img src="https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github" /></a>
+      <a href="mailto:hsisodiya205@bbdu.ac.in"><img src="https://img.shields.io/badge/Email-D14836?style=flat-square&logo=gmail" /></a>
+    </td>
+    <td>
+      <a href="https://github.com/patelvishal-ji">
+        <img src="https://github.com/patelvishal-ji.png" width="85" height="85" style="border-radius: 50%; border: 2px solid #10B981;" alt="Vishal Patel" /><br/>
+        <b>Vishal Patel</b>
+      </a><br/>
+      <small>QA Lead &amp; Automated Testing</small><br/><br/>
+      <small>Pytest 39/39 Passing Suite, AI Multi-Provider Mocking, Sanitization &amp; Audit Logger</small><br/><br/>
+      <a href="https://github.com/patelvishal-ji"><img src="https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github" /></a>
+      <a href="mailto:patelvishal7800023@gmail.com"><img src="https://img.shields.io/badge/Email-D14836?style=flat-square&logo=gmail" /></a>
+    </td>
+    <td>
+      <a href="https://github.com/sujeet-official">
+        <img src="https://github.com/sujeet-official.png" width="85" height="85" style="border-radius: 50%; border: 2px solid #F59E0B;" alt="Sujeet Kannaujiya" /><br/>
+        <b>Sujeet Kannaujiya</b>
+      </a><br/>
+      <small>Research &amp; Technical Docs Lead</small><br/><br/>
+      <small>ATS Document Parsing Research, Framework Benchmarking, Academic Dossier &amp; Ethics</small><br/><br/>
+      <a href="https://github.com/sujeet-official"><img src="https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github" /></a>
+      <a href="mailto:sujeetkannujiya2004@bbdu.ac.in"><img src="https://img.shields.io/badge/Email-D14836?style=flat-square&logo=gmail" /></a>
+    </td>
+  </tr>
+</table>
 
 | Member | Role | Core Modules & Technical Contributions | Contact |
 |---|---|---|---|
@@ -287,5 +362,6 @@ python testing/run_tests.py
 ---
 
 <div align="center">
-  <sub>Built with ❤️ by Shivansh, Harshwardhan, Vishal & Sujeet | Academic Minor Project 2026</sub>
+  <sub>👑 Project Conceived, Architected & Directed by <b><a href="https://github.com/Shivansh-mishraji">Shivansh Mishra</a></b> (Team Leader & Principal Architect)</sub><br/>
+  <sub>Built with ❤️ by Shivansh, Harshwardhan, Vishal & Sujeet • BBD University Academic Capstone 2026</sub>
 </div>

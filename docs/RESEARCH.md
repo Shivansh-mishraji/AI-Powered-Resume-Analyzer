@@ -1,6 +1,8 @@
 # Research & Technical Decisions — AI-Powered Resume Analyzer
 
-> Researched & Documented by: Sujeet Kannaujiya (Research & Documentation Lead)
+> **Conceived & Directed by:** [Shivansh Mishra](https://github.com/Shivansh-mishraji) (Team Leader & Principal Architect)  
+> **Researched & Documented by:** Sujeet Kannaujiya (Research & Documentation Lead)  
+> **Evaluation:** BBD University • Academic Capstone 2026
 
 - **Live Application:** [https://ai-powered-resume-analyzer-pi.vercel.app](https://ai-powered-resume-analyzer-pi.vercel.app)
 - **Live Backend API:** [https://resume-analyzer-api.onrender.com](https://resume-analyzer-api.onrender.com)

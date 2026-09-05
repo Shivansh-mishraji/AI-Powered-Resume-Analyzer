@@ -51,10 +51,17 @@ export default function TopNavBar({
           <button
             type="button"
             onClick={onOpenTeam}
-            className="text-on-surface-variant font-label-md text-sm hover:text-on-background transition-colors duration-200 flex items-center gap-1.5"
+            className="text-on-surface-variant font-label-md text-sm hover:text-on-background transition-colors duration-200 flex items-center gap-2 group px-2.5 py-1 rounded-full hover:bg-surface-bright/50 border border-transparent hover:border-secondary/30"
           >
-            <span className="material-symbols-outlined text-[18px] text-secondary" aria-hidden="true">stars</span>
-            <span>Team • Lead: Shivansh</span>
+            <img
+              src="https://github.com/Shivansh-mishraji.png"
+              alt="Shivansh Mishra"
+              className="w-5 h-5 rounded-full object-cover ring-1 ring-secondary/50 group-hover:ring-secondary"
+              onError={(e) => {
+                e.currentTarget.style.display = 'none';
+              }}
+            />
+            <span className="text-secondary font-medium">Team • Lead: Shivansh</span>
           </button>
         </div>
 

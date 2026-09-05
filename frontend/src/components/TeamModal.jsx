@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 const TEAM_LEADER = {
   name: 'Shivansh Mishra',
   initials: 'SM',
+  avatar: 'https://github.com/Shivansh-mishraji.png',
   role: 'Team Lead • Backend & AI System Architect',
   title: 'Team Leader & Principal Architect',
   color: 'border-secondary text-secondary bg-secondary/15',
@@ -23,6 +24,7 @@ const TEAM_MEMBERS = [
   {
     name: 'Harshvardhan Sisodiya',
     initials: 'HS',
+    avatar: 'https://github.com/harsh123-code.png',
     role: 'Frontend Architect • UI/UX Lead',
     color: 'border-primary text-primary bg-primary/10',
     avatarBg: 'from-purple-500 to-indigo-600',
@@ -38,6 +40,7 @@ const TEAM_MEMBERS = [
   {
     name: 'Vishal Patel',
     initials: 'VP',
+    avatar: 'https://github.com/patelvishal-ji.png',
     role: 'QA Lead • Security & Automated Testing',
     color: 'border-match-emerald text-match-emerald bg-match-emerald/10',
     avatarBg: 'from-emerald-500 to-teal-600',
@@ -53,6 +56,7 @@ const TEAM_MEMBERS = [
   {
     name: 'Sujeet Kannaujiya',
     initials: 'SK',
+    avatar: 'https://github.com/sujeet-official.png',
     role: 'Research Lead • Technical Documentation',
     color: 'border-match-amber text-match-amber bg-match-amber/10',
     avatarBg: 'from-amber-500 to-orange-600',
@@ -139,8 +143,24 @@ export default function TeamModal({ isOpen, onClose }) {
 
           <div className="relative z-10 flex flex-col md:flex-row md:items-start justify-between gap-4 mb-4">
             <div className="flex items-start gap-4">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-cyan-400 via-teal-500 to-blue-600 flex items-center justify-center text-white font-black text-xl shadow-glow-cyan shrink-0 ring-2 ring-secondary/40">
-                {TEAM_LEADER.initials}
+              <div className="relative shrink-0 w-16 h-16">
+                <img
+                  src={TEAM_LEADER.avatar}
+                  alt={TEAM_LEADER.name}
+                  className="w-16 h-16 rounded-2xl object-cover shadow-glow-cyan ring-2 ring-secondary/50"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                    if (e.currentTarget.nextElementSibling) {
+                      e.currentTarget.nextElementSibling.style.display = 'flex';
+                    }
+                  }}
+                />
+                <div
+                  style={{ display: 'none' }}
+                  className="w-16 h-16 rounded-2xl bg-gradient-to-br from-cyan-400 via-teal-500 to-blue-600 items-center justify-center text-white font-black text-xl shadow-glow-cyan ring-2 ring-secondary/40"
+                >
+                  {TEAM_LEADER.initials}
+                </div>
               </div>
               <div>
                 <div className="flex flex-wrap items-center gap-2 mb-1">
@@ -214,10 +234,24 @@ export default function TeamModal({ isOpen, onClose }) {
             >
               <div>
                 <div className="flex items-center gap-3 mb-3">
-                  <div
-                    className={`w-11 h-11 rounded-xl bg-gradient-to-br ${member.avatarBg} flex items-center justify-center text-white font-bold text-sm shadow-glow-sm shrink-0`}
-                  >
-                    {member.initials}
+                  <div className="relative shrink-0 w-11 h-11">
+                    <img
+                      src={member.avatar}
+                      alt={member.name}
+                      className="w-11 h-11 rounded-xl object-cover shadow-glow-sm ring-1 ring-outline-variant/50"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                        if (e.currentTarget.nextElementSibling) {
+                          e.currentTarget.nextElementSibling.style.display = 'flex';
+                        }
+                      }}
+                    />
+                    <div
+                      style={{ display: 'none' }}
+                      className={`w-11 h-11 rounded-xl bg-gradient-to-br ${member.avatarBg} items-center justify-center text-white font-bold text-sm shadow-glow-sm`}
+                    >
+                      {member.initials}
+                    </div>
                   </div>
                   <div className="truncate">
                     <h4 className="font-bold text-sm text-on-background truncate">{member.name}</h4>

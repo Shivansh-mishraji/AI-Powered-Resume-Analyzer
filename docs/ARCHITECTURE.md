@@ -1,6 +1,8 @@
 # System Architecture — AI-Powered Resume Analyzer
 
-> Documented by: Sujeet Kannaujiya (Research & Documentation Lead)
+> **Conceived, Architected & Directed by:** [Shivansh Mishra](https://github.com/Shivansh-mishraji) (Team Leader & Principal Architect)  
+> **Documented by:** Sujeet Kannaujiya (Research & Documentation Lead)  
+> **Evaluation:** BBD University • Academic Capstone 2026
 
 - **Live Application:** [https://ai-powered-resume-analyzer-pi.vercel.app](https://ai-powered-resume-analyzer-pi.vercel.app)
 - **Live Backend API:** [https://resume-analyzer-api.onrender.com](https://resume-analyzer-api.onrender.com)
@@ -8,6 +10,8 @@
 ---
 
 ## 🏛️ High-Level System Architecture
+
+![System Architecture](../assets/architecture.jpg)
 
 The AI-Powered Resume Analyzer implements a **Hybrid Multi-Model & Deterministic Architecture** using a Bring-Your-Own-Key (BYOK) model. 
 
@@ -162,3 +166,23 @@ class AnalysisResult(BaseModel):
 | **Analysis Router** | `backend/app/services/analysis_service.py` | Orchestration, engine routing, graceful error recovery, fallback tagging. |
 | **HTTP Gateway** | `backend/app/main.py` | FastAPI routes, CORS middleware, multipart request receiving. |
 | **Frontend UI** | `frontend/src/App.jsx` | BYOK key input, debounce handling, unified dashboard visualizer. |
+
+---
+
+## 🖥️ Production Interface & Visual Physics
+
+![Production Dashboard Showcase](../assets/dashboard.jpg)
+
+*Interactive Glassmorphic Dashboard: 60/120 FPS Radial Gauge, Deep Semantic Matching & Strengths Breakdown.*
+
+---
+
+## 👥 Architecture Team & Technical Ownership
+
+| Member | Architectural Role | Core Technical Ownership |
+|---|---|---|
+| 👑 **Shivansh Mishra** | **Team Leader & Principal Architect** | End-to-end platform design, FastAPI Gateway, Multi-Provider AI Rubric Engine, in-memory PyMuPDF streaming (`sort=True`), deterministic fallback orchestration, and production deployments on Render & Vercel. |
+| **Harshvardhan Sisodiya** | Frontend Architect • UI/UX Lead | React 19 SPA modular architecture, Nebula Aurora glassmorphism, 60fps rAF count-up physics, and BYOK security hub. |
+| **Vishal Patel** | QA Lead • Security & Automated Testing | 39/39 passing pytest test suite, multi-provider AI mock testing (401, 429), and text sanitization validators. |
+| **Sujeet Kannaujiya** | Research Lead • Technical Documentation | ATS parsing literature review, framework benchmarking, and ethical rubric documentation. |
+

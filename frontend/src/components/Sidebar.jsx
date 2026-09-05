@@ -104,8 +104,15 @@ export default function Sidebar({
           }}
           className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-bright/50 transition-colors text-sm w-full text-left"
         >
-          <span className="material-symbols-outlined text-[20px] text-secondary" aria-hidden="true">stars</span>
-          <span>Team (Lead: Shivansh)</span>
+          <img
+            src="https://github.com/Shivansh-mishraji.png"
+            alt="Shivansh Mishra"
+            className="w-5 h-5 rounded-full object-cover ring-1 ring-secondary/50"
+            onError={(e) => {
+              e.currentTarget.style.display = 'none';
+            }}
+          />
+          <span className="text-secondary font-medium">Team (Lead: Shivansh)</span>
         </button>
 
         {/* Mobile Extra Links */}
