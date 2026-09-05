@@ -12,15 +12,11 @@
 [![Multi-Provider AI](https://img.shields.io/badge/AI_BYOK-Gemini_·_OpenAI_·_Claude-orange?style=for-the-badge)](https://aistudio.google.com/)
 [![Pytest](https://img.shields.io/badge/Pytest-39_Tests_Passed-success?style=for-the-badge&logo=pytest&logoColor=white)](https://docs.pytest.org/)
 
-<br/>
-
-> 👑 **Project Leader & Principal Architect:** [Shivansh Mishra](https://github.com/Shivansh-mishraji)  
-> 🌐 **Live Production Website:** [https://ai-powered-resume-analyzer-pi.vercel.app](https://ai-powered-resume-analyzer-pi.vercel.app)  
-> ⚡ **Live Production API:** [https://resume-analyzer-api.onrender.com](https://resume-analyzer-api.onrender.com)
-
-<br/>
+<br/><br/>
 
 <img src="./assets/banner.jpg" alt="AI Resume Analyzer Banner" width="100%" style="border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.4);" />
+
+<br/>
 
 <p align="center">
   <b>Upload your resume (PDF/DOCX) + Job Description + Optional Multi-Provider API Key → Deep Semantic Matching, Skill Gaps, Strengths, Weaknesses, and Actionable AI Suggestions!</b>
@@ -34,6 +30,14 @@
   <img src="https://img.shields.io/badge/Zero%20Disk%20Storage-Privacy%20First-purple" />
   <img src="https://img.shields.io/badge/Performance-60%2F120%20FPS%20GPU-cyan" />
 </p>
+
+</div>
+
+---
+
+> 👑 **Project Leader & Principal Architect:** [Shivansh Mishra](https://github.com/Shivansh-mishraji)  
+> 🌐 **Live Production Website:** [https://ai-powered-resume-analyzer-pi.vercel.app](https://ai-powered-resume-analyzer-pi.vercel.app)  
+> ⚡ **Live Production API:** [https://resume-analyzer-api.onrender.com](https://resume-analyzer-api.onrender.com)
 
 ---
 
@@ -98,11 +102,42 @@ The **AI-Powered Resume Analyzer** is a **Hybrid Multi-Model Career Intelligence
                 │                │
                 └───────┬────────┘
                         ▼
-             📋 UNIFIED RESULT SCHEMA
+              📋 UNIFIED RESULT SCHEMA
                         │
                         ▼
                 📊 REACT DASHBOARD
 ```
+
+<p align="center">
+  <img src="./assets/architecture.jpg" alt="System Architecture Diagram" width="100%" style="border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.4);" />
+</p>
+
+---
+
+## 🖥️ Live Application & Dashboard Showcase
+
+<p align="center">
+  <img src="./assets/dashboard.jpg" alt="Interactive Desktop Results Dashboard" width="58%" style="border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.4); vertical-align: middle; margin-right: 1%;" />
+  <img src="./assets/mobile.jpg" alt="Responsive Mobile Experience" width="39%" style="border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.4); vertical-align: middle;" />
+</p>
+
+<p align="center">
+  <em>Interactive Results Dashboard (Left) &amp; Touch-Optimized Mobile View with Slide-Over Drawer (Right)</em>
+</p>
+
+---
+
+## ⚡ 3-Stage Pipeline Breakdown
+
+<p align="center">
+  <img src="./assets/step1_parsing.jpg" alt="Step 1: In-Memory Parsing" width="32%" style="border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.3);" />
+  <img src="./assets/step2_matching.jpg" alt="Step 2: Semantic Matching" width="32%" style="border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.3);" />
+  <img src="./assets/step3_ui_dashboard.jpg" alt="Step 3: Interactive UI Dashboard" width="32%" style="border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.3);" />
+</p>
+
+| Stage 1: In-Memory Document Ingestion | Stage 2: Multi-Model Semantic Matching | Stage 3: Real-Time Intelligence Dashboard |
+|---|---|---|
+| • PyMuPDF stream parsing (`sort=True`)<br/>• Strict 5MB &amp; 10-page safety guards<br/>• 100% transient RAM processing | • Multi-Provider AI (Gemini, GPT-4o, Claude)<br/>• 39-test deterministic fallback engine<br/>• Dynamic skill extraction &amp; gap identification | • 60/120 FPS hardware-synced score physics<br/>• Nebula Aurora GPU-accelerated theme<br/>• Comprehensive strengths &amp; recommendations |
 
 ---
 
@@ -124,40 +159,14 @@ BBD University • Academic Capstone 2026 • Full-Stack AI Academic Evaluation
 
 ---
 
-## 🗺️ 6-Week Project Roadmap
+## 🗺️ 6-Week Completed Project Roadmap
 
-```
-📄 Resume (PDF/DOCX) + 📋 Job Description
-              ⬇️
-         ⚛️ React Frontend  (Vite · Port 5173)
-              ⬇️  HTTP POST /analyze
-        ⚡ FastAPI Backend  (Uvicorn · Port 8000)
-              ⬇️
-    📄 In-Memory File Parsing  (PyMuPDF / python-docx)
-    — Files are NEVER saved to disk —
-              ⬇️
-    🧹 Text Cleaning & Skill Extraction
-              ⬇️
-       ┌──────────────────────────┐
-       │  API Key provided?       │
-       │  YES → 🤖 Gemini AI      │
-       │  NO  → 🔄 Rule-Based     │
-       └──────────────────────────┘
-              ⬇️
-      📊 Unified JSON Result
-              ⬇️
-   🖥️ Interactive Results Dashboard
-```
-
----
-
-### ✅ Completed Sprints (Weeks 1 – 6)
-- [x] **Week 1 (Foundation):** FastAPI backend initialized, `/health` endpoint, strict PDF/DOCX validation, initial React Vite frontend.
+- [x] **Week 1 (Foundation):** FastAPI backend initialized, `/health` endpoint, strict PDF/DOCX validation, initial React 19 Vite frontend.
 - [x] **Week 2 (Text Cleaning & Skill Extraction):** In-memory text extraction, regex text normalization, and 50+ tech skills dictionary.
-- [x] **Week 3 (Scoring & Full-Stack Integration):** Set-intersection score calculator, connected `POST /analyze`, 29 unit tests passing.
+- [x] **Week 3 (Scoring & Full-Stack Integration):** Set-intersection score calculator, connected `POST /analyze`, and automated test infrastructure.
 - [x] **Week 4 (UI Overhaul, QA & CI/CD):** Glassmorphic dark mode UI, radial score gauge, QA test audit logging system, and GitHub Actions CI pipeline.
 - [x] **Week 5 (Hybrid Multi-Provider AI Upgrade):** Central config, unified Pydantic response contract, Gemini AI service with fallback chain, OpenAI/Claude support, and analysis router.
-- [x] **Week 6 (Production Deployment & Performance Optimization):** Frontend deployed to Vercel, Backend deployed to Render, 60/120 FPS rAF counters, GPU-accelerated Nebula Aurora design, cold-start silent pre-warming, and AQ./AIza key compatibility.
+- [x] **Week 6 (Production Deployment & Performance Optimization):** Frontend deployed to Vercel, Backend deployed to Render, 60/120 FPS rAF counters, GPU-accelerated Nebula Aurora design, cold-start silent pre-warming, 39/39 passing unit tests, and AQ./AIza key compatibility.
 
 ---
 
@@ -196,58 +205,48 @@ pytest
 
 ```
 AI-Powered-Resume-Analyzer/
-│
 ├── .github/
 │   └── workflows/
-│       └── ci.yml                  # GitHub Actions CI pipeline
-│
+│       └── ci.yml                      # GitHub Actions CI pipeline
 ├── backend/
 │   ├── app/
-│   │   ├── main.py                 # FastAPI application & HTTP Gateway
-│   │   ├── config.py               # Central limits, origins, & constants
+│   │   ├── main.py                     # FastAPI application & HTTP Gateway
+│   │   ├── config.py                   # Central limits, origins & constants
 │   │   ├── schemas/
-│   │   │   └── analysis_schema.py  # Unified Pydantic response contract
+│   │   │   └── analysis_schema.py      # Unified Pydantic response contract
 │   │   └── services/
-│   │       ├── resume_parser.py    # In-memory PDF (sort=True) & DOCX parser
-│   │       ├── text_cleaner.py     # Regex-based text normalization
-│   │       ├── skill_extractor.py  # 50+ tech skill keyword matcher
-│   │       ├── score_calculator.py # Set-intersection match score engine
-│   │       ├── rule_based_service.py # Deterministic fallback wrapper
-│   │       ├── ai_service.py       # Google Gemini AI semantic service
-│   │       └── analysis_service.py # Analysis Router & Orchestrator
-│   ├── tests/
-│   │   ├── test_main.py
-│   │   ├── test_analyze.py
-│   │   ├── test_score_calculator.py
-│   │   ├── test_skill_extractor.py
-│   │   ├── test_text_cleaner.py
-│   │   ├── test_ai_service.py      # Mocked Gemini AI tests
-│   │   └── test_analysis_service.py# Router & fallback tests
+│   │       ├── resume_parser.py        # In-memory PDF (sort=True) & DOCX parser
+│   │       ├── text_cleaner.py         # Regex text normalization
+│   │       ├── skill_extractor.py      # 50+ tech skill keyword matcher
+│   │       ├── score_calculator.py     # Set-intersection match score engine
+│   │       ├── rule_based_service.py   # Deterministic fallback service
+│   │       ├── ai_service.py           # Multi-provider AI semantic engine
+│   │       └── analysis_service.py     # Analysis router & orchestrator
+│   ├── tests/                          # 39/39 passing pytest test suite
 │   ├── conftest.py
-│   ├── requirements.txt
-│   └── GUIDELINES.md
-│
+│   └── requirements.txt
 ├── frontend/
 │   ├── src/
-│   │   ├── App.jsx                 # Main React component (BYOK + AI UI)
-│   │   ├── App.css                 # Dark mode glassmorphism styles
-│   │   └── index.css               # Global typography & variables
+│   │   ├── App.jsx                     # Root React orchestrator & state
+│   │   ├── App.css                     # Nebula Aurora glassmorphic theme
+│   │   ├── index.css                   # Global resets & design tokens
+│   │   ├── components/                 # 29 modular UI components
+│   │   ├── hooks/                      # sessionStorage BYOK security hook
+│   │   └── services/                   # API client & backend cold-start warmup
 │   ├── index.html
 │   ├── vite.config.js
-│   └── GUIDELINES.md
-│
-├── testing/
-│   ├── run_tests.py                # QA test runner with narrative logs
-│   └── reports/                    # Timestamped test execution history
-│
+│   ├── package.json
+│   └── vercel.json
 ├── docs/
-│   ├── API_REFERENCE.md            # Endpoint documentation & payloads
-│   ├── ARCHITECTURE.md             # System architecture & component design
-│   └── RESEARCH.md                 # Technical decisions & algorithmic research
-│
-├── assets/                         # Architecture diagrams & pipeline visuals
-├── README.md
-└── .gitignore
+│   ├── API_REFERENCE.md                # Endpoint specs & JSON payloads
+│   ├── ARCHITECTURE.md                 # System architecture & component design
+│   └── RESEARCH.md                     # Benchmarks & algorithmic research
+├── testing/
+│   ├── run_tests.py                    # QA test runner with audit logs
+│   └── reports/                        # Timestamped QA test logs
+├── assets/                             # Visual diagrams, screenshots & banners
+├── DEPLOYMENT.md                       # Cloud deployment guide (Render + Vercel)
+└── README.md
 ```
 
 ---
