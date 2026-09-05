@@ -15,8 +15,8 @@ const STEPS = [
   },
   {
     step: '03',
-    title: 'Optional BYOK Gemini Key',
-    desc: 'Enter your free Google Gemini API key. Keys are held in RAM only and passed via X-Gemini-API-Key header.',
+    title: 'Multi-Provider BYOK Key (Optional)',
+    desc: 'Use Google Gemini (free tier), OpenAI GPT-4o, Anthropic Claude, Groq, or DeepSeek. Keys stay in RAM only, zero disk storage.',
     icon: 'vpn_key',
   },
   {
@@ -66,9 +66,21 @@ export default function HowItWorksModal({ isOpen, onClose }) {
         </button>
 
         <div className="mb-6">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary/10 border border-secondary/30 text-secondary font-label-sm text-xs font-semibold mb-2">
-            <span className="material-symbols-outlined text-[14px]" aria-hidden="true">psychology_alt</span>
-            <span>4-Step Workflow</span>
+          <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary/10 border border-secondary/30 text-secondary font-label-sm text-xs font-semibold">
+              <span className="material-symbols-outlined text-[14px]" aria-hidden="true">psychology_alt</span>
+              <span>4-Step Workflow</span>
+            </div>
+            <a
+              href="https://ai-powered-resume-analyzer-pi.vercel.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-label-sm text-xs font-semibold hover:bg-emerald-500/20 transition-all"
+            >
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span>Live Website</span>
+              <span className="material-symbols-outlined text-[12px]" aria-hidden="true">open_in_new</span>
+            </a>
           </div>
           <h2 id="how-it-works-title" className="font-display-lg text-2xl font-bold text-on-background">
             How ResumeAI Operates

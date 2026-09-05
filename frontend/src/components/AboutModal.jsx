@@ -39,9 +39,21 @@ export default function AboutModal({ isOpen, onClose }) {
         </button>
 
         <div className="mb-6">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/30 text-primary font-label-sm text-xs font-semibold mb-2">
-            <span className="material-symbols-outlined text-[14px]" aria-hidden="true">info</span>
-            <span>Project Architecture</span>
+          <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/30 text-primary font-label-sm text-xs font-semibold">
+              <span className="material-symbols-outlined text-[14px]" aria-hidden="true">info</span>
+              <span>Project Architecture</span>
+            </div>
+            <a
+              href="https://ai-powered-resume-analyzer-pi.vercel.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-label-sm text-xs font-semibold hover:bg-emerald-500/20 transition-all"
+            >
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span>Live Website</span>
+              <span className="material-symbols-outlined text-[12px]" aria-hidden="true">open_in_new</span>
+            </a>
           </div>
           <h2 id="about-modal-title" className="font-display-lg text-2xl font-bold text-on-background">
             About AI Powered Resume Analyzer
@@ -56,9 +68,9 @@ export default function AboutModal({ isOpen, onClose }) {
           <div className="p-4 rounded-xl bg-surface-container-low/80 border border-outline-variant/40 space-y-2">
             <h3 className="font-bold text-sm text-on-background">Core Architectural Pillars:</h3>
             <ul className="space-y-1.5 list-disc pl-5">
-              <li><strong>Zero-Persistence Privacy:</strong> No database, no local cookies, and no disk logging. Resume byte streams and Gemini API keys reside exclusively in transient memory.</li>
-              <li><strong>Dual-Engine Reliability:</strong> Uses Google Gemini 2.5 Flash for deep semantic reasoning, with automatic fallback to a deterministic keyword matching algorithm if offline or unkeyed.</li>
-              <li><strong>Hermetic Verification:</strong> 38/38 automated pytest test suite ensuring zero hallucination, strict schema validation, and high test coverage.</li>
+              <li><strong>Zero-Persistence Privacy:</strong> No database, no local cookies, and no disk logging. Resume byte streams and API keys reside exclusively in transient memory.</li>
+              <li><strong>Multi-Provider AI &amp; Fallback Reliability:</strong> Supports Google Gemini (AQ./AIza), OpenAI GPT-4o, Anthropic Claude, Groq, and DeepSeek with automatic fallback to a deterministic keyword matching algorithm if offline or unkeyed.</li>
+              <li><strong>Hermetic Verification:</strong> 39/39 automated pytest test suite ensuring zero hallucination, strict schema validation, and 100% test pass rate.</li>
             </ul>
           </div>
 

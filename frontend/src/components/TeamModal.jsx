@@ -11,7 +11,7 @@ const TEAM_MEMBERS = [
     email: 'tgsmishra@gmail.com',
     modules: [
       'FastAPI REST Gateway, Routing & CORS Architecture',
-      'Google Gemini 2.5 AI Rubric Evaluation Engine',
+      'Multi-Provider AI Engine (Gemini 2.5/3.6, GPT-4o, Claude 3.5, Groq)',
       'In-Memory PyMuPDF Document Parsing (sort=True)',
       'Deterministic Rule-Based Fallback Orchestration',
     ],
@@ -25,10 +25,10 @@ const TEAM_MEMBERS = [
     github: 'https://github.com/harsh123-code',
     email: 'hsisodiya205@bbdu.ac.in',
     modules: [
-      'React + Vite Modular Single-Page Application (SPA)',
-      'Google Stitch Design System & Glassmorphism Refraction',
+      'React 19 + Vite Modular Single-Page Application (SPA)',
+      'Nebula Aurora Glassmorphism & 60fps rAF Animation Engine',
       '180px SVG Radial Match Gauge & Count-Up Physics',
-      'BYOK In-Memory Security Hub & Live Quota Telemetry',
+      'Multi-Provider BYOK Security Hub & Live Telemetry',
     ],
   },
   {
@@ -40,8 +40,8 @@ const TEAM_MEMBERS = [
     github: 'https://github.com/patelvishal-ji',
     email: 'patelvishal7800023@gmail.com',
     modules: [
-      'Pytest Automated Test Suite (38/38 Unit Tests)',
-      'Mocked Gemini Client Tests (401, 429, Fallback Recovery)',
+      'Pytest Automated Test Suite (39/39 Passing Unit Tests)',
+      'Mocked Multi-Provider AI Tests (401, 429, Fallback Recovery)',
       'Text Sanitization & Keyword Extraction Coverage',
       'Automated Markdown Audit Log Generator',
     ],
@@ -104,9 +104,21 @@ export default function TeamModal({ isOpen, onClose }) {
 
         {/* Modal Header */}
         <div className="mb-8">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/30 text-primary font-label-sm text-xs font-semibold mb-2">
-            <span className="material-symbols-outlined text-[14px]" aria-hidden="true">school</span>
-            <span>BBD University • Academic Capstone 2026</span>
+          <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/30 text-primary font-label-sm text-xs font-semibold">
+              <span className="material-symbols-outlined text-[14px]" aria-hidden="true">school</span>
+              <span>BBD University • Academic Capstone 2026</span>
+            </div>
+            <a
+              href="https://ai-powered-resume-analyzer-pi.vercel.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-label-sm text-xs font-semibold hover:bg-emerald-500/20 transition-all"
+            >
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span>Live Website</span>
+              <span className="material-symbols-outlined text-[12px]" aria-hidden="true">open_in_new</span>
+            </a>
           </div>
           <h2 id="team-modal-title" className="font-display-lg text-2xl md:text-3xl font-bold text-on-background">
             Engineering Team &amp; Technical Attribution

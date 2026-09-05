@@ -2,6 +2,9 @@
 
 > Researched & Documented by: Sujeet Kannaujiya (Research & Documentation Lead)
 
+- **Live Application:** [https://ai-powered-resume-analyzer-pi.vercel.app](https://ai-powered-resume-analyzer-pi.vercel.app)
+- **Live Backend API:** [https://resume-analyzer-api.onrender.com](https://resume-analyzer-api.onrender.com)
+
 ---
 
 ## 1. Why Google Gemini for Semantic Analysis?
@@ -54,7 +57,7 @@ Latency: ~1.5 seconds | Failure Points: 1 hop with 1 retry | Token Cost: 1x
 
 No cloud AI API is immune to transient network outages, invalid user keys, or rate limits (HTTP 429). 
 
-Preserving our 29-test-verified **Regex Keyword Extractor & Set-Intersection Calculator** guarantees that:
+Preserving our 39-test-verified **Regex Keyword Extractor & Set-Intersection Calculator** guarantees that:
 * The application **never crashes or returns a dead screen**.
 * If AI analysis is unavailable, the user receives an honest, transparent rule-based match score accompanied by an explanatory warning in the response payload.
 
