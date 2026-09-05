@@ -147,30 +147,22 @@ BBD University • Academic Capstone 2026 • Full-Stack AI Academic Evaluation
 
 ### 👑 Project Leadership & Principal Architect
 
-<table>
-  <tr>
-    <td width="130" align="center" valign="top">
-      <a href="https://github.com/Shivansh-mishraji">
-        <img src="https://github.com/Shivansh-mishraji.png" width="110" height="110" style="border-radius: 50%; border: 3px solid #00F0FF; box-shadow: 0 4px 20px rgba(0, 240, 255, 0.4);" alt="Shivansh Mishra" /><br/><br/>
-        <img src="https://img.shields.io/badge/👑_Team_Lead-00F0FF?style=flat-square&labelColor=0d1117&color=00F0FF" />
-      </a>
-    </td>
-    <td valign="top">
-      <h3>👑 <a href="https://github.com/Shivansh-mishraji">Shivansh Mishra</a></h3>
-      <b>Team Leader • Backend & AI System Architect</b><br/>
-      <em>Conceived, engineered, and steered the complete platform architecture:</em>
-      <ul>
-        <li><b>FastAPI REST Gateway &amp; Routing:</b> Architected the central routing layer, request validation, upload boundaries, and explicit CORS origin security.</li>
-        <li><b>Multi-Provider AI Rubric Engine:</b> Integrated Google Gemini (<code>AQ....</code> &amp; <code>AIza...</code> keys), OpenAI (<code>sk-...</code>), and Claude (<code>sk-ant-...</code>) with automated multi-tier model fallbacks.</li>
-        <li><b>In-Memory Document Ingestion:</b> Authored zero-persistence PyMuPDF binary streaming (<code>sort=True</code>) with zero disk retention for enterprise-grade privacy.</li>
-        <li><b>Deterministic Fallback Orchestration:</b> Built high-availability fallback engine guaranteeing uninterrupted analysis under network disconnects or API limits.</li>
-        <li><b>Cloud Production Deployments:</b> Led the cloud infrastructure deployments on Render (FastAPI) and Vercel (React).</li>
-      </ul>
-      <a href="https://github.com/Shivansh-mishraji"><img src="https://img.shields.io/badge/GitHub-Shivansh--mishraji-181717?style=flat&logo=github" /></a>
-      <a href="mailto:tgsmishra@gmail.com"><img src="https://img.shields.io/badge/Email-tgsmishra%40gmail.com-D14836?style=flat&logo=gmail&logoColor=white" /></a>
-    </td>
-  </tr>
-</table>
+<a href="https://github.com/Shivansh-mishraji">
+  <img align="left" width="160" height="160" src="./assets/team/shivansh_circle.png" alt="Shivansh Mishra • Team Leader & Principal Architect" />
+</a>
+
+### 👑 <a href="https://github.com/Shivansh-mishraji">Shivansh Mishra</a>
+**Team Leader & Principal Architect • Backend & AI Systems Architecture**  
+[![Team Lead](https://img.shields.io/badge/👑_Team_Lead-00F0FF?style=flat-square&labelColor=0d1117&color=00F0FF)](https://github.com/Shivansh-mishraji) [![GitHub Profile](https://img.shields.io/badge/GitHub-Shivansh--mishraji-181717?style=flat-square&logo=github)](https://github.com/Shivansh-mishraji) [![Email Contact](https://img.shields.io/badge/Email-tgsmishra%40gmail.com-D14836?style=flat-square&logo=gmail&logoColor=white)](mailto:tgsmishra@gmail.com)
+
+*Conceived, engineered, and steered the complete platform architecture end-to-end:*
+- **FastAPI REST Gateway & Routing:** Architected the central routing layer, request validation, upload boundaries, and explicit CORS origin security.
+- **Multi-Provider AI Rubric Engine:** Integrated Google Gemini (`AQ....` & `AIza...` keys), OpenAI (`sk-...`), and Claude (`sk-ant-...`) with automated multi-tier model fallbacks.
+- **In-Memory Document Ingestion:** Authored zero-persistence PyMuPDF binary streaming (`sort=True`) with zero disk retention for enterprise-grade privacy.
+- **Deterministic Fallback Orchestration:** Built high-availability fallback engine guaranteeing uninterrupted analysis under network disconnects or API limits.
+- **Cloud Production Deployments:** Led the cloud infrastructure deployments on Render (FastAPI) and Vercel (React).
+
+<br clear="left" />
 
 ### 🌟 Core Engineering Contributors
 
@@ -184,7 +176,7 @@ BBD University • Academic Capstone 2026 • Full-Stack AI Academic Evaluation
   <tr align="center" valign="top">
     <td>
       <a href="https://github.com/Shivansh-mishraji">
-        <img src="https://github.com/Shivansh-mishraji.png" width="85" height="85" style="border-radius: 50%; border: 2px solid #00F0FF;" alt="Shivansh Mishra" /><br/>
+        <img src="./assets/team/shivansh_circle.png" width="85" height="85" alt="Shivansh Mishra" /><br/>
         <b>Shivansh Mishra</b>
       </a><br/>
       <small><b>Team Leader &amp; Principal Architect</b></small><br/><br/>
@@ -194,7 +186,7 @@ BBD University • Academic Capstone 2026 • Full-Stack AI Academic Evaluation
     </td>
     <td>
       <a href="https://github.com/harsh123-code">
-        <img src="https://github.com/harsh123-code.png" width="85" height="85" style="border-radius: 50%; border: 2px solid #8B5CF6;" alt="Harshvardhan Sisodiya" /><br/>
+        <img src="./assets/team/harshvardhan_circle.png" width="85" height="85" alt="Harshvardhan Sisodiya" /><br/>
         <b>Harshvardhan Sisodiya</b>
       </a><br/>
       <small>Frontend Architect &amp; UI/UX Lead</small><br/><br/>
@@ -204,7 +196,7 @@ BBD University • Academic Capstone 2026 • Full-Stack AI Academic Evaluation
     </td>
     <td>
       <a href="https://github.com/patelvishal-ji">
-        <img src="https://github.com/patelvishal-ji.png" width="85" height="85" style="border-radius: 50%; border: 2px solid #10B981;" alt="Vishal Patel" /><br/>
+        <img src="./assets/team/vishal_circle.png" width="85" height="85" alt="Vishal Patel" /><br/>
         <b>Vishal Patel</b>
       </a><br/>
       <small>QA Lead &amp; Automated Testing</small><br/><br/>
@@ -214,7 +206,7 @@ BBD University • Academic Capstone 2026 • Full-Stack AI Academic Evaluation
     </td>
     <td>
       <a href="https://github.com/sujeet-official">
-        <img src="https://github.com/sujeet-official.png" width="85" height="85" style="border-radius: 50%; border: 2px solid #F59E0B;" alt="Sujeet Kannaujiya" /><br/>
+        <img src="./assets/team/sujeet_circle.png" width="85" height="85" alt="Sujeet Kannaujiya" /><br/>
         <b>Sujeet Kannaujiya</b>
       </a><br/>
       <small>Research &amp; Technical Docs Lead</small><br/><br/>

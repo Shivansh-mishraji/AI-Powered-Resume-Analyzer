@@ -301,7 +301,7 @@ export default function TeamModal({ isOpen, onClose }) {
                 <img
                   src={currentCard.avatar}
                   alt={currentCard.name}
-                  className={`w-36 h-36 sm:w-40 sm:h-40 rounded-3xl object-cover shadow-2xl ${currentCard.ringClass} bg-surface-container-high transition-transform duration-300 hover:scale-105`}
+                  className={`w-36 h-36 sm:w-40 sm:h-40 rounded-full object-cover shadow-2xl ${currentCard.ringClass} bg-surface-container-high transition-transform duration-300 hover:scale-105`}
                   onError={(e) => {
                     e.currentTarget.style.display = 'none';
                     if (e.currentTarget.nextElementSibling) {
@@ -311,7 +311,7 @@ export default function TeamModal({ isOpen, onClose }) {
                 />
                 <div
                   style={{ display: 'none' }}
-                  className={`w-36 h-36 sm:w-40 sm:h-40 rounded-3xl bg-gradient-to-br from-cyan-400 via-teal-500 to-blue-600 items-center justify-center text-white font-black text-4xl shadow-2xl ${currentCard.ringClass}`}
+                  className={`w-36 h-36 sm:w-40 sm:h-40 rounded-full bg-gradient-to-br from-cyan-400 via-teal-500 to-blue-600 items-center justify-center text-white font-black text-4xl shadow-2xl ${currentCard.ringClass}`}
                 >
                   {currentCard.initials}
                 </div>
