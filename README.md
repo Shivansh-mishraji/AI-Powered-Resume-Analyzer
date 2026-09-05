@@ -14,6 +14,7 @@
 
 <br/>
 
+> 👑 **Project Leader & Principal Architect:** [Shivansh Mishra](https://github.com/Shivansh-mishraji)  
 > 🌐 **Live Production Website:** [https://ai-powered-resume-analyzer-pi.vercel.app](https://ai-powered-resume-analyzer-pi.vercel.app)  
 > ⚡ **Live Production API:** [https://resume-analyzer-api.onrender.com](https://resume-analyzer-api.onrender.com)
 
@@ -109,9 +110,14 @@ The **AI-Powered Resume Analyzer** is a **Hybrid Multi-Model Career Intelligence
 
 BBD University • Academic Capstone 2026 • Full-Stack AI Academic Evaluation
 
+> ### 👑 **Project Leadership & Architecture**
+> **Shivansh Mishra** — *Team Leader • Backend & AI System Architect*  
+> Conceived, engineered, and spearheaded the end-to-end platform architecture: authored the FastAPI REST Gateway & security boundary, built the Multi-Provider AI Rubric Engine (Gemini 2.5/3.6, GPT-4o, Claude 3.5, Groq), implemented zero-persistence in-memory PyMuPDF binary streaming (`sort=True`), orchestrated automated deterministic fallback recovery, and drove production cloud deployments on Render & Vercel.  
+> [![GitHub](https://img.shields.io/badge/GitHub-Shivansh--mishraji-181717?style=flat&logo=github)](https://github.com/Shivansh-mishraji) [![Email](https://img.shields.io/badge/Email-tgsmishra%40gmail.com-D14836?style=flat&logo=gmail&logoColor=white)](mailto:tgsmishra@gmail.com)
+
 | Member | Role | Core Modules & Technical Contributions | Contact |
 |---|---|---|---|
-| **Shivansh Mishra** | Team Lead • Backend & AI Architect | • FastAPI REST Gateway, Routing & CORS Architecture<br/>• Multi-Provider AI Engine (Gemini 2.5/3.6, GPT-4o, Claude 3.5, Groq)<br/>• In-Memory PyMuPDF Document Streaming (`sort=True`)<br/>• Deterministic Rule-Based Fallback Orchestration | [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat&logo=github)](https://github.com/Shivansh-mishraji) [![Email](https://img.shields.io/badge/Email-D14836?style=flat&logo=gmail&logoColor=white)](mailto:tgsmishra@gmail.com) |
+| 👑 **Shivansh Mishra** | **Team Leader • Backend & AI Architect** | • FastAPI REST Gateway, Routing & CORS Architecture<br/>• Multi-Provider AI Engine (Gemini 2.5/3.6, GPT-4o, Claude 3.5, Groq)<br/>• In-Memory PyMuPDF Document Streaming (`sort=True`)<br/>• Deterministic Rule-Based Fallback Orchestration | [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat&logo=github)](https://github.com/Shivansh-mishraji) [![Email](https://img.shields.io/badge/Email-D14836?style=flat&logo=gmail&logoColor=white)](mailto:tgsmishra@gmail.com) |
 | **Harshvardhan Sisodiya** | Frontend Architect • UI/UX Lead | • React 19 + Vite Modular Single-Page Application (SPA)<br/>• Nebula Aurora Glassmorphism & 60fps rAF Animation Engine<br/>• 180px SVG Radial Match Gauge & Count-Up Physics<br/>• Multi-Provider BYOK Security Hub & Live Telemetry | [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat&logo=github)](https://github.com/harsh123-code) [![Email](https://img.shields.io/badge/Email-D14836?style=flat&logo=gmail&logoColor=white)](mailto:hsisodiya205@bbdu.ac.in) |
 | **Vishal Patel** | QA Lead • Security & Automated Testing | • Pytest Automated Test Suite (39/39 Passing Unit Tests)<br/>• Mocked Multi-Provider AI Tests (401, 429, Fallback Recovery)<br/>• Text Sanitization & Keyword Extraction Coverage<br/>• Automated Markdown Audit Log Generator | [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat&logo=github)](https://github.com/patelvishal-ji) [![Email](https://img.shields.io/badge/Email-D14836?style=flat&logo=gmail&logoColor=white)](mailto:patelvishal7800023@gmail.com) |
 | **Sujeet Kannaujiya** | Research Lead • Technical Documentation | • ATS Parsing Strategies & In-Memory Privacy Studies<br/>• FastAPI vs. Flask Comparative Architecture Benchmarking<br/>• Academic Research Dossier (`RESEARCH.md`)<br/>• Ethical AI Rubric & Non-Discriminatory Guidelines | [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat&logo=github)](https://github.com/sujeet-official) [![Email](https://img.shields.io/badge/Email-D14836?style=flat&logo=gmail&logoColor=white)](mailto:sujeetkannujiya2004@bbdu.ac.in) |

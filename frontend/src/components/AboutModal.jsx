@@ -75,7 +75,7 @@ export default function AboutModal({ isOpen, onClose }) {
           </div>
 
           <p className="text-outline">
-            Developed by Shivansh Mishra, Harshvardhan Sisodiya, Vishal Patel, and Sujeet Kannaujiya (BBD University).
+            Conceived, architected, and led by <strong>Shivansh Mishra</strong> (Team Leader &amp; AI Architect), developed in collaboration with Harshvardhan Sisodiya, Vishal Patel, and Sujeet Kannaujiya (BBD University).
           </p>
         </div>
       </div>

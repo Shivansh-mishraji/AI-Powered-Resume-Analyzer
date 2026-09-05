@@ -53,8 +53,8 @@ export default function TopNavBar({
             onClick={onOpenTeam}
             className="text-on-surface-variant font-label-md text-sm hover:text-on-background transition-colors duration-200 flex items-center gap-1.5"
           >
-            <span className="material-symbols-outlined text-[18px]" aria-hidden="true">group</span>
-            <span>Engineering Team</span>
+            <span className="material-symbols-outlined text-[18px] text-secondary" aria-hidden="true">stars</span>
+            <span>Team • Lead: Shivansh</span>
           </button>
         </div>
 

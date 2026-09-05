@@ -224,10 +224,10 @@ export default function App() {
             <span className="mx-2 hidden sm:inline">•</span>
             <button
               type="button"
-              className="hover:text-secondary transition-colors block sm:inline mt-1 sm:mt-0"
+              className="hover:text-secondary transition-colors block sm:inline mt-1 sm:mt-0 font-medium"
               onClick={() => setIsTeamOpen(true)}
             >
-              Developed by Team Antigravity
+              Project Lead: Shivansh Mishra &amp; Team
             </button>
           </div>
           <div className="flex items-center gap-4 sm:gap-6">

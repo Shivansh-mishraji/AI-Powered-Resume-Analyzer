@@ -104,8 +104,8 @@ export default function Sidebar({
           }}
           className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-bright/50 transition-colors text-sm w-full text-left"
         >
-          <span className="material-symbols-outlined text-[20px]" aria-hidden="true">groups</span>
-          <span>Team &amp; Roles</span>
+          <span className="material-symbols-outlined text-[20px] text-secondary" aria-hidden="true">stars</span>
+          <span>Team (Lead: Shivansh)</span>
         </button>
 
         {/* Mobile Extra Links */}
