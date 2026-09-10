@@ -67,7 +67,7 @@ const TEAM_CARDS = [
     badgeText: '🛡️ QA Lead & Security Specialist',
     name: 'Vishal Patel',
     initials: 'VP',
-    avatar: 'https://github.com/patelvishal-ji.png',
+    avatar: '/team/vishal.png',
     role: 'QA Lead • Security & Automated Testing',
     themeColor: 'text-match-emerald',
     borderClass: 'border-match-emerald/70',

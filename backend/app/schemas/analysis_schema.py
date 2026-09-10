@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import List, Literal
+from typing import List, Literal, Optional, Dict, Any
 
 class AnalysisResult(BaseModel):
     """
@@ -51,3 +51,36 @@ class AnalysisResult(BaseModel):
         default_factory=list, 
         description="Informational alerts regarding truncation, fallback triggers, or file quality."
     )
+    ats_audit: Optional[dict] = Field(
+        default=None,
+        description="Comprehensive ATS parseability, section health, and metric quantification audit."
+    )
+    domain_breakdown: Optional[dict] = Field(
+        default=None,
+        description="Skill distribution across 12 tech domains."
+    )
+    interview_questions: Optional[List[dict]] = Field(
+        default=None,
+        description="Targeted candidate interview questions based on skill gaps."
+    )
+
+
+class AtsAuditRequest(BaseModel):
+    resume_text: str = Field(..., min_length=1, description="Raw or parsed resume text to audit.")
+
+
+class CategorizeSkillsRequest(BaseModel):
+    skills: List[str] = Field(..., description="List of raw or shorthand skills to categorize.")
+
+
+class ExportRequest(BaseModel):
+    analysis: dict = Field(..., description="AnalysisResult data dictionary.")
+    ats_audit: Optional[dict] = Field(default=None, description="Optional ATS audit results.")
+
+
+class InterviewKitRequest(BaseModel):
+    matched_skills: List[str] = Field(default_factory=list)
+    missing_skills: List[str] = Field(default_factory=list)
+    weaknesses: Optional[List[str]] = Field(default_factory=list)
+    score: Optional[int] = Field(default=None)
+
