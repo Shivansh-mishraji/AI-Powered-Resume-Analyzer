@@ -10,7 +10,7 @@
 [![Vite](https://img.shields.io/badge/Vite_6-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
 [![Python](https://img.shields.io/badge/Python_3.13-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![Multi-Provider AI](https://img.shields.io/badge/AI_BYOK-Gemini_·_OpenAI_·_Claude-orange?style=for-the-badge)](https://aistudio.google.com/)
-[![Pytest](https://img.shields.io/badge/Pytest-39_Tests_Passed-success?style=for-the-badge&logo=pytest&logoColor=white)](https://docs.pytest.org/)
+[![Pytest](https://img.shields.io/badge/Pytest-89_Tests_Passed-success?style=for-the-badge&logo=pytest&logoColor=white)](https://docs.pytest.org/)
 
 <br/><br/>
 
@@ -19,14 +19,14 @@
 <br/>
 
 <p align="center">
-  <b>Upload your resume (PDF/DOCX) + Job Description + Optional Multi-Provider API Key → Deep Semantic Matching, Skill Gaps, Strengths, Weaknesses, and Actionable AI Suggestions!</b>
+  <b>Upload your resume (PDF/DOCX) + Job Description + Optional Multi-Provider API Key → Deep Semantic Matching, Skill Gaps, Strengths, Weaknesses, ATS Heuristic Audit, and Actionable AI Suggestions!</b>
 </p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/AI%20Engine-Gemini%203.6%20%2F%202.5%20%2F%20GPT--4o%20%2F%20Claude-blue?logo=google&logoColor=white" />
   <img src="https://img.shields.io/badge/FastAPI-0.115+-green?logo=fastapi" />
   <img src="https://img.shields.io/badge/React-19-61DAFB?logo=react" />
-  <img src="https://img.shields.io/badge/Tests-39%2F39%20Passing-brightgreen" />
+  <img src="https://img.shields.io/badge/Tests-89%2F89%20Passing-brightgreen" />
   <img src="https://img.shields.io/badge/Zero%20Disk%20Storage-Privacy%20First-purple" />
   <img src="https://img.shields.io/badge/Performance-60%2F120%20FPS%20GPU-cyan" />
 </p>
@@ -51,16 +51,20 @@ The **AI-Powered Resume Analyzer** is a **Hybrid Multi-Model Career Intelligence
    - **OpenAI**: Auto-detects `sk-...` keys and routes to `gpt-4o` / `gpt-4o-mini`.
    - **Anthropic Claude**: Auto-detects `sk-ant-...` keys and routes to `claude-opus-4` / `claude-3-5-sonnet`.
    - Generates deep contextual semantic matching, dynamic skill extraction, candidate profiling, strengths & weaknesses analysis, and personalized resume improvement advice.
-2. ⚙️ **Fallback Engine (Deterministic Rule-Based Analyzer):** If an API key is unprovided or third-party AI services are unreachable, automatically falls back to our fast, 39-test-verified keyword extraction and set-intersection scoring engine.
-3. 🔒 **Enterprise-Grade Client Security:**
+2. ⚙️ **Fallback Engine (Deterministic Rule-Based Analyzer):** If an API key is unprovided or third-party AI services are unreachable, automatically falls back to our sub-5ms, 89-test-verified keyword extraction and set-intersection scoring engine.
+3. 🧠 **Enterprise Skills Taxonomy & Synonym Graph:** Catalogs 440+ canonical technologies across 12 engineering domains with automatic alias resolution (`k8s` → `Kubernetes`, `postgres` → `PostgreSQL`, `mongo` → `MongoDB`).
+4. 🔍 **Deep ATS Heuristic & Quantification Engine:** Audits 7 standard resume sections, analyzes Action Verb Density across 150+ verbs, and calculates a quantified impact score (`%`, `$`, throughput, latency).
+5. 📄 **Automated Multi-Format Audit Exporter:** Generates executive PDF, Markdown, JSON, and printable HTML reports stamped with tamper-proof **SHA-256 cryptographic digital seals**.
+6. 🎯 **Candidate Technical Interview Generator:** Automatically generates tailored technical questions, system design scenarios, and behavioral prompts based on identified skill gaps.
+7. 🔒 **Enterprise-Grade Client Security:**
    - Keys are obfuscated in `sessionStorage` (auto-cleared on tab close).
    - Never logged, never written to disk, and never stored in any database.
    - Master toggle allows users to pause AI analysis without clearing their saved key.
-4. ⚡ **Zero-Lag & 60/120 FPS Performance:**
+8. ⚡ **Zero-Lag & 60/120 FPS Performance:**
    - Score counting uses `requestAnimationFrame` with an ease-out cubic animation curve.
    - Background aurora effects are GPU-accelerated with tab-visibility awareness (`document.hidden`) and `prefers-reduced-motion` compliance.
    - Silent backend pre-warming (`warmUpBackend()`) automatically wakes Render free-tier instances on page load.
-5. 📊 **Unified Data Contract:** Both AI and Fallback engines return a standardized Pydantic JSON response, guaranteeing zero frontend crashes.
+9. 📊 **Unified Data Contract:** Both AI and Fallback engines return a standardized Pydantic JSON response, guaranteeing zero frontend crashes.
 
 ---
 
@@ -102,7 +106,11 @@ The **AI-Powered Resume Analyzer** is a **Hybrid Multi-Model Career Intelligence
                 │                │
                 └───────┬────────┘
                         ▼
-              📋 UNIFIED RESULT SCHEMA
+              📋 ENRICHMENT PIPELINE
+         ├── Skills Taxonomy Graph (12 Domains)
+         ├── Deep ATS Heuristics & Verbs
+         ├── Interview Question Generator
+         └── SHA-256 Executive Exporter
                         │
                         ▼
                 📊 REACT DASHBOARD
@@ -137,7 +145,7 @@ The **AI-Powered Resume Analyzer** is a **Hybrid Multi-Model Career Intelligence
 
 | Stage 1: In-Memory Document Ingestion | Stage 2: Multi-Model Semantic Matching | Stage 3: Real-Time Intelligence Dashboard |
 |---|---|---|
-| • PyMuPDF stream parsing (`sort=True`)<br/>• Strict 5MB &amp; 10-page safety guards<br/>• 100% transient RAM processing | • Multi-Provider AI (Gemini, GPT-4o, Claude)<br/>• 39-test deterministic fallback engine<br/>• Dynamic skill extraction &amp; gap identification | • 60/120 FPS hardware-synced score physics<br/>• Nebula Aurora GPU-accelerated theme<br/>• Comprehensive strengths &amp; recommendations |
+| • PyMuPDF stream parsing (`sort=True`)<br/>• Strict 5MB &amp; 10-page safety guards<br/>• 100% transient RAM processing | • Multi-Provider AI (Gemini, GPT-4o, Claude)<br/>• 89-test deterministic fallback engine<br/>• Dynamic skill extraction &amp; gap identification | • 60/120 FPS hardware-synced score physics<br/>• Nebula Aurora GPU-accelerated theme<br/>• Comprehensive strengths &amp; recommendations |
 
 ---
 
@@ -157,6 +165,7 @@ BBD University • Academic Capstone 2026 • Full-Stack AI Academic Evaluation
 
 *Conceived, engineered, and steered the complete platform architecture end-to-end:*
 - **FastAPI REST Gateway & Routing:** Architected the central routing layer, request validation, upload boundaries, and explicit CORS origin security.
+- **5 Strategic Enterprise Backend Systems:** Built the Enterprise Skills Taxonomy Engine (440+ skills, 12 domains), Deep ATS Heuristic Engine, Automated Executive Multi-Format Report Exporter (PDF/Markdown/HTML/JSON with SHA-256 seals), and Candidate Interview Question Generator.
 - **Multi-Provider AI Rubric Engine:** Integrated Google Gemini (`AQ....` & `AIza...` keys), OpenAI (`sk-...`), and Claude (`sk-ant-...`) with automated multi-tier model fallbacks.
 - **In-Memory Document Ingestion:** Authored zero-persistence PyMuPDF binary streaming (`sort=True`) with zero disk retention for enterprise-grade privacy.
 - **Deterministic Fallback Orchestration:** Built high-availability fallback engine guaranteeing uninterrupted analysis under network disconnects or API limits.
@@ -180,7 +189,7 @@ BBD University • Academic Capstone 2026 • Full-Stack AI Academic Evaluation
         <b>Shivansh Mishra</b>
       </a><br/>
       <small><b>Team Leader &amp; Principal Architect</b></small><br/><br/>
-      <small>FastAPI Gateway, Multi-Provider AI Engine, In-Memory Stream Parsing, Deterministic Fallbacks</small><br/><br/>
+      <small>FastAPI Gateway, 5 Backend Systems, Skills Taxonomy, ATS Engine, Exporter, In-Memory Stream Parsing</small><br/><br/>
       <a href="https://github.com/Shivansh-mishraji"><img src="https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github" /></a>
       <a href="mailto:tgsmishra@gmail.com"><img src="https://img.shields.io/badge/Email-D14836?style=flat-square&logo=gmail" /></a>
     </td>
@@ -190,7 +199,7 @@ BBD University • Academic Capstone 2026 • Full-Stack AI Academic Evaluation
         <b>Harshvardhan Sisodiya</b>
       </a><br/>
       <small>Frontend Architect &amp; UI/UX Lead</small><br/><br/>
-      <small>React 19 SPA, Nebula Aurora Glassmorphism, 60fps rAF Animation Physics, BYOK Hub</small><br/><br/>
+      <small>React 19 SPA, Nebula Aurora Glassmorphism, 60fps rAF Animation Physics, BYOK Hub, Team Deck</small><br/><br/>
       <a href="https://github.com/harsh123-code"><img src="https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github" /></a>
       <a href="mailto:hsisodiya205@bbdu.ac.in"><img src="https://img.shields.io/badge/Email-D14836?style=flat-square&logo=gmail" /></a>
     </td>
@@ -199,8 +208,8 @@ BBD University • Academic Capstone 2026 • Full-Stack AI Academic Evaluation
         <img src="./assets/team/vishal_circle.png" width="85" height="85" alt="Vishal Patel" /><br/>
         <b>Vishal Patel</b>
       </a><br/>
-      <small>QA Lead &amp; Automated Testing</small><br/><br/>
-      <small>Pytest 39/39 Passing Suite, AI Multi-Provider Mocking, Sanitization &amp; Audit Logger</small><br/><br/>
+      <small>QA Lead &amp; Security Specialist</small><br/><br/>
+      <small>Pytest 89/89 Test Suite, Security Sanitization (XSS/SQLi), E2E Test Harness, Concurrency Benchmarks</small><br/><br/>
       <a href="https://github.com/patelvishal-ji"><img src="https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github" /></a>
       <a href="mailto:patelvishal7800023@gmail.com"><img src="https://img.shields.io/badge/Email-D14836?style=flat-square&logo=gmail" /></a>
     </td>
@@ -210,30 +219,19 @@ BBD University • Academic Capstone 2026 • Full-Stack AI Academic Evaluation
         <b>Sujeet Kannaujiya</b>
       </a><br/>
       <small>Research &amp; Technical Docs Lead</small><br/><br/>
-      <small>ATS Document Parsing Research, Framework Benchmarking, Academic Dossier &amp; Ethics</small><br/><br/>
+      <small>Capstone Project Dossier, LLM Benchmark Study, Ethical AI Non-Bias Rubric, ATS Specifications</small><br/><br/>
       <a href="https://github.com/sujeet-official"><img src="https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github" /></a>
-      <a href="mailto:sujeetkannujiya2004@bbdu.ac.in"><img src="https://img.shields.io/badge/Email-D14836?style=flat-square&logo=gmail" /></a>
+      <a href="mailto:sujeetkannaujiya2004@bbdu.ac.in"><img src="https://img.shields.io/badge/Email-D14836?style=flat-square&logo=gmail" /></a>
     </td>
   </tr>
 </table>
 
 | Member | Role | Core Modules & Technical Contributions | Contact |
 |---|---|---|---|
-| 👑 **Shivansh Mishra** | **Team Leader • Backend & AI Architect** | • FastAPI REST Gateway, Routing & CORS Architecture<br/>• Multi-Provider AI Engine (Gemini 2.5/3.6, GPT-4o, Claude 3.5, Groq)<br/>• In-Memory PyMuPDF Document Streaming (`sort=True`)<br/>• Deterministic Rule-Based Fallback Orchestration | [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat&logo=github)](https://github.com/Shivansh-mishraji) [![Email](https://img.shields.io/badge/Email-D14836?style=flat&logo=gmail&logoColor=white)](mailto:tgsmishra@gmail.com) |
+| 👑 **Shivansh Mishra** | **Team Leader • Backend & AI Architect** | • FastAPI REST Gateway, Routing & CORS Architecture<br/>• 5 Enterprise Backend Systems (Taxonomy, ATS, Exporters, Interview Kit)<br/>• In-Memory PyMuPDF Document Streaming (`sort=True`)<br/>• Deterministic Rule-Based Fallback Orchestration | [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat&logo=github)](https://github.com/Shivansh-mishraji) [![Email](https://img.shields.io/badge/Email-D14836?style=flat&logo=gmail&logoColor=white)](mailto:tgsmishra@gmail.com) |
 | **Harshvardhan Sisodiya** | Frontend Architect • UI/UX Lead | • React 19 + Vite Modular Single-Page Application (SPA)<br/>• Nebula Aurora Glassmorphism & 60fps rAF Animation Engine<br/>• 180px SVG Radial Match Gauge & Count-Up Physics<br/>• Multi-Provider BYOK Security Hub & Live Telemetry | [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat&logo=github)](https://github.com/harsh123-code) [![Email](https://img.shields.io/badge/Email-D14836?style=flat&logo=gmail&logoColor=white)](mailto:hsisodiya205@bbdu.ac.in) |
-| **Vishal Patel** | QA Lead • Security & Automated Testing | • Pytest Automated Test Suite (39/39 Passing Unit Tests)<br/>• Mocked Multi-Provider AI Tests (401, 429, Fallback Recovery)<br/>• Text Sanitization & Keyword Extraction Coverage<br/>• Automated Markdown Audit Log Generator | [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat&logo=github)](https://github.com/patelvishal-ji) [![Email](https://img.shields.io/badge/Email-D14836?style=flat&logo=gmail&logoColor=white)](mailto:patelvishal7800023@gmail.com) |
-| **Sujeet Kannaujiya** | Research Lead • Technical Documentation | • ATS Parsing Strategies & In-Memory Privacy Studies<br/>• FastAPI vs. Flask Comparative Architecture Benchmarking<br/>• Academic Research Dossier (`RESEARCH.md`)<br/>• Ethical AI Rubric & Non-Discriminatory Guidelines | [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat&logo=github)](https://github.com/sujeet-official) [![Email](https://img.shields.io/badge/Email-D14836?style=flat&logo=gmail&logoColor=white)](mailto:sujeetkannujiya2004@bbdu.ac.in) |
-
----
-
-## 🗺️ 6-Week Completed Project Roadmap
-
-- [x] **Week 1 (Foundation):** FastAPI backend initialized, `/health` endpoint, strict PDF/DOCX validation, initial React 19 Vite frontend.
-- [x] **Week 2 (Text Cleaning & Skill Extraction):** In-memory text extraction, regex text normalization, and 50+ tech skills dictionary.
-- [x] **Week 3 (Scoring & Full-Stack Integration):** Set-intersection score calculator, connected `POST /analyze`, and automated test infrastructure.
-- [x] **Week 4 (UI Overhaul, QA & CI/CD):** Glassmorphic dark mode UI, radial score gauge, QA test audit logging system, and GitHub Actions CI pipeline.
-- [x] **Week 5 (Hybrid Multi-Provider AI Upgrade):** Central config, unified Pydantic response contract, Gemini AI service with fallback chain, OpenAI/Claude support, and analysis router.
-- [x] **Week 6 (Production Deployment & Performance Optimization):** Frontend deployed to Vercel, Backend deployed to Render, 60/120 FPS rAF counters, GPU-accelerated Nebula Aurora design, cold-start silent pre-warming, 39/39 passing unit tests, and AQ./AIza key compatibility.
+| **Vishal Patel** | QA Lead • Security & Automated Testing | • Pytest Automated Test Suite (89/89 Passing Tests)<br/>• Automated Security Test Harness (XSS, SQLi, Prompt Injection)<br/>• End-to-End Automated Integration Test Harness (`e2e_integration_test.py`)<br/>• API Concurrency & Latency Benchmark Runner (`benchmark_runner.py`) | [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat&logo=github)](https://github.com/patelvishal-ji) [![Email](https://img.shields.io/badge/Email-D14836?style=flat&logo=gmail&logoColor=white)](mailto:patelvishal7800023@gmail.com) |
+| **Sujeet Kannaujiya** | Research Lead • Technical Documentation | • Academic Capstone Project Technical Dossier (`docs/CAPSTONE_PROJECT_DOSSIER.md`)<br/>• LLM Benchmarking Study across Gemini, GPT-4o, Claude (`RESEARCH_LLM_BENCHMARKS.md`)<br/>• Ethical AI Framework & Non-Discriminatory Rubric (`ETHICAL_AI_AND_BIAS_AUDIT.md`)<br/>• ATS Parsing Heuristics & Font Encoding Specification (`ATS_PARSER_HEURISTICS_SPEC.md`) | [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat&logo=github)](https://github.com/sujeet-official) [![Email](https://img.shields.io/badge/Email-D14836?style=flat&logo=gmail&logoColor=white)](mailto:sujeetkannaujiya2004@bbdu.ac.in) |
 
 ---
 
@@ -258,13 +256,23 @@ cd backend
 pytest
 ```
 
-**39/39 tests passing ✅ — 100% pass rate in 2.60s**
+**89/89 tests passing ✅ — 100% pass rate in 3.09s**
 
-| Module | Tests | Status |
-|--------|-------|--------|
-| File Parser (PDF/DOCX) | 12 | ✅ All Pass |
-| Skill Extractor & Text Cleaner | 10 | ✅ All Pass |
-| API Integration & AI Multi-Provider | 17 | ✅ All Pass |
+| Module | Tests | Status | Scope / Focus Area |
+|---|:---:|:---:|---|
+| `test_ai_service.py` | 6 | ✅ All Pass | Gemini 2.5/3.6 Flash fallback, error handling, rate-limits |
+| `test_analysis_service.py` | 4 | ✅ All Pass | Analysis router, character limits, deterministic fallback |
+| `test_analyze.py` | 3 | ✅ All Pass | Upload validation, PDF stream handling, MIME enforcement |
+| `test_ats_audit.py` | 9 | ✅ All Pass | 7 section headers, 150+ action verbs, metric quantification |
+| `test_interview_generator.py` | 8 | ✅ All Pass | Skill gap probing, competency validation, system design |
+| `test_main.py` | 3 | ✅ All Pass | Core FastAPI lifespan, CORS middleware, /health probe |
+| `test_new_endpoints.py` | 9 | ✅ All Pass | /taxonomy/domains, /audit/ats, /export/* (MD/JSON/HTML/PDF) |
+| `test_report_exporter.py` | 8 | ✅ All Pass | SHA-256 seal determinism, PyMuPDF PDF, HTML print CSS |
+| `test_score_calculator.py` | 7 | ✅ All Pass | Skill ratio calculation, weighting logic, boundary clamp |
+| `test_security_sanitization.py` | 7 | ✅ All Pass | XSS neutralization, SQLi handling, prompt injection defense |
+| `test_skill_extractor.py` | 9 | ✅ All Pass | Keyword extraction, case insensitivity, boundary isolation |
+| `test_taxonomy.py` | 9 | ✅ All Pass | 440+ canonical skills, 12 domains, 79 synonym alias mappings |
+| `test_text_cleaner.py` | 7 | ✅ All Pass | Whitespace normalization, punctuation, non-ASCII cleanup |
 
 ---
 
@@ -274,45 +282,61 @@ pytest
 AI-Powered-Resume-Analyzer/
 ├── .github/
 │   └── workflows/
-│       └── ci.yml                      # GitHub Actions CI pipeline
+│       └── ci.yml                          # GitHub Actions CI pipeline
 ├── backend/
 │   ├── app/
-│   │   ├── main.py                     # FastAPI application & HTTP Gateway
-│   │   ├── config.py                   # Central limits, origins & constants
+│   │   ├── main.py                         # FastAPI gateway & enterprise endpoints
+│   │   ├── config.py                       # Central limits, origins & constants
 │   │   ├── schemas/
-│   │   │   └── analysis_schema.py      # Unified Pydantic response contract
+│   │   │   └── analysis_schema.py          # Unified response & request schemas
 │   │   └── services/
-│   │       ├── resume_parser.py        # In-memory PDF (sort=True) & DOCX parser
-│   │       ├── text_cleaner.py         # Regex text normalization
-│   │       ├── skill_extractor.py      # 50+ tech skill keyword matcher
-│   │       ├── score_calculator.py     # Set-intersection match score engine
-│   │       ├── rule_based_service.py   # Deterministic fallback service
-│   │       ├── ai_service.py           # Multi-provider AI semantic engine
-│   │       └── analysis_service.py     # Analysis router & orchestrator
-│   ├── tests/                          # 39/39 passing pytest test suite
+│   │       ├── resume_parser.py            # In-memory PDF (sort=True) & DOCX parser
+│   │       ├── text_cleaner.py             # Regex text normalization
+│   │       ├── skill_extractor.py          # 50+ tech skill keyword matcher
+│   │       ├── score_calculator.py         # Set-intersection match score engine
+│   │       ├── rule_based_service.py       # Deterministic fallback service
+│   │       ├── ai_service.py               # Multi-provider AI semantic engine
+│   │       ├── analysis_service.py         # Analysis router & enrichment orchestrator
+│   │       ├── taxonomy_service.py         # 440+ canonical skills & synonym engine
+│   │       ├── taxonomy_graph.json         # 12 engineering domains ontology graph
+│   │       ├── skills_graph.json           # Skills graph alias mapping
+│   │       ├── ats_audit_service.py        # Deep ATS heuristic & quantification engine
+│   │       ├── report_exporter.py          # PDF/MD/JSON/HTML with SHA-256 seals
+│   │       └── interview_generator.py      # Candidate technical interview question generator
+│   ├── tests/                              # 89/89 passing pytest test suite (13 modules)
 │   ├── conftest.py
 │   └── requirements.txt
 ├── frontend/
 │   ├── src/
-│   │   ├── App.jsx                     # Root React orchestrator & state
-│   │   ├── App.css                     # Nebula Aurora glassmorphic theme
-│   │   ├── index.css                   # Global resets & design tokens
-│   │   ├── components/                 # 29 modular UI components
-│   │   ├── hooks/                      # sessionStorage BYOK security hook
-│   │   └── services/                   # API client & backend cold-start warmup
+│   │   ├── App.jsx                         # Root React orchestrator & state
+│   │   ├── App.css                         # Nebula Aurora glassmorphic theme
+│   │   ├── index.css                       # Global resets & design tokens
+│   │   ├── components/                     # 29 modular UI components (TeamModal deck)
+│   │   ├── hooks/                          # sessionStorage BYOK security hook
+│   │   └── services/                       # API client & backend cold-start warmup
 │   ├── index.html
 │   ├── vite.config.js
 │   ├── package.json
 │   └── vercel.json
 ├── docs/
-│   ├── API_REFERENCE.md                # Endpoint specs & JSON payloads
-│   ├── ARCHITECTURE.md                 # System architecture & component design
-│   └── RESEARCH.md                     # Benchmarks & algorithmic research
+│   ├── API_REFERENCE.md                    # Endpoint specs & JSON payloads
+│   ├── ARCHITECTURE.md                     # System architecture & component design
+│   ├── CAPSTONE_PROJECT_DOSSIER.md         # Final academic project dossier (BBDU)
+│   ├── RESEARCH_LLM_BENCHMARKS.md          # LLM benchmarking study (Gemini/GPT/Claude)
+│   ├── ETHICAL_AI_AND_BIAS_AUDIT.md        # EEOC non-bias compliance framework
+│   ├── ATS_PARSER_HEURISTICS_SPEC.md       # Multi-column parsing & font specs
+│   ├── SECURITY_AUDIT_REPORT.md            # OWASP API Top 10 security audit
+│   ├── RESEARCH.md                         # Algorithmic research notes
+│   └── GUIDELINES.md                       # Engineering guidelines
 ├── testing/
-│   ├── run_tests.py                    # QA test runner with audit logs
-│   └── reports/                        # Timestamped QA test logs
-├── assets/                             # Visual diagrams, screenshots & banners
-├── DEPLOYMENT.md                       # Cloud deployment guide (Render + Vercel)
+│   ├── run_tests.py                        # QA test runner with audit logs
+│   ├── benchmark_runner.py                 # Concurrency & latency benchmark harness
+│   ├── e2e_integration_test.py             # Automated end-to-end integration test
+│   ├── fixtures/
+│   │   └── synthetic_eval_dataset.json     # Multi-domain synthetic test resumes
+│   └── reports/                            # Timestamped QA audit reports
+├── assets/                                 # Visual diagrams, screenshots & banners
+├── DEPLOYMENT.md                           # Cloud deployment guide (Render + Vercel)
 └── README.md
 ```
 
@@ -355,5 +379,5 @@ python testing/run_tests.py
 
 <div align="center">
   <sub>👑 Project Conceived, Architected & Directed by <b><a href="https://github.com/Shivansh-mishraji">Shivansh Mishra</a></b> (Team Leader & Principal Architect)</sub><br/>
-  <sub>Built with ❤️ by Shivansh, Harshwardhan, Vishal & Sujeet • BBD University Academic Capstone 2026</sub>
+  <sub>Built with ❤️ by Shivansh, Harshvardhan, Vishal & Sujeet • BBD University Academic Capstone 2026</sub>
 </div>
