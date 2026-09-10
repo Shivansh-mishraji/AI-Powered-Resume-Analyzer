@@ -1,0 +1,61 @@
+{
+  "metadata": {
+    "dataset_name": "AI-Powered Resume Analyzer Synthetic QA Evaluation Matrix",
+    "curator": "Vishal Patel (QA Lead • Security & Automated Testing)",
+    "version": "2.0.0",
+    "total_samples": 5,
+    "purpose": "Automated regression validation across diverse engineering domains and ATS formats"
+  },
+  "samples": [
+    {
+      "id": "sample_01_cloud_architect",
+      "domain": "cloud_infrastructure",
+      "target_role": "Principal Cloud Infrastructure Architect",
+      "resume_text": "Marcus Vance | marcus.vance@example.com | Seattle, WA\n\nPROFESSIONAL SUMMARY\nPrincipal Cloud Architect with 10+ years specializing in AWS enterprise migrations and Kubernetes orchestration.\n\nWORK EXPERIENCE\nLead Cloud Architect at EnterpriseCore (2020 - Present)\n- Architected high-availability multi-region AWS infrastructure supporting 100k req/s.\n- Spearheaded enterprise containerization with Kubernetes and Docker, cutting deployment latency by 65%.\n- Optimized cloud spend by $240k annually through automated Terraform lifecycle management.\n\nEDUCATION\nB.S. in Computer Engineering, University of Washington\n\nTECHNICAL SKILLS\nAWS, Kubernetes, Docker, Terraform, Python, Linux, CI/CD, Go\n\nPROJECTS\nGlobal Mesh Gateway: Engineered service mesh handling 50M daily requests with 99.999% uptime.\n\nCERTIFICATIONS\nAWS Certified Solutions Architect - Professional",
+      "job_description": "Seeking a Principal Cloud Architect with deep expertise in AWS, Kubernetes, Docker, Terraform, and Python to lead cloud platform scalability.",
+      "expected_matched_skills": ["AWS", "Kubernetes", "Docker", "Terraform", "Python"],
+      "expected_min_score": 85,
+      "expected_ats_health_min": 80
+    },
+    {
+      "id": "sample_02_fullstack_react_fastapi",
+      "domain": "fullstack_engineering",
+      "target_role": "Senior Full-Stack Software Engineer",
+      "resume_text": "Elena Rostova | elena.rostova@example.com | New York, NY\n\nSUMMARY\nFull-Stack Engineer with 6 years experience building modern web applications in React and FastAPI.\n\nEXPERIENCE\nSenior Full-Stack Engineer at FinTech Labs (2021 - Present)\n- Engineered responsive React 18 single-page application with 60 FPS animations.\n- Developed asynchronous FastAPI REST microservices handling 25k transactions per second.\n- Optimized PostgreSQL query performance, reducing p95 latency from 320ms to 18ms.\n\nEDUCATION\nM.S. in Software Engineering, Columbia University\n\nSKILLS\nReact, TypeScript, FastAPI, Python, PostgreSQL, Redis, Tailwind CSS, Docker\n\nPROJECTS\nAlgorithmic Trading Dashboard: Real-time WebSocket portfolio analytics platform.\n\nCERTIFICATIONS\nMeta Certified Front-End Developer",
+      "job_description": "Looking for a Senior Full-Stack Engineer skilled in React, TypeScript, FastAPI, Python, and PostgreSQL.",
+      "expected_matched_skills": ["React", "TypeScript", "FastAPI", "Python", "PostgreSQL"],
+      "expected_min_score": 80,
+      "expected_ats_health_min": 75
+    },
+    {
+      "id": "sample_03_machine_learning_engineer",
+      "domain": "ai_machine_learning",
+      "target_role": "Machine Learning Research Engineer",
+      "resume_text": "Dr. Sarah Chen | sarah.chen@example.com | Boston, MA\n\nEXECUTIVE SUMMARY\nApplied ML Scientist with Ph.D. in Computer Science and 5 years production experience in NLP and LLM fine-tuning.\n\nEMPLOYMENT\nSenior ML Engineer at NeuralMetrics (2022 - Present)\n- Fine-tuned transformer models using PyTorch, improving classification F1-score from 0.81 to 0.94.\n- Scaled model inference throughput by 4x using TensorRT and vLLM on NVIDIA A100 GPUs.\n- Automated distributed training pipelines using Kubeflow and Docker.\n\nEDUCATION\nPh.D. in Computer Science, MIT\n\nTECHNICAL SKILLS\nPython, PyTorch, TensorFlow, Scikit-Learn, Docker, Kubernetes, Hugging Face, MLOps\n\nPROJECTS\nDomain-Specific LLM Router: Semantic intent classification engine for financial contracts.\n\nCERTIFICATIONS\nDeep Learning Specialization - DeepLearning.AI",
+      "job_description": "We need an experienced ML Engineer proficient in Python, PyTorch, NLP, Docker, and MLOps to deploy production inference models.",
+      "expected_matched_skills": ["Python", "PyTorch", "Docker", "MLOps"],
+      "expected_min_score": 75,
+      "expected_ats_health_min": 80
+    },
+    {
+      "id": "sample_04_devops_sre",
+      "domain": "devops_cicd",
+      "target_role": "Site Reliability Engineer (SRE)",
+      "resume_text": "David Miller | david.miller@example.com | Austin, TX\n\nSUMMARY\nSRE with 7 years managing distributed cloud infrastructure, observability pipelines, and incident response.\n\nWORK HISTORY\nStaff SRE at Datastream Inc (2019 - Present)\n- Reduced MTTR (Mean Time to Resolution) by 48% by implementing Prometheus and Grafana alerting.\n- Automated infrastructure provisioning with Terraform and Ansible across 500+ AWS instances.\n- Hardened Kubernetes security posture, passing SOC2 Type II compliance audit with 0 defects.\n\nEDUCATION\nB.S. in Information Systems, UT Austin\n\nCORE COMPETENCIES\nKubernetes, Docker, Terraform, Prometheus, Grafana, AWS, Python, Bash, CI/CD\n\nPROJECTS\nAutomated Chaos Engineering Suite: Automated failure injection framework in Go.\n\nCERTIFICATIONS\nCertified Kubernetes Security Specialist (CKS)",
+      "job_description": "Seeking a Site Reliability Engineer proficient in Kubernetes, Terraform, Prometheus, Grafana, and AWS.",
+      "expected_matched_skills": ["Kubernetes", "Terraform", "Prometheus", "Grafana", "AWS"],
+      "expected_min_score": 85,
+      "expected_ats_health_min": 85
+    },
+    {
+      "id": "sample_05_cybersecurity_engineer",
+      "domain": "security_compliance",
+      "target_role": "Application Security Engineer",
+      "resume_text": "Priya Sharma | priya.sharma@example.com | Chicago, IL\n\nSUMMARY\nAppSec Engineer with 5+ years specializing in SAST/DAST automation, penetration testing, and zero-trust IAM.\n\nEXPERIENCE\nSenior Security Engineer at SecureNet (2021 - Present)\n- Conducted comprehensive penetration tests, identifying and patching 32 high-severity CVEs.\n- Implemented automated secret scanning and dependency vulnerability gates in GitHub Actions.\n- Hardened cloud API endpoints, preventing credential stuffing attacks across 2M user accounts.\n\nEDUCATION\nB.S. in Cybersecurity, Purdue University\n\nTECHNICAL SKILLS\nPython, Docker, Linux, Bash, OWASP, Penetration Testing, IAM, CI/CD\n\nPROJECTS\nAutomated Secret Scanner: Open-source CLI tool scanning git repositories for leaked API tokens.\n\nCERTIFICATIONS\nOffensive Security Certified Professional (OSCP)",
+      "job_description": "Looking for an Application Security Engineer skilled in Python, Docker, Linux, OWASP, and CI/CD.",
+      "expected_matched_skills": ["Python", "Docker", "Linux", "OWASP", "CI/CD"],
+      "expected_min_score": 75,
+      "expected_ats_health_min": 75
+    }
+  ]
+}
