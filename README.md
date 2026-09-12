@@ -10,7 +10,7 @@
 [![Vite](https://img.shields.io/badge/Vite_6-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
 [![Python](https://img.shields.io/badge/Python_3.13-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![Multi-Provider AI](https://img.shields.io/badge/AI_BYOK-Gemini_·_OpenAI_·_Claude-orange?style=for-the-badge)](https://aistudio.google.com/)
-[![Pytest](https://img.shields.io/badge/Pytest-89_Tests_Passed-success?style=for-the-badge&logo=pytest&logoColor=white)](https://docs.pytest.org/)
+[![Pytest](https://img.shields.io/badge/Pytest-90_Tests_Passed-success?style=for-the-badge&logo=pytest&logoColor=white)](https://docs.pytest.org/)
 
 <br/><br/>
 
@@ -23,10 +23,10 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/AI%20Engine-Gemini%203.6%20%2F%202.5%20%2F%20GPT--4o%20%2F%20Claude-blue?logo=google&logoColor=white" />
+  <img src="https://img.shields.io/badge/AI%20Engine-Gemini%202.5%20%2F%202.0%20%2F%20GPT--4o%20%2F%20Claude-blue?logo=google&logoColor=white" />
   <img src="https://img.shields.io/badge/FastAPI-0.115+-green?logo=fastapi" />
   <img src="https://img.shields.io/badge/React-19-61DAFB?logo=react" />
-  <img src="https://img.shields.io/badge/Tests-89%2F89%20Passing-brightgreen" />
+  <img src="https://img.shields.io/badge/Tests-90%2F90%20Passing-brightgreen" />
   <img src="https://img.shields.io/badge/Zero%20Disk%20Storage-Privacy%20First-purple" />
   <img src="https://img.shields.io/badge/Performance-60%2F120%20FPS%20GPU-cyan" />
 </p>
@@ -209,7 +209,7 @@ BBD University • Academic Capstone 2026 • Full-Stack AI Academic Evaluation
         <b>Vishal Patel</b>
       </a><br/>
       <small>QA Lead &amp; Security Specialist</small><br/><br/>
-      <small>Pytest 89/89 Test Suite, Security Sanitization (XSS/SQLi), E2E Test Harness, Concurrency Benchmarks</small><br/><br/>
+      <small>Pytest 90/90 Test Suite, Security Sanitization (XSS/SQLi), E2E Test Harness, Concurrency Benchmarks</small><br/><br/>
       <a href="https://github.com/patelvishal-ji"><img src="https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github" /></a>
       <a href="mailto:patelvishal7800023@gmail.com"><img src="https://img.shields.io/badge/Email-D14836?style=flat-square&logo=gmail" /></a>
     </td>
@@ -230,7 +230,7 @@ BBD University • Academic Capstone 2026 • Full-Stack AI Academic Evaluation
 |---|---|---|---|
 | 👑 **Shivansh Mishra** | **Team Leader • Backend & AI Architect** | • FastAPI REST Gateway, Routing & CORS Architecture<br/>• 5 Enterprise Backend Systems (Taxonomy, ATS, Exporters, Interview Kit)<br/>• In-Memory PyMuPDF Document Streaming (`sort=True`)<br/>• Deterministic Rule-Based Fallback Orchestration | [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat&logo=github)](https://github.com/Shivansh-mishraji) [![Email](https://img.shields.io/badge/Email-D14836?style=flat&logo=gmail&logoColor=white)](mailto:tgsmishra@gmail.com) |
 | **Harshvardhan Sisodiya** | Frontend Architect • UI/UX Lead | • React 19 + Vite Modular Single-Page Application (SPA)<br/>• Nebula Aurora Glassmorphism & 60fps rAF Animation Engine<br/>• 180px SVG Radial Match Gauge & Count-Up Physics<br/>• Multi-Provider BYOK Security Hub & Live Telemetry | [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat&logo=github)](https://github.com/harsh123-code) [![Email](https://img.shields.io/badge/Email-D14836?style=flat&logo=gmail&logoColor=white)](mailto:hsisodiya205@bbdu.ac.in) |
-| **Vishal Patel** | QA Lead • Security & Automated Testing | • Pytest Automated Test Suite (89/89 Passing Tests)<br/>• Automated Security Test Harness (XSS, SQLi, Prompt Injection)<br/>• End-to-End Automated Integration Test Harness (`e2e_integration_test.py`)<br/>• API Concurrency & Latency Benchmark Runner (`benchmark_runner.py`) | [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat&logo=github)](https://github.com/patelvishal-ji) [![Email](https://img.shields.io/badge/Email-D14836?style=flat&logo=gmail&logoColor=white)](mailto:patelvishal7800023@gmail.com) |
+| **Vishal Patel** | QA Lead • Security & Automated Testing | • Pytest Automated Test Suite (90/90 Passing Tests)<br/>• Automated Security Test Harness (XSS, SQLi, Prompt Injection)<br/>• End-to-End Automated Integration Test Harness (`e2e_integration_test.py`)<br/>• API Concurrency & Latency Benchmark Runner (`benchmark_runner.py`) | [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat&logo=github)](https://github.com/patelvishal-ji) [![Email](https://img.shields.io/badge/Email-D14836?style=flat&logo=gmail&logoColor=white)](mailto:patelvishal7800023@gmail.com) |
 | **Sujeet Kannaujiya** | Research Lead • Technical Documentation | • Academic Capstone Project Technical Dossier (`docs/CAPSTONE_PROJECT_DOSSIER.md`)<br/>• LLM Benchmarking Study across Gemini, GPT-4o, Claude (`RESEARCH_LLM_BENCHMARKS.md`)<br/>• Ethical AI Framework & Non-Discriminatory Rubric (`ETHICAL_AI_AND_BIAS_AUDIT.md`)<br/>• ATS Parsing Heuristics & Font Encoding Specification (`ATS_PARSER_HEURISTICS_SPEC.md`) | [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat&logo=github)](https://github.com/sujeet-official) [![Email](https://img.shields.io/badge/Email-D14836?style=flat&logo=gmail&logoColor=white)](mailto:sujeetkannaujiya2004@bbdu.ac.in) |
 
 ---
@@ -256,11 +256,11 @@ cd backend
 pytest
 ```
 
-**89/89 tests passing ✅ — 100% pass rate in 3.09s**
+**90/90 tests passing ✅ — 100% pass rate in 2.4s**
 
 | Module | Tests | Status | Scope / Focus Area |
 |---|:---:|:---:|---|
-| `test_ai_service.py` | 6 | ✅ All Pass | Gemini 2.5/3.6 Flash fallback, error handling, rate-limits |
+| `test_ai_service.py` | 7 | ✅ All Pass | Gemini 2.5/2.0 Flash fallback, error handling, rate-limits |
 | `test_analysis_service.py` | 4 | ✅ All Pass | Analysis router, character limits, deterministic fallback |
 | `test_analyze.py` | 3 | ✅ All Pass | Upload validation, PDF stream handling, MIME enforcement |
 | `test_ats_audit.py` | 9 | ✅ All Pass | 7 section headers, 150+ action verbs, metric quantification |

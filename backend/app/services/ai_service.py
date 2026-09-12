@@ -14,10 +14,24 @@ Better API key tier = better model = richer, more accurate analysis.
 
 import json
 import time
-from typing import List, Optional
+from typing import List, Optional, Literal
+from pydantic import BaseModel, Field
 
 from app.config import GEMINI_MODEL_FALLBACK_CHAIN
 from app.schemas.analysis_schema import AnalysisResult
+
+class GeminiAnalysisPayload(BaseModel):
+    score: int = Field(..., ge=0, le=100, description="Overall match percentage between 0 and 100.")
+    analysis_confidence: Literal["high", "medium", "low"] = Field(
+        default="high",
+        description="Confidence level of analysis: high, medium, or low."
+    )
+    candidate_summary: str = Field(..., description="Professional summary of candidate profile and role alignment.")
+    matched_skills: List[str] = Field(default_factory=list, description="Skills required by the job that the candidate possesses.")
+    missing_skills: List[str] = Field(default_factory=list, description="Skills required by the job that the candidate lacks.")
+    strengths: List[str] = Field(default_factory=list, description="Key competitive candidate strengths for this role.")
+    weaknesses: List[str] = Field(default_factory=list, description="Critical missing qualifications or gaps for this role.")
+    suggestions: List[str] = Field(default_factory=list, description="Actionable resume optimization recommendations.")
 
 # ──────────────────────────────────────────────
 # Key Security Utilities
@@ -124,56 +138,25 @@ Return a JSON object with these exact keys:
 # Gemini Provider
 # ──────────────────────────────────────────────
 
-def _call_gemini(resume_text: str, job_description: str, api_key: str,
-                 filename: str, warnings: List[str]) -> AnalysisResult:
-    from google import genai
-    from google.genai import types
-    from google.genai.errors import APIError
+def _parse_ai_response_text(raw_text: str, filename: str, warnings: List[str]) -> AnalysisResult:
+    """Safely extracts JSON from model text, strips markdown code blocks, and validates into AnalysisResult."""
+    text = (raw_text or "").strip()
+    if text.startswith("```json"):
+        text = text[7:]
+    elif text.startswith("```"):
+        text = text[3:]
+    if text.endswith("```"):
+        text = text[:-3]
+    text = text.strip()
 
-    client = genai.Client(api_key=api_key.strip())
-    prompt = build_prompt(resume_text, job_description)
-    last_error = None
+    # Extract outermost JSON object if surrounded by preamble or postscript text
+    start = text.find("{")
+    end = text.rfind("}") + 1
+    if start != -1 and end > start:
+        text = text[start:end]
 
-    for model in GEMINI_MODEL_FALLBACK_CHAIN:
-        try:
-            response = client.models.generate_content(
-                model=model,
-                contents=prompt,
-                config=types.GenerateContentConfig(
-                    system_instruction=SYSTEM_INSTRUCTION,
-                    response_mime_type="application/json",
-                    response_schema=AnalysisResult,
-                    temperature=0.1
-                )
-            )
-            if not response.text:
-                continue
-
-            result = AnalysisResult.model_validate_json(response.text)
-            result.filename = filename
-            result.is_ai_powered = True
-            result.warnings = list(set((result.warnings or []) + warnings))
-            return result
-
-        except APIError as e:
-            last_error = e
-            code = getattr(e, "code", None) or getattr(e, "status_code", None)
-            msg = str(e).lower()
-            if code == 401 or "api_key_invalid" in msg or "unauthenticated" in msg:
-                raise GeminiAuthError("Invalid Gemini API key. Please check your key.")
-            if code == 429 or "resource_exhausted" in msg or "rate limit" in msg:
-                raise GeminiRateLimitError("Gemini rate limit hit. Please wait a moment.")
-            if code == 404 or "not_found" in msg or "no longer available" in msg:
-                # This model is gone — try next in chain
-                continue
-            time.sleep(0.5)
-            continue
-
-        except Exception as e:
-            last_error = e
-            continue
-
-    raise GeminiServiceError(f"All Gemini models unavailable: {last_error}")
+    data = json.loads(text)
+    return _normalize_and_validate_result(data, filename, warnings)
 
 
 def _normalize_and_validate_result(data: dict, filename: str, warnings: List[str]) -> AnalysisResult:
@@ -187,14 +170,112 @@ def _normalize_and_validate_result(data: dict, filename: str, warnings: List[str
     data["filename"] = filename
     data["is_ai_powered"] = True
     data["warnings"] = list(set((data.get("warnings") or []) + warnings))
-    data.setdefault("analysis_confidence", "high")
+    
+    conf = str(data.get("analysis_confidence", "high")).lower()
+    if conf not in ("high", "medium", "low", "not_applicable"):
+        conf = "high"
+    data["analysis_confidence"] = conf
+
     data.setdefault("candidate_summary", "Candidate profile evaluated against job requirements.")
     data.setdefault("matched_skills", [])
     data.setdefault("missing_skills", [])
     data.setdefault("strengths", [])
     data.setdefault("weaknesses", [])
     data.setdefault("suggestions", [])
-    return AnalysisResult(**data)
+
+    valid_keys = {
+        "filename", "score", "is_ai_powered", "analysis_confidence",
+        "candidate_summary", "matched_skills", "missing_skills",
+        "strengths", "weaknesses", "suggestions", "warnings",
+        "ats_audit", "domain_breakdown", "interview_questions"
+    }
+    filtered_data = {k: v for k, v in data.items() if k in valid_keys}
+    return AnalysisResult(**filtered_data)
+
+
+def _call_gemini(resume_text: str, job_description: str, api_key: str,
+                 filename: str, warnings: List[str]) -> AnalysisResult:
+    from google import genai
+    from google.genai import types
+    from google.genai.errors import APIError
+
+    client = genai.Client(api_key=api_key.strip())
+    prompt = build_prompt(resume_text, job_description)
+    last_error = None
+
+    for model in GEMINI_MODEL_FALLBACK_CHAIN:
+        # Pass 1: Try with strict GeminiAnalysisPayload (clean OpenAPI schema, 0 additionalProperties)
+        try:
+            response = client.models.generate_content(
+                model=model,
+                contents=prompt,
+                config=types.GenerateContentConfig(
+                    system_instruction=SYSTEM_INSTRUCTION + "\n" + FALLBACK_SCHEMA_HINT,
+                    response_mime_type="application/json",
+                    response_schema=GeminiAnalysisPayload,
+                    temperature=0.1
+                )
+            )
+            if response and response.text:
+                return _parse_ai_response_text(response.text, filename, warnings)
+
+        except APIError as e:
+            code = getattr(e, "code", None) or getattr(e, "status_code", None)
+            msg = str(e).lower()
+            if code == 401 or "api_key_invalid" in msg or "unauthenticated" in msg:
+                raise GeminiAuthError("Invalid Gemini API key. Please check your key.")
+            if code == 429 or "resource_exhausted" in msg or "rate limit" in msg:
+                raise GeminiRateLimitError("Gemini rate limit hit. Please wait a moment.")
+            if code == 404 or "not_found" in msg or "no longer available" in msg:
+                # Model not found on this API tier — try next model in fallback chain
+                continue
+
+            # Pass 2: If schema validation failed (e.g. additionalProperties restriction),
+            # fall back immediately to prompt-guided JSON without response_schema on this model
+            if "additionalproperties" in msg or "schema" in msg:
+                try:
+                    fallback_response = client.models.generate_content(
+                        model=model,
+                        contents=prompt,
+                        config=types.GenerateContentConfig(
+                            system_instruction=SYSTEM_INSTRUCTION + "\n" + FALLBACK_SCHEMA_HINT,
+                            response_mime_type="application/json",
+                            temperature=0.1
+                        )
+                    )
+                    if fallback_response and fallback_response.text:
+                        return _parse_ai_response_text(fallback_response.text, filename, warnings)
+                except Exception as fb_err:
+                    last_error = fb_err
+                    continue
+
+            last_error = e
+            time.sleep(0.5)
+            continue
+
+        except Exception as e:
+            msg = str(e).lower()
+            if "additionalproperties" in msg or "schema" in msg:
+                try:
+                    fallback_response = client.models.generate_content(
+                        model=model,
+                        contents=prompt,
+                        config=types.GenerateContentConfig(
+                            system_instruction=SYSTEM_INSTRUCTION + "\n" + FALLBACK_SCHEMA_HINT,
+                            response_mime_type="application/json",
+                            temperature=0.1
+                        )
+                    )
+                    if fallback_response and fallback_response.text:
+                        return _parse_ai_response_text(fallback_response.text, filename, warnings)
+                except Exception as fb_err:
+                    last_error = fb_err
+                    continue
+
+            last_error = e
+            continue
+
+    raise GeminiServiceError(f"All Gemini models unavailable: {last_error}")
 
 
 # ──────────────────────────────────────────────
@@ -223,8 +304,7 @@ def _call_openai(resume_text: str, job_description: str, api_key: str,
                 temperature=0.1
             )
             raw = response.choices[0].message.content
-            data = json.loads(raw)
-            return _normalize_and_validate_result(data, filename, warnings)
+            return _parse_ai_response_text(raw, filename, warnings)
 
         except AuthenticationError:
             raise GeminiAuthError("Invalid OpenAI API key. Please check your key.")
@@ -260,11 +340,7 @@ def _call_anthropic(resume_text: str, job_description: str, api_key: str,
                 messages=[{"role": "user", "content": prompt}]
             )
             raw = response.content[0].text
-            # Extract JSON from response
-            start = raw.find("{")
-            end = raw.rfind("}") + 1
-            data = json.loads(raw[start:end])
-            return _normalize_and_validate_result(data, filename, warnings)
+            return _parse_ai_response_text(raw, filename, warnings)
 
         except anthropic.AuthenticationError:
             raise GeminiAuthError("Invalid Anthropic API key. Please check your key.")

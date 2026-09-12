@@ -130,3 +130,27 @@ def test_detect_provider_prefixes():
     assert detect_provider("sk-proj-1234567890") == "openai"
     assert detect_provider("custom-random-key") == "gemini"
 
+def test_gemini_schema_fallback_on_additional_properties_error():
+    """Verify Gemini service catches additionalProperties schema rejection and retries with pure JSON."""
+    mock_success = MagicMock()
+    mock_success.text = SAMPLE_AI_JSON
+
+    with patch("google.genai.Client") as mock_client_cls:
+        mock_client = MagicMock()
+        mock_client.models.generate_content.side_effect = [
+            _make_genai_error(ClientError, 400, "additionalProperties is only supported in Gemini Enterprise Agent Platform mode"),
+            mock_success
+        ]
+        mock_client_cls.return_value = mock_client
+
+        result = generate_ai_analysis(
+            resume_text="Experienced Python developer",
+            job_description="Python JD",
+            api_key="AIzaDummyValidKey12345"
+        )
+
+        assert result.score == 85
+        assert result.is_ai_powered is True
+        assert mock_client.models.generate_content.call_count == 2
+
+

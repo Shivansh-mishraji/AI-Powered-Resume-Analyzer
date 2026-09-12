@@ -82,6 +82,10 @@ export async function analyzeResume(fileOrObj, maybeJobDesc, maybeApiKey) {
     switch (response.status) {
       case 400:
         throw new Error(detail || 'Invalid input or corrupt document provided.');
+      case 401:
+        throw new Error(
+          detail || 'Invalid or unauthorized API key. Please check your key in the BYOK card or disable AI mode to use deterministic analysis.'
+        );
       case 413:
         throw new Error(detail || 'File exceeds the 5 MB maximum size limit.');
       case 422:
