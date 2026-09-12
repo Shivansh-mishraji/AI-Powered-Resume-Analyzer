@@ -241,17 +241,58 @@ def _extract_response_text(response) -> Optional[str]:
     return None
 
 
+def discover_gemini_models(api_key: str) -> List[str]:
+    """Queries Google Gemini ListModels API to discover available models for this specific API key."""
+    import urllib.request
+    import json
+    clean_key = api_key.strip().strip("'\"")
+    try:
+        url = f"https://generativelanguage.googleapis.com/v1beta/models?key={clean_key}"
+        req = urllib.request.Request(url, headers={"User-Agent": "AI-Resume-Analyzer/2.1"})
+        with urllib.request.urlopen(req, timeout=3.0) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+            models = []
+            for item in data.get("models", []):
+                methods = item.get("supportedGenerationMethods", [])
+                if "generateContent" in methods:
+                    name = item.get("name", "")
+                    if name.startswith("models/"):
+                        name = name[len("models/"):]
+                    if name.startswith("gemini"):
+                        models.append(name)
+            if models:
+                flash_models = [m for m in models if "flash" in m]
+                pro_models = [m for m in models if "pro" in m]
+                other_models = [m for m in models if m not in flash_models and m not in pro_models]
+                return flash_models + pro_models + other_models
+    except Exception:
+        pass
+    return []
+
+
 def _call_gemini(resume_text: str, job_description: str, api_key: str,
                  filename: str, warnings: List[str]) -> AnalysisResult:
     from google import genai
     from google.genai import types
     from google.genai.errors import APIError
 
-    client = genai.Client(api_key=api_key.strip())
+    clean_key = api_key.strip().strip("'\"")
+    client = genai.Client(api_key=clean_key)
     prompt = build_prompt(resume_text, job_description)
-    last_error = None
 
-    for model in GEMINI_MODEL_FALLBACK_CHAIN:
+    # Dynamically probe for models supported by this specific key, falling back to vetted static chain
+    discovered = discover_gemini_models(clean_key)
+    candidate_models = list(discovered) if discovered else list(GEMINI_MODEL_FALLBACK_CHAIN)
+
+    # Ensure standard models are included in fallback sequence
+    for fallback in GEMINI_MODEL_FALLBACK_CHAIN:
+        if fallback not in candidate_models:
+            candidate_models.append(fallback)
+
+    last_error = None
+    model_errors = []
+
+    for model in candidate_models:
         try:
             # Using response_mime_type="application/json" with schema hint in prompt
             # guarantees strict JSON without OpenAPI schema rejection (no additionalProperties issues)
@@ -270,6 +311,7 @@ def _call_gemini(resume_text: str, job_description: str, api_key: str,
                     return _parse_ai_response_text(raw_text, filename, warnings)
                 except Exception as pe:
                     last_error = f"Model {model} JSON parse failed: {pe}"
+                    model_errors.append(f"{model}: JSON parse error")
                     continue
             else:
                 finish_reason = None
@@ -279,6 +321,7 @@ def _call_gemini(resume_text: str, job_description: str, api_key: str,
                 except Exception:
                     pass
                 last_error = f"Model {model} returned empty response (finish_reason: {finish_reason})"
+                model_errors.append(f"{model}: empty response ({finish_reason})")
                 continue
 
         except APIError as e:
@@ -304,6 +347,8 @@ def _call_gemini(resume_text: str, job_description: str, api_key: str,
                 raise GeminiAuthError("Invalid Gemini API key. Please check your key.")
             if code == 429 or "resource_exhausted" in msg or "rate limit" in msg or "quota" in msg:
                 raise GeminiRateLimitError("Gemini rate limit hit. Please wait a moment.")
+
+            model_errors.append(f"{model} (HTTP {code})")
             if code == 404 or "not_found" in msg or "no longer available" in msg:
                 continue
 
@@ -312,9 +357,18 @@ def _call_gemini(resume_text: str, job_description: str, api_key: str,
 
         except Exception as e:
             last_error = e
+            model_errors.append(f"{model}: {str(e)[:60]}")
             continue
 
-    raise GeminiServiceError(f"All Gemini models unavailable: {last_error}")
+    if model_errors and all("404" in err for err in model_errors):
+        raise GeminiServiceError(
+            "Gemini models were not accessible for this API key. "
+            "Please ensure the Generative Language API is enabled in your Google AI Studio project "
+            "(generate a fresh key at https://aistudio.google.com/app/apikey)."
+        )
+
+    summary = " | ".join(model_errors) if model_errors else str(last_error)
+    raise GeminiServiceError(f"All Gemini models unavailable: {summary}")
 
 
 # ──────────────────────────────────────────────

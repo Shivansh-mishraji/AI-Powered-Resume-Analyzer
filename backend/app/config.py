@@ -35,11 +35,12 @@ ALLOWED_CORS_ORIGINS = [
 
 # Gemini model fallback chain — tries each in order until one works
 GEMINI_MODEL_FALLBACK_CHAIN = [
-    "gemini-2.0-flash",
     "gemini-1.5-flash",
+    "gemini-2.0-flash",
+    "gemini-1.5-flash-8b",
     "gemini-1.5-pro",
     "gemini-2.0-flash-001",
-    "gemini-1.5-flash-latest",
+    "gemini-pro",
 ]
 # Default (first in chain)
 DEFAULT_GEMINI_MODEL = GEMINI_MODEL_FALLBACK_CHAIN[0]
