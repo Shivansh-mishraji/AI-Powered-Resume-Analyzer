@@ -61,11 +61,35 @@ def test_ai_service_missing_key():
 import json
 import requests
 
+class MockGenAIResponse(requests.Response):
+    def __init__(self, code: int, message: str):
+        super().__init__()
+        self.status_code = code
+        self._data = {"error": {"code": code, "message": message, "status": "INVALID_ARGUMENT"}}
+        self._content = json.dumps(self._data).encode("utf-8")
+
+    def get(self, key, default=None):
+        return self._data.get(key, default)
+
+    def __getitem__(self, key):
+        return self._data[key]
+
+    def __str__(self):
+        return json.dumps(self._data)
+
+    def __repr__(self):
+        return json.dumps(self._data)
+
+
 def _make_genai_error(err_cls, code: int, message: str):
-    r = requests.Response()
-    r.status_code = code
-    r._content = json.dumps({"error": {"code": code, "message": message}}).encode("utf-8")
-    return err_cls(code, r)
+    error_dict = {"error": {"code": code, "message": message, "status": "INVALID_ARGUMENT"}}
+    r = MockGenAIResponse(code, message)
+    try:
+        # google-genai 2.x signature: (code, response_json, response=...)
+        return err_cls(code, error_dict, r)
+    except TypeError:
+        # google-genai 0.x signature: (code, response)
+        return err_cls(code, r)
 
 def test_ai_service_invalid_key():
     """Verify AI service catches auth error and raises GeminiAuthError."""

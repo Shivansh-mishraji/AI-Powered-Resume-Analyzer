@@ -284,7 +284,13 @@ def _call_gemini(resume_text: str, job_description: str, api_key: str,
         except APIError as e:
             last_error = e
             code = getattr(e, "code", None) or getattr(e, "status_code", None)
-            msg = str(e).lower()
+            msg_parts = [
+                str(e),
+                str(getattr(e, "message", "") or ""),
+                str(getattr(e, "details", "") or ""),
+                str(getattr(e, "status", "") or "")
+            ]
+            msg = " ".join(msg_parts).lower()
             if (
                 code == 401
                 or "api_key_invalid" in msg
@@ -293,6 +299,7 @@ def _call_gemini(resume_text: str, job_description: str, api_key: str,
                 or "unauthenticated" in msg
                 or ("api_key" in msg and "not valid" in msg)
                 or ("api key" in msg and "invalid" in msg)
+                or (code == 400 and ("api_key" in msg or "api key" in msg or "key not valid" in msg))
             ):
                 raise GeminiAuthError("Invalid Gemini API key. Please check your key.")
             if code == 429 or "resource_exhausted" in msg or "rate limit" in msg or "quota" in msg:
