@@ -154,3 +154,53 @@ def test_gemini_schema_fallback_on_additional_properties_error():
         assert mock_client.models.generate_content.call_count == 2
 
 
+def test_gemini_catches_api_key_not_valid_code_400():
+    """Verify Gemini service catches Google's code 400 'API key not valid' and raises GeminiAuthError."""
+    with patch("google.genai.Client") as mock_client_cls:
+        mock_client = MagicMock()
+        mock_client.models.generate_content.side_effect = _make_genai_error(
+            ClientError, 400, "API key not valid. Please pass a valid API key."
+        )
+        mock_client_cls.return_value = mock_client
+
+        with pytest.raises(GeminiAuthError):
+            generate_ai_analysis(
+                resume_text="Some resume",
+                job_description="Some JD",
+                api_key="AIzaSyBadKey12345"
+            )
+
+
+def test_gemini_extracts_text_from_candidate_parts_when_response_text_is_none():
+    """Verify Gemini service successfully extracts JSON when response.text is None but candidate parts exist."""
+    part_mock = MagicMock()
+    part_mock.text = SAMPLE_AI_JSON
+
+    content_mock = MagicMock()
+    content_mock.parts = [part_mock]
+
+    candidate_mock = MagicMock()
+    candidate_mock.content = content_mock
+
+    mock_response = MagicMock()
+    mock_response.text = None
+    mock_response.parsed = None
+    mock_response.candidates = [candidate_mock]
+
+    with patch("google.genai.Client") as mock_client_cls:
+        mock_client = MagicMock()
+        mock_client.models.generate_content.return_value = mock_response
+        mock_client_cls.return_value = mock_client
+
+        result = generate_ai_analysis(
+            resume_text="Experienced Python developer",
+            job_description="Python JD",
+            api_key="AIzaDummyValidKey12345"
+        )
+
+        assert result.score == 85
+        assert result.is_ai_powered is True
+        assert "Python" in result.matched_skills
+
+
+

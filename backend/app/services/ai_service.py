@@ -13,6 +13,7 @@ Better API key tier = better model = richer, more accurate analysis.
 """
 
 import json
+import re
 import time
 from typing import List, Optional, Literal
 from pydantic import BaseModel, Field
@@ -155,7 +156,12 @@ def _parse_ai_response_text(raw_text: str, filename: str, warnings: List[str]) -
     if start != -1 and end > start:
         text = text[start:end]
 
-    data = json.loads(text)
+    try:
+        data = json.loads(text)
+    except json.JSONDecodeError:
+        cleaned = re.sub(r'[\x00-\x1f\x7f-\x9f]', '', text)
+        data = json.loads(cleaned)
+
     return _normalize_and_validate_result(data, filename, warnings)
 
 
@@ -193,6 +199,48 @@ def _normalize_and_validate_result(data: dict, filename: str, warnings: List[str
     return AnalysisResult(**filtered_data)
 
 
+def _extract_response_text(response) -> Optional[str]:
+    """Safely extracts raw text/JSON from a Gemini response across SDK versions, parsed fields, and candidate parts."""
+    if not response:
+        return None
+    # 1. Standard text property
+    try:
+        text = getattr(response, "text", None)
+        if text and isinstance(text, str) and text.strip():
+            return text.strip()
+    except Exception:
+        pass
+
+    # 2. Check if response.parsed was populated by the SDK
+    try:
+        parsed = getattr(response, "parsed", None)
+        if parsed:
+            if hasattr(parsed, "model_dump_json"):
+                return parsed.model_dump_json()
+            elif isinstance(parsed, dict):
+                return json.dumps(parsed)
+    except Exception:
+        pass
+
+    # 3. Direct candidate parts traversal (handles thinking model parts & multi-part output)
+    try:
+        candidates = getattr(response, "candidates", None)
+        if candidates and len(candidates) > 0:
+            content = getattr(candidates[0], "content", None)
+            if content and getattr(content, "parts", None):
+                combined = []
+                for part in content.parts:
+                    pt = getattr(part, "text", None)
+                    if pt and isinstance(pt, str) and pt.strip():
+                        combined.append(pt)
+                if combined:
+                    return "".join(combined).strip()
+    except Exception:
+        pass
+
+    return None
+
+
 def _call_gemini(resume_text: str, job_description: str, api_key: str,
                  filename: str, warnings: List[str]) -> AnalysisResult:
     from google import genai
@@ -204,74 +252,58 @@ def _call_gemini(resume_text: str, job_description: str, api_key: str,
     last_error = None
 
     for model in GEMINI_MODEL_FALLBACK_CHAIN:
-        # Pass 1: Try with strict GeminiAnalysisPayload (clean OpenAPI schema, 0 additionalProperties)
         try:
+            # Using response_mime_type="application/json" with schema hint in prompt
+            # guarantees strict JSON without OpenAPI schema rejection (no additionalProperties issues)
             response = client.models.generate_content(
                 model=model,
                 contents=prompt,
                 config=types.GenerateContentConfig(
                     system_instruction=SYSTEM_INSTRUCTION + "\n" + FALLBACK_SCHEMA_HINT,
                     response_mime_type="application/json",
-                    response_schema=GeminiAnalysisPayload,
                     temperature=0.1
                 )
             )
-            if response and response.text:
-                return _parse_ai_response_text(response.text, filename, warnings)
-
-        except APIError as e:
-            code = getattr(e, "code", None) or getattr(e, "status_code", None)
-            msg = str(e).lower()
-            if code == 401 or "api_key_invalid" in msg or "unauthenticated" in msg:
-                raise GeminiAuthError("Invalid Gemini API key. Please check your key.")
-            if code == 429 or "resource_exhausted" in msg or "rate limit" in msg:
-                raise GeminiRateLimitError("Gemini rate limit hit. Please wait a moment.")
-            if code == 404 or "not_found" in msg or "no longer available" in msg:
-                # Model not found on this API tier — try next model in fallback chain
+            raw_text = _extract_response_text(response)
+            if raw_text:
+                try:
+                    return _parse_ai_response_text(raw_text, filename, warnings)
+                except Exception as pe:
+                    last_error = f"Model {model} JSON parse failed: {pe}"
+                    continue
+            else:
+                finish_reason = None
+                try:
+                    if response and response.candidates:
+                        finish_reason = getattr(response.candidates[0], "finish_reason", None)
+                except Exception:
+                    pass
+                last_error = f"Model {model} returned empty response (finish_reason: {finish_reason})"
                 continue
 
-            # Pass 2: If schema validation failed (e.g. additionalProperties restriction),
-            # fall back immediately to prompt-guided JSON without response_schema on this model
-            if "additionalproperties" in msg or "schema" in msg:
-                try:
-                    fallback_response = client.models.generate_content(
-                        model=model,
-                        contents=prompt,
-                        config=types.GenerateContentConfig(
-                            system_instruction=SYSTEM_INSTRUCTION + "\n" + FALLBACK_SCHEMA_HINT,
-                            response_mime_type="application/json",
-                            temperature=0.1
-                        )
-                    )
-                    if fallback_response and fallback_response.text:
-                        return _parse_ai_response_text(fallback_response.text, filename, warnings)
-                except Exception as fb_err:
-                    last_error = fb_err
-                    continue
-
+        except APIError as e:
             last_error = e
+            code = getattr(e, "code", None) or getattr(e, "status_code", None)
+            msg = str(e).lower()
+            if (
+                code == 401
+                or "api_key_invalid" in msg
+                or "api key not valid" in msg
+                or "invalid api key" in msg
+                or "unauthenticated" in msg
+                or ("api_key" in msg and "not valid" in msg)
+                or ("api key" in msg and "invalid" in msg)
+            ):
+                raise GeminiAuthError("Invalid Gemini API key. Please check your key.")
+            if code == 429 or "resource_exhausted" in msg or "rate limit" in msg or "quota" in msg:
+                raise GeminiRateLimitError("Gemini rate limit hit. Please wait a moment.")
+            if code == 404 or "not_found" in msg or "no longer available" in msg:
+                continue
+
             time.sleep(0.5)
             continue
 
         except Exception as e:
-            msg = str(e).lower()
-            if "additionalproperties" in msg or "schema" in msg:
-                try:
-                    fallback_response = client.models.generate_content(
-                        model=model,
-                        contents=prompt,
-                        config=types.GenerateContentConfig(
-                            system_instruction=SYSTEM_INSTRUCTION + "\n" + FALLBACK_SCHEMA_HINT,
-                            response_mime_type="application/json",
-                            temperature=0.1
-                        )
-                    )
-                    if fallback_response and fallback_response.text:
-                        return _parse_ai_response_text(fallback_response.text, filename, warnings)
-                except Exception as fb_err:
-                    last_error = fb_err
-                    continue
-
             last_error = e
             continue
 
