@@ -19,7 +19,7 @@ class ReportExporter:
 
     def __init__(self):
         self.certifying_authority = "AI-Powered Resume Analyzer Enterprise Suite"
-        self.lead_architect = "Shivansh Mishra (Principal Architect & Co-Founder)"
+        self.lead_architect = "Shivansh Mishra (Founder & Principal Architect)"
 
     def generate_verification_hash(self, payload: Dict[str, Any]) -> str:
         """
@@ -820,7 +820,7 @@ class ReportExporter:
 
         sy_info += 12
         p2.insert_text((L_MARGIN + 12, sy_info), "Principal Architect:", fontname="helv", fontsize=6.8, color=TEXT_MUTED)
-        p2.insert_text((L_MARGIN + 95, sy_info), "Shivansh Mishra (Principal Architect & Co-Founder)", fontname="helv", fontsize=6.8, color=NAVY)
+        p2.insert_text((L_MARGIN + 95, sy_info), self.lead_architect, fontname="helv", fontsize=6.8, color=NAVY)
 
         p2.insert_text((L_MARGIN + 300, sy_info), "Academic Capstone:", fontname="helv", fontsize=6.8, color=TEXT_MUTED)
         p2.insert_text((L_MARGIN + 395, sy_info), "B.Tech CSE (BBD University, 2026)", fontname="helv", fontsize=6.8, color=NAVY)
