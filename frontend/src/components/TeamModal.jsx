@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 
 const TEAM_CARDS = [
   {
@@ -124,7 +124,13 @@ export default function TeamModal({ isOpen, onClose }) {
   const [activeCardIndex, setActiveCardIndex] = useState(0);
   const [animClass, setAnimClass] = useState('');
   const [isBusy, setIsBusy] = useState(false);
+  // Track which photos have already loaded (keyed by avatar path)
+  const [loadedPhotos, setLoadedPhotos] = useState({});
   const touchStartX = useRef(null);
+
+  const markLoaded = useCallback((src) => {
+    setLoadedPhotos((prev) => ({ ...prev, [src]: true }));
+  }, []);
 
   useEffect(() => {
     if (isOpen) {
@@ -204,9 +210,29 @@ export default function TeamModal({ isOpen, onClose }) {
 
   if (!isOpen) return null;
 
+  // --- Preload all photos immediately so they are browser-cached before the user taps them ---
+  const photoPreloader = (
+    <div aria-hidden="true" style={{ position: 'absolute', width: 0, height: 0, overflow: 'hidden', opacity: 0, pointerEvents: 'none' }}>
+      {TEAM_CARDS.map((card) => (
+        <img
+          key={card.id}
+          src={card.avatar}
+          alt=""
+          width="160"
+          height="160"
+          fetchPriority="high"
+          decoding="async"
+          onLoad={() => markLoaded(card.avatar)}
+        />
+      ))}
+    </div>
+  );
+
   const currentCard = TEAM_CARDS[activeCardIndex];
 
   return (
+    <>
+    {photoPreloader}
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md animate-fade-in"
       onClick={onClose}
@@ -298,17 +324,37 @@ export default function TeamModal({ isOpen, onClose }) {
             {/* 📸 Large Clear Centerpiece Avatar Photo 📸 */}
             <div className="relative z-10 flex flex-col items-center text-center my-1">
               <div className="relative">
+                {/* Shimmer skeleton — shown only while photo hasn't loaded yet */}
+                {!loadedPhotos[currentCard.avatar] && (
+                  <div
+                    className={`absolute inset-0 w-36 h-36 sm:w-40 sm:h-40 rounded-full ${currentCard.ringClass} overflow-hidden`}
+                    aria-hidden="true"
+                  >
+                    <div className="w-full h-full bg-surface-container-high animate-pulse" />
+                  </div>
+                )}
                 <img
                   src={currentCard.avatar}
                   alt={currentCard.name}
-                  className={`w-36 h-36 sm:w-40 sm:h-40 rounded-full object-cover shadow-2xl ${currentCard.ringClass} bg-surface-container-high transition-transform duration-300 hover:scale-105`}
+                  width="160"
+                  height="160"
+                  fetchPriority="high"
+                  decoding="async"
+                  className={`w-36 h-36 sm:w-40 sm:h-40 rounded-full object-cover shadow-2xl ${currentCard.ringClass} bg-surface-container-high transition-all duration-300 hover:scale-105 ${
+                    loadedPhotos[currentCard.avatar] ? 'opacity-100' : 'opacity-0'
+                  }`}
+                  onLoad={(e) => {
+                    markLoaded(currentCard.avatar);
+                    e.currentTarget.style.opacity = '1';
+                  }}
                   onError={(e) => {
+                    markLoaded(currentCard.avatar); // stop shimmer
                     e.currentTarget.style.display = 'none';
-                    if (e.currentTarget.nextElementSibling) {
-                      e.currentTarget.nextElementSibling.style.display = 'flex';
-                    }
+                    const fallback = e.currentTarget.nextElementSibling;
+                    if (fallback) fallback.style.display = 'flex';
                   }}
                 />
+                {/* Initials fallback — shown only when image fails to load */}
                 <div
                   style={{ display: 'none' }}
                   className={`w-36 h-36 sm:w-40 sm:h-40 rounded-full bg-gradient-to-br from-cyan-400 via-teal-500 to-blue-600 items-center justify-center text-white font-black text-4xl shadow-2xl ${currentCard.ringClass}`}
@@ -477,6 +523,7 @@ export default function TeamModal({ isOpen, onClose }) {
         </div>
       </div>
     </div>
+    </>
   );
 }
 
