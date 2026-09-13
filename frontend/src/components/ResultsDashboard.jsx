@@ -437,6 +437,211 @@ ${(result.missing_skills || []).join(', ') || 'None'}`;
         </div>
       </div>
 
+      {/* ── ATS Audit Panel ───────────────────────────────────────────── */}
+      {result.ats_audit && (
+        <div className="lg:col-span-12 glass-panel p-6 sm:p-8 animate-stagger-5 mt-4 md:mt-gutter-desktop">
+          <div className="ai-accent-bar bg-match-amber shadow-[0_0_8px_rgba(245,158,11,0.6)]" />
+          <div className="flex items-center gap-3 mb-6">
+            <span className="material-symbols-outlined text-match-amber text-2xl sm:text-3xl drop-shadow-[0_0_10px_rgba(245,158,11,0.5)]" aria-hidden="true">
+              fact_check
+            </span>
+            <div>
+              <h3 className="font-headline-md text-lg sm:text-headline-md text-on-background">ATS Parseability Audit</h3>
+              <p className="text-xs text-on-surface-variant mt-0.5">Automated Tracking System structural compliance report</p>
+            </div>
+          </div>
+
+          {/* Score Meters */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6">
+            {[
+              { label: 'ATS Score', value: result.ats_audit.overall_score ?? 0, color: 'text-match-amber', glow: 'rgba(245,158,11,0.5)' },
+              { label: 'Section Health', value: result.ats_audit.section_health_score ?? 0, color: 'text-secondary', glow: 'rgba(34,211,238,0.5)' },
+              { label: 'Verb Strength', value: result.ats_audit.verb_density_score ?? 0, color: 'text-primary', glow: 'rgba(99,102,241,0.5)' },
+              { label: 'Metric Impact', value: result.ats_audit.quantification_score ?? 0, color: 'text-match-rose', glow: 'rgba(244,63,94,0.5)' },
+            ].map(({ label, value, color, glow }) => (
+              <div key={label} className="bg-surface-container/40 border border-primary/10 rounded-xl p-4 flex flex-col items-center gap-2 hover:bg-surface-container/60 transition-colors">
+                <span className={`font-bold text-3xl sm:text-4xl ${color}`} style={{ filter: `drop-shadow(0 0 8px ${glow})` }}>
+                  {value}
+                </span>
+                <div className="w-full bg-surface-container-high/40 rounded-full h-1.5 overflow-hidden">
+                  <div
+                    className={`h-1.5 rounded-full transition-all duration-700 ${color.replace('text-', 'bg-')}`}
+                    style={{ width: `${value}%` }}
+                  />
+                </div>
+                <span className="text-[11px] text-on-surface-variant uppercase tracking-wider text-center">{label}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Sections Detected / Missing */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            {(result.ats_audit.sections_detected ?? []).length > 0 && (
+              <div>
+                <p className="text-xs text-secondary font-semibold uppercase tracking-widest mb-2 flex items-center gap-1.5">
+                  <span className="material-symbols-outlined text-[15px]">check_circle</span> Detected Sections
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {(result.ats_audit.sections_detected ?? []).map((s) => (
+                    <span key={s} className="px-2.5 py-1 bg-secondary/10 border border-secondary/25 text-secondary rounded-md text-[11px] capitalize">
+                      {s.replace(/_/g, ' ')}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+            {(result.ats_audit.missing_sections ?? []).length > 0 && (
+              <div>
+                <p className="text-xs text-match-rose font-semibold uppercase tracking-widest mb-2 flex items-center gap-1.5">
+                  <span className="material-symbols-outlined text-[15px]">cancel</span> Missing Sections
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {(result.ats_audit.missing_sections ?? []).map((s) => (
+                    <span key={s} className="px-2.5 py-1 bg-match-rose/10 border border-match-rose/25 text-match-rose rounded-md text-[11px] capitalize">
+                      {s.replace(/_/g, ' ')}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Action Verbs Found */}
+          {(result.ats_audit.action_verbs_found ?? []).length > 0 && (
+            <div className="mb-6">
+              <p className="text-xs text-primary font-semibold uppercase tracking-widest mb-2 flex items-center gap-1.5">
+                <span className="material-symbols-outlined text-[15px]">electric_bolt</span>
+                Action Verbs Detected ({result.ats_audit.verb_diversity_count ?? 0} unique)
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {(result.ats_audit.action_verbs_found ?? []).map((v) => (
+                  <span key={v} className="px-2.5 py-1 bg-primary/10 border border-primary/20 text-primary rounded-md text-[11px] font-medium capitalize">
+                    {v}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ATS Recommendations */}
+          {(result.ats_audit.recommendations ?? []).length > 0 && (
+            <div className="bg-match-amber/5 border border-match-amber/20 rounded-xl p-4">
+              <p className="text-xs text-match-amber font-semibold uppercase tracking-widest mb-3 flex items-center gap-1.5">
+                <span className="material-symbols-outlined text-[15px]">tips_and_updates</span> ATS Recommendations
+              </p>
+              <ul className="space-y-2">
+                {(result.ats_audit.recommendations ?? []).map((rec, i) => (
+                  <li key={i} className="text-xs text-on-surface-variant/90 flex gap-2.5 items-start">
+                    <span className="text-match-amber font-bold shrink-0 mt-0.5">›</span>
+                    <span>{rec}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ── Domain Taxonomy Breakdown ─────────────────────────────────── */}
+      {result.domain_breakdown && Object.keys(result.domain_breakdown).length > 0 && (
+        <div className="lg:col-span-12 glass-panel p-6 sm:p-8 animate-stagger-5 mt-4 md:mt-gutter-desktop">
+          <div className="ai-accent-bar bg-secondary shadow-[0_0_8px_rgba(34,211,238,0.6)]" />
+          <div className="flex items-center gap-3 mb-6">
+            <span className="material-symbols-outlined text-secondary text-2xl sm:text-3xl drop-shadow-[0_0_10px_rgba(34,211,238,0.5)]" aria-hidden="true">
+              hub
+            </span>
+            <div>
+              <h3 className="font-headline-md text-lg sm:text-headline-md text-on-background">Skill Domain Taxonomy</h3>
+              <p className="text-xs text-on-surface-variant mt-0.5">Matched skills categorized across engineering domains</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+            {Object.entries(result.domain_breakdown).map(([domain, skills]) => (
+              <div key={domain} className="bg-surface-container/40 border border-secondary/15 rounded-xl p-4 hover:border-secondary/35 hover:bg-surface-container/60 transition-colors">
+                <div className="flex items-center justify-between mb-3">
+                  <p className="text-[11px] text-secondary font-bold uppercase tracking-widest capitalize">
+                    {domain.replace(/_/g, ' ')}
+                  </p>
+                  <span className="text-xs bg-secondary/10 text-secondary px-2 py-0.5 rounded-full border border-secondary/20 font-bold">
+                    {Array.isArray(skills) ? skills.length : 0}
+                  </span>
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  {(Array.isArray(skills) ? skills : []).map((skill) => (
+                    <span key={skill} className="px-2 py-0.5 bg-secondary/8 text-on-surface-variant rounded text-[11px] border border-secondary/10">
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ── Interview Question Kit ────────────────────────────────────── */}
+      {Array.isArray(result.interview_questions) && result.interview_questions.length > 0 && (
+        <div className="lg:col-span-12 glass-panel p-6 sm:p-8 animate-stagger-5 mt-4 md:mt-gutter-desktop">
+          <div className="ai-accent-bar bg-primary shadow-[0_0_8px_rgba(99,102,241,0.6)]" />
+          <div className="flex items-center gap-3 mb-6">
+            <span className="material-symbols-outlined text-primary text-2xl sm:text-3xl drop-shadow-[0_0_10px_rgba(99,102,241,0.5)]" aria-hidden="true">
+              quiz
+            </span>
+            <div>
+              <h3 className="font-headline-md text-lg sm:text-headline-md text-on-background">Interview Question Kit</h3>
+              <p className="text-xs text-on-surface-variant mt-0.5">Targeted technical questions based on your skill alignment</p>
+            </div>
+          </div>
+          <div className="flex flex-col gap-4">
+            {result.interview_questions.map((q, idx) => (
+              <div key={idx} className="bg-surface-container/40 border border-primary/15 rounded-xl p-5 hover:border-primary/35 hover:bg-surface-container/60 transition-colors group">
+                <div className="flex items-start justify-between gap-4 mb-3">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-[10px] font-bold bg-primary/15 text-primary px-2.5 py-1 rounded-full border border-primary/25 uppercase tracking-wider">
+                      {q?.skill ?? 'General'}
+                    </span>
+                    <span className="text-[10px] font-bold bg-surface-container-high/60 text-on-surface-variant px-2.5 py-1 rounded-full border border-outline/20 uppercase tracking-wider">
+                      {q?.difficulty ?? 'Mid-Level'}
+                    </span>
+                    <span className="text-[10px] font-bold bg-secondary/10 text-secondary px-2.5 py-1 rounded-full border border-secondary/20 uppercase tracking-wider">
+                      {q?.category ?? 'Technical'}
+                    </span>
+                  </div>
+                  <span className="text-xs font-bold text-outline shrink-0">Q{String(idx + 1).padStart(2, '0')}</span>
+                </div>
+
+                <p className="text-sm sm:text-base text-on-surface font-medium leading-relaxed mb-3">
+                  {q?.question ?? ''}
+                </p>
+
+                {q?.rationale && (
+                  <p className="text-xs text-on-surface-variant/70 italic mb-3">
+                    <span className="font-semibold not-italic text-primary">Why asked:</span> {q.rationale}
+                  </p>
+                )}
+
+                {Array.isArray(q?.expected_answer_points) && q.expected_answer_points.length > 0 && (
+                  <details className="group/details">
+                    <summary className="text-xs text-primary cursor-pointer hover:text-primary/80 flex items-center gap-1.5 font-semibold select-none list-none">
+                      <span className="material-symbols-outlined text-[14px] group-open/details:rotate-180 transition-transform">expand_more</span>
+                      Expected Answer Points
+                    </summary>
+                    <ul className="mt-3 space-y-1.5 pl-4 border-l-2 border-primary/20">
+                      {q.expected_answer_points.map((pt, pi) => (
+                        <li key={pi} className="text-xs text-on-surface-variant/85 flex gap-2 items-start">
+                          <span className="text-primary shrink-0 mt-0.5">›</span>
+                          <span>{pt}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </details>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Reset CTA */}
       <div className="mt-12 sm:mt-16 flex justify-center animate-stagger-5">
         <button
