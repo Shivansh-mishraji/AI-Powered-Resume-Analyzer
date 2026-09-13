@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { exportPdfReport } from '../services/api';
 
 export default function ResultsDashboard({
   result,
@@ -8,6 +9,8 @@ export default function ResultsDashboard({
   const [activeTab, setActiveTab] = useState('all'); // 'all', 'matched', 'gaps'
   const [copied, setCopied] = useState(false);
   const [animatedScore, setAnimatedScore] = useState(0);
+  const [pdfLoading, setPdfLoading] = useState(false);
+  const [pdfError, setPdfError] = useState('');
 
   // Score Count-Up Animation (60/120fps hardware synced)
   useEffect(() => {
@@ -55,8 +58,18 @@ ${(result.missing_skills || []).join(', ') || 'None'}`;
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handlePrint = () => {
-    window.print();
+  const handleExportPdf = async () => {
+    if (pdfLoading) return;
+    setPdfError('');
+    setPdfLoading(true);
+    try {
+      await exportPdfReport(result);
+    } catch (err) {
+      setPdfError(err.message || 'PDF export failed.');
+      setTimeout(() => setPdfError(''), 5000);
+    } finally {
+      setPdfLoading(false);
+    }
   };
 
   const matchedList = Array.isArray(result.matched_skills) ? result.matched_skills : [];
@@ -128,11 +141,21 @@ ${(result.missing_skills || []).join(', ') || 'None'}`;
 
           <button
             type="button"
-            onClick={handlePrint}
-            className="flex-1 sm:flex-initial px-4 py-2.5 bg-surface-container/50 glassmorphism-refraction border border-primary/30 text-on-surface rounded-lg font-label-md text-xs sm:text-sm hover:bg-surface-bright hover:border-primary/60 transition-all flex items-center justify-center gap-2 shadow-glow-sm hover:shadow-glow-md cursor-pointer"
+            onClick={handleExportPdf}
+            disabled={pdfLoading}
+            className="flex-1 sm:flex-initial px-4 py-2.5 bg-surface-container/50 glassmorphism-refraction border border-primary/30 text-on-surface rounded-lg font-label-md text-xs sm:text-sm hover:bg-surface-bright hover:border-primary/60 transition-all flex items-center justify-center gap-2 shadow-glow-sm hover:shadow-glow-md cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
           >
-            <span className="material-symbols-outlined text-[18px]" aria-hidden="true">picture_as_pdf</span>
-            <span>Export PDF Report</span>
+            {pdfLoading ? (
+              <>
+                <span className="material-symbols-outlined text-[18px] animate-spin" aria-hidden="true">progress_activity</span>
+                <span>Generating...</span>
+              </>
+            ) : (
+              <>
+                <span className="material-symbols-outlined text-[18px]" aria-hidden="true">picture_as_pdf</span>
+                <span>Export PDF Report</span>
+              </>
+            )}
           </button>
 
           <button
@@ -163,6 +186,14 @@ ${(result.missing_skills || []).join(', ') || 'None'}`;
               <li key={idx}>{warn}</li>
             ))}
           </ul>
+        </div>
+      )}
+
+      {/* PDF Export Error Toast */}
+      {pdfError && (
+        <div className="mb-6 p-4 rounded-xl bg-match-rose/15 border border-match-rose/40 text-match-rose flex items-center gap-3 animate-stagger-1">
+          <span className="material-symbols-outlined text-[20px] shrink-0" aria-hidden="true">error</span>
+          <span className="text-xs font-medium">{pdfError}</span>
         </div>
       )}
 

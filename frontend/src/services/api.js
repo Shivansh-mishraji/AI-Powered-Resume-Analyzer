@@ -130,3 +130,57 @@ export async function checkBackendHealth() {
     return { status: 'offline' };
   }
 }
+
+/**
+ * Requests a professional PDF audit report from the backend.
+ * Sends the full analysis result object and receives a PDF blob.
+ * Automatically triggers a browser download.
+ */
+export async function exportPdfReport(analysisResult) {
+  const payload = {
+    analysis: analysisResult,
+    ats_audit: analysisResult.ats_audit ?? null,
+  };
+
+  let response;
+  try {
+    response = await fetch(`${API_BASE_URL}/export/pdf`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+      signal: AbortSignal.timeout(30000),
+    });
+  } catch (err) {
+    if (err.name === 'TimeoutError' || err.name === 'AbortError') {
+      throw new Error('PDF export request timed out. Please try again.');
+    }
+    throw new Error('Could not connect to the server to generate the PDF report.');
+  }
+
+  if (!response.ok) {
+    let detail = '';
+    try {
+      const errJson = await response.json();
+      detail = errJson.detail || '';
+    } catch { /* ignore */ }
+    throw new Error(detail || `PDF export failed with status ${response.status}.`);
+  }
+
+  const blob = await response.blob();
+  const url = URL.createObjectURL(blob);
+
+  // Trigger automatic download
+  const filename = analysisResult.filename
+    ? `audit_report_${analysisResult.filename.replace(/\.[^.]+$/, '')}.pdf`
+    : 'resume_audit_report.pdf';
+
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+
+  // Clean up object URL after short delay
+  setTimeout(() => URL.revokeObjectURL(url), 5000);
+}
