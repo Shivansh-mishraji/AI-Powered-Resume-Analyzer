@@ -79,9 +79,9 @@ const TEAM_CARDS = [
     github: 'https://github.com/patelvishal-ji',
     email: 'patelvishal7800023@gmail.com',
     summary:
-      'Designed and executed automated testing infrastructure: 90/90 passing pytest test suite, benchmark runner, security sanitization, and multi-format QA evaluation dataset.',
+      'Designed and executed automated testing infrastructure: 92/92 passing pytest test suite, benchmark runner, security sanitization, and multi-format QA evaluation dataset.',
     deliverables: [
-      { icon: 'verified', text: 'Pytest 90/90 Passing Automated Test Suite' },
+      { icon: 'verified', text: 'Pytest 92/92 Passing Automated Test Suite' },
       { icon: 'speed', text: 'Concurrency & Latency Benchmark Runner' },
       { icon: 'security', text: 'OWASP Sanitization (XSS, SQLi, Prompt Injection)' },
       { icon: 'description', text: 'Synthetic Evaluation Dataset & Audit Logs' },

@@ -1,4 +1,4 @@
-﻿<div align="center">
+<div align="center">
 
 # 🚀 AI-Powered Resume Analyzer
 ### *Hybrid Multi-Model Career Intelligence Platform & ATS Semantic Analyzer*
@@ -9,7 +9,7 @@
 [![React 19](https://img.shields.io/badge/React_19-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
 [![Python 3.13](https://img.shields.io/badge/Python_3.13-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![Multi-Provider AI](https://img.shields.io/badge/AI_BYOK-Gemini_·_OpenAI_·_Claude-orange?style=for-the-badge)](https://aistudio.google.com/)
-[![Tests](https://img.shields.io/badge/Pytest-90_Tests_Passed-success?style=for-the-badge&logo=pytest&logoColor=white)](https://docs.pytest.org/)
+[![Tests](https://img.shields.io/badge/Pytest-92_Tests_Passed-success?style=for-the-badge&logo=pytest&logoColor=white)](https://docs.pytest.org/)
 
 <br/><br/>
 
@@ -25,7 +25,7 @@
   <img src="https://img.shields.io/badge/AI%20Engine-Gemini%202.5%20%2F%202.0%20%2F%20GPT--4o%20%2F%20Claude-blue?logo=google&logoColor=white" />
   <img src="https://img.shields.io/badge/FastAPI-0.115+-green?logo=fastapi" />
   <img src="https://img.shields.io/badge/React-19-61DAFB?logo=react" />
-  <img src="https://img.shields.io/badge/Tests-90%2F90%20Passing-brightgreen" />
+  <img src="https://img.shields.io/badge/Tests-92%2F92%20Passing-brightgreen" />
   <img src="https://img.shields.io/badge/Zero%20Disk%20Storage-Privacy%20First-purple" />
   <img src="https://img.shields.io/badge/Performance-60%2F120%20FPS%20GPU-cyan" />
 </p>
@@ -48,7 +48,7 @@
 | 2 | 🎯 **Deep Semantic Matching** | Understands context: *AWS ECS + Terraform = Container Orchestration & IaC* — not just keyword counting. |
 | 3 | 🧬 **Skills Taxonomy Graph** | 440+ canonical technologies across 12 engineering domains with alias resolution (`k8s` → `Kubernetes`). |
 | 4 | 🔍 **Deep ATS Heuristic Audit** | 4 composite scores, 7 section detectors, 150+ action verbs, quantified bullet analysis. |
-| 5 | 📄 **Professional PDF Export** | Real multi-page backend PDF — cover, skills matrix, ATS audit, insights, interview kit, SHA-256 seal. |
+| 5 | 📄 **Executive PDF Dossier** | High-density 2-page print-ready executive audit report with KPI tiles, composite ATS progress bars, competency matrix, recruiter interview kit & SHA-256 seal. |
 | 6 | 🎤 **Targeted Interview Kit** | Auto-generates technical questions & behavioral prompts from your specific skill gaps. |
 | 7 | 🔒 **Zero-Storage Privacy** | In-memory only processing — no disk writes, no DB, keys live in `sessionStorage` only. |
 | 8 | 🎨 **Nebula Aurora UI** | React 19 glassmorphism, 60/120 FPS GPU animations, fully responsive bento grid. |
@@ -176,13 +176,13 @@ AI-Powered-Resume-Analyzer/
 │   │       ├── ats_audit_service.py    # Deep ATS heuristic & quantification engine
 │   │       ├── report_exporter.py      # Multi-page PDF/MD/JSON/HTML + SHA-256
 │   │       └── interview_generator.py  # Technical interview question generator
-│   └── tests/                          # 90/90 passing pytest suite (13 modules)
+│   └── tests/                          # 92/92 passing pytest suite (13 modules)
 ├── frontend/
 │   └── src/
 │       ├── components/                 # Modular UI components (bento grid, team modal)
 │       ├── hooks/                      # sessionStorage BYOK security hook
 │       └── services/api.js             # API client & backend warmup
-├── docs/                               # 9 detailed documentation files
+├── docs/                               # 10 detailed documentation files
 ├── testing/                            # E2E, benchmark & QA test harness
 ├── assets/                             # Banners, diagrams, team photos
 └── DEPLOYMENT.md
@@ -206,7 +206,7 @@ cd frontend && npm install && npm run dev
 # → http://localhost:5173
 
 # 4. Tests
-cd backend && python testing/run_tests.py
+pytest backend/tests
 ```
 
 > 📖 Full setup, env vars & deployment → [`docs/GUIDELINES.md`](./docs/GUIDELINES.md) | [`DEPLOYMENT.md`](./DEPLOYMENT.md)

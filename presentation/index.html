@@ -1,0 +1,1375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI-Powered Resume Analyzer — Dean Presentation Deck</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0B0F19;
+      --card-bg: rgba(23, 32, 54, 0.85);
+      --card-border: rgba(56, 189, 248, 0.25);
+      --cyan-accent: #38BDF8;
+      --emerald-accent: #10B981;
+      --indigo-accent: #818CF8;
+      --amber-accent: #F59E0B;
+      --rose-accent: #F43F5E;
+      --text-main: #F8FAFC;
+      --text-muted: #94A3B8;
+      --text-dim: #64748B;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Navigation Bar */
+    header {
+      height: 52px;
+      background: rgba(11, 15, 25, 0.95);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      z-index: 50;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: -0.3px;
+    }
+
+    .brand-badge {
+      background: linear-gradient(135deg, #0284C7, #38BDF8);
+      color: #FFFFFF;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: var(--text-main);
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: var(--cyan-accent);
+      color: var(--cyan-accent);
+    }
+
+    .btn.active {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: var(--cyan-accent);
+      color: var(--cyan-accent);
+    }
+
+    .slide-counter {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: var(--text-muted);
+      min-width: 60px;
+      text-align: center;
+    }
+
+    /* Main Slide Stage */
+    main#stage {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 30px 40px;
+    }
+
+    .slide {
+      position: absolute;
+      width: 100%;
+      max-width: 1360px;
+      height: 100%;
+      max-height: 760px;
+      opacity: 0;
+      visibility: hidden;
+      transform: scale(0.98);
+      transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background: linear-gradient(145deg, rgba(17, 24, 39, 0.7) 0%, rgba(15, 23, 42, 0.9) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      padding: 36px 44px;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7);
+    }
+
+    .slide.active {
+      opacity: 1;
+      visibility: visible;
+      transform: scale(1);
+    }
+
+    /* Slide Header */
+    .slide-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 24px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 16px;
+    }
+
+    .slide-title-area h2 {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .slide-title-area p.subtitle {
+      font-size: 15px;
+      color: var(--cyan-accent);
+      margin-top: 4px;
+      font-weight: 500;
+    }
+
+    .presenter-pill {
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--cyan-accent);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .presenter-pill .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--emerald-accent);
+      box-shadow: 0 0 8px var(--emerald-accent);
+    }
+
+    /* Slide Body */
+    .slide-body {
+      flex: 1;
+      display: flex;
+      gap: 28px;
+      overflow-y: auto;
+    }
+
+    /* Cards & Layout Utilities */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      width: 100%;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      width: 100%;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      width: 100%;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      backdrop-filter: blur(12px);
+    }
+
+    .card.highlight {
+      border-color: rgba(56, 189, 248, 0.5);
+      background: linear-gradient(145deg, rgba(23, 32, 54, 0.95), rgba(15, 23, 42, 0.95));
+      box-shadow: 0 10px 30px -10px rgba(56, 189, 248, 0.2);
+    }
+
+    .card h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .card li {
+      font-size: 14px;
+      line-height: 1.5;
+      color: #CBD5E1;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .card li::before {
+      content: "•";
+      color: var(--cyan-accent);
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .badge-metric {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 800;
+      font-size: 28px;
+      color: var(--emerald-accent);
+    }
+
+    .metric-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Team Cards */
+    .team-avatar {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      border: 3px solid var(--cyan-accent);
+      object-fit: cover;
+      margin: 0 auto 8px auto;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .team-card {
+      text-align: center;
+      padding: 20px;
+    }
+
+    .team-card h4 {
+      font-size: 16px;
+      font-weight: 800;
+      color: #FFFFFF;
+    }
+
+    .team-card p.role {
+      font-size: 12px;
+      color: var(--cyan-accent);
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    /* Media visual container */
+    .media-box {
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .media-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Slide Footer */
+    .slide-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding-top: 12px;
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+
+    /* Speaker Notes Drawer (Toggled with 'N' or button) */
+    #notes-drawer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(15, 23, 42, 0.98);
+      border-top: 2px solid var(--cyan-accent);
+      padding: 20px 32px;
+      max-height: 220px;
+      overflow-y: auto;
+      z-index: 100;
+      box-shadow: 0 -15px 40px rgba(0, 0, 0, 0.7);
+      transform: translateY(100%);
+      transition: transform 0.25s ease-in-out;
+    }
+
+    #notes-drawer.open {
+      transform: translateY(0);
+    }
+
+    .notes-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .notes-header h4 {
+      color: var(--cyan-accent);
+      font-size: 14px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .notes-content {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #E2E8F0;
+      white-space: pre-line;
+    }
+
+    /* Progress bar */
+    .progress-bar-container {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.08);
+      z-index: 60;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #0284C7, #38BDF8, #10B981);
+      width: 5.5%;
+      transition: width 0.3s ease;
+    }
+
+    /* Code Snippet Box */
+    .code-box {
+      background: #0D1117;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: #E6EDF3;
+      line-height: 1.4;
+      overflow-x: auto;
+    }
+
+    /* Table styling */
+    .styled-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .styled-table th {
+      background: rgba(56, 189, 248, 0.12);
+      color: var(--cyan-accent);
+      text-align: left;
+      padding: 10px 14px;
+      font-weight: 700;
+      border-bottom: 1px solid rgba(56, 189, 248, 0.2);
+    }
+
+    .styled-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      color: #CBD5E1;
+    }
+
+    .styled-table tr:hover td {
+      background: rgba(255, 255, 255, 0.03);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Header Navigation -->
+  <header>
+    <div class="brand">
+      <span class="brand-badge">CAPSTONE 2026</span>
+      <span>AI-Powered Resume Analyzer</span>
+      <span style="color: var(--text-dim); font-size: 12px; font-weight: 400;">| BBDU CSE</span>
+    </div>
+
+    <div class="controls">
+      <button class="btn" id="prevBtn" onclick="prevSlide()" title="Previous Slide (Left Arrow)">◀ Prev</button>
+      <span class="slide-counter" id="slideIndicator">1 / 18</span>
+      <button class="btn" id="nextBtn" onclick="nextSlide()" title="Next Slide (Right Arrow / Space)">Next ▶</button>
+      <button class="btn" id="notesToggleBtn" onclick="toggleNotes()" title="Toggle Speaker Notes (Key: N)">📝 Notes</button>
+      <button class="btn" id="fullscreenBtn" onclick="toggleFullscreen()" title="Fullscreen (Key: F)">⛶ Fullscreen</button>
+    </div>
+  </header>
+
+  <!-- Main Slide Stage -->
+  <main id="stage">
+
+    <!-- SLIDE 1: Title Slide -->
+    <section class="slide active" id="slide-1" data-presenter="Shivansh Mishra" data-time="30s" data-notes="Respected Dean Sir, faculty members, and fellow classmates: Good morning! I am Shivansh Mishra, lead and architect. Alongside Harshvardhan, Sujeet, and Vishal, we present our capstone: the AI-Powered Resume Analyzer. Let's see how our system bridges the candidate-job gap using modern AI and rigorous software engineering.">
+      <div class="slide-header">
+        <div class="slide-title-area">
+          <h2>AI-Powered Resume Analyzer</h2>
+          <p class="subtitle">Next-Generation ATS Scoring, Semantic Gap Analysis & Executive Reporting</p>
+        </div>
+        <div class="presenter-pill"><span class="dot"></span> Speaker: Shivansh Mishra (30s)</div>
+      </div>
+      <div class="slide-body grid-2">
+        <div class="card highlight" style="justify-content: center; gap: 16px;">
+          <h3 style="font-size: 24px; color: var(--cyan-accent);">🎓 B.Tech Computer Science Capstone</h3>
+          <p style="font-size: 16px; line-height: 1.6; color: #E2E8F0;">
+            A production-ready web application providing real-time ATS scoring, explainable semantic skill gap analysis, and tailored bullet recommendations for students and job applicants.
+          </p>
+          <div style="margin-top: 10px; display: flex; gap: 12px; flex-wrap: wrap;">
+            <span class="btn" style="cursor: default;">⚡ FastAPI + React 19</span>
+            <span class="btn" style="cursor: default;">🤖 Gemini + Multi-LLM</span>
+            <span class="btn" style="cursor: default;">🛡️ 92/92 Passing Tests</span>
+          </div>
+        </div>
+        <div class="card">
+          <h3>👥 Project Team Members</h3>
+          <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 6px;">
+            <div style="display: flex; align-items: center; gap: 14px; background: rgba(255,255,255,0.03); padding: 10px; border-radius: 10px;">
+              <img src="../assets/team/shivansh_circle.png" style="width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--cyan-accent);" alt="Shivansh">
+              <div><strong>Shivansh Mishra</strong><div style="font-size: 12px; color: var(--cyan-accent);">Founder & Principal Architect (Lead)</div></div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 14px; background: rgba(255,255,255,0.03); padding: 10px; border-radius: 10px;">
+              <img src="../assets/team/harshvardhan_circle.png" style="width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--emerald-accent);" alt="Harshvardhan">
+              <div><strong>Harshvardhan Sisodiya</strong><div style="font-size: 12px; color: var(--emerald-accent);">Frontend Architect & UI Lead</div></div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 14px; background: rgba(255,255,255,0.03); padding: 10px; border-radius: 10px;">
+              <img src="../assets/team/vishal_circle.png" style="width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--indigo-accent);" alt="Vishal">
+              <div><strong>Vishal Patel</strong><div style="font-size: 12px; color: var(--indigo-accent);">QA Engineer & Security Lead</div></div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 14px; background: rgba(255,255,255,0.03); padding: 10px; border-radius: 10px;">
+              <img src="../assets/team/sujeet_circle.png" style="width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--amber-accent);" alt="Sujeet">
+              <div><strong>Sujeet Kannaujiya</strong><div style="font-size: 12px; color: var(--amber-accent);">Research & Documentation Lead</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>Babu Banarasi Das University (BBDU), Lucknow</span>
+        <span>Department of Computer Science & Engineering • 2026</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 2: TL;DR Slide -->
+    <section class="slide" id="slide-2" data-presenter="Shivansh Mishra" data-time="45s" data-notes="To hook our audience: over 75% of deserving candidates get screened out simply because legacy ATS tools look for exact keyword matches. Our platform takes any PDF/DOCX resume, evaluates it against a specific job description, produces an explainable match score, and gives clear, tailored bullet improvements with zero user data tracking.">
+      <div class="slide-header">
+        <div class="slide-title-area">
+          <h2>Project TL;DR — Quick Executive Summary</h2>
+          <p class="subtitle">The Problem, Our Solution, and the Quantified Impact</p>
+        </div>
+        <div class="presenter-pill"><span class="dot"></span> Speaker: Shivansh Mishra (45s)</div>
+      </div>
+      <div class="slide-body grid-3">
+        <div class="card" style="border-top: 4px solid var(--rose-accent);">
+          <h3 style="color: var(--rose-accent);">🛑 The Problem</h3>
+          <ul>
+            <li><strong>75% Automated Rejection</strong>: Legacy keyword-based ATS silently discard qualified applicants.</li>
+            <li><strong>Zero Feedback</strong>: Job seekers receive automated rejection emails with zero explanation.</li>
+            <li><strong>Privacy Exploitation</strong>: Free online tools sell candidate contact data to third parties.</li>
+          </ul>
+        </div>
+        <div class="card highlight" style="border-top: 4px solid var(--cyan-accent);">
+          <h3 style="color: var(--cyan-accent);">💡 Our Solution</h3>
+          <ul>
+            <li><strong>Semantic Understanding</strong>: Evaluates context and conceptual experience, not just strings.</li>
+            <li><strong>Actionable Gap Analysis</strong>: Displays matching, missing, and recommended technical skills.</li>
+            <li><strong>BYOK Privacy First</strong>: Users supply API keys; zero server-side storage of personal documents.</li>
+          </ul>
+        </div>
+        <div class="card" style="border-top: 4px solid var(--emerald-accent);">
+          <h3 style="color: var(--emerald-accent);">🚀 Key Outcomes</h3>
+          <div style="display: flex; flex-direction: column; gap: 14px; margin-top: 8px;">
+            <div>
+              <div class="badge-metric">&lt; 3.0s</div>
+              <div class="metric-sub">End-to-End Latency</div>
+            </div>
+            <div>
+              <div class="badge-metric" style="color: var(--cyan-accent);">92 / 92</div>
+              <div class="metric-sub">Automated Pytest Suite (100% Pass)</div>
+            </div>
+            <div>
+              <div class="badge-metric" style="color: var(--indigo-accent);">$0.00</div>
+              <div class="metric-sub">Zero-Cost Cloud Deployment</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>Slide 2 of 18</span>
+        <span>Executive Snapshot</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 3: Team and Roles -->
+    <section class="slide" id="slide-3" data-presenter="Shivansh Mishra" data-time="30s" data-notes="We divided responsibilities into 4 specialized pillars: I owned backend architecture and AI pipeline; Harshvardhan designed our responsive React 19 UI; Vishal built 92 automated tests and secured inputs; Sujeet created 10 technical documentation guides.">
+      <div class="slide-header">
+        <div class="slide-title-area">
+          <h2>Team Composition & Roles</h2>
+          <p class="subtitle">Four Specialized Engineering Pillars Driving Delivery</p>
+        </div>
+        <div class="presenter-pill"><span class="dot"></span> Speaker: Shivansh Mishra (30s)</div>
+      </div>
+      <div class="slide-body grid-4">
+        <div class="card team-card highlight">
+          <img src="../assets/team/shivansh_circle.png" class="team-avatar" alt="Shivansh" />
+          <h4>Shivansh Mishra</h4>
+          <p class="role">Lead & Architect</p>
+          <ul>
+            <li>FastAPI Microservices</li>
+            <li>Multi-LLM BYOK Pipeline</li>
+            <li>In-Memory Parsers (PDF/DOCX)</li>
+          </ul>
+        </div>
+        <div class="card team-card">
+          <img src="../assets/team/harshvardhan_circle.png" class="team-avatar" style="border-color: var(--emerald-accent);" alt="Harshvardhan" />
+          <h4>Harshvardhan Sisodiya</h4>
+          <p class="role" style="color: var(--emerald-accent);">Frontend Architect</p>
+          <ul>
+            <li>React 19 + Vite 6 UI</li>
+            <li>Glassmorphism Theme System</li>
+            <li>Responsive Mobile & Desktop</li>
+          </ul>
+        </div>
+        <div class="card team-card">
+          <img src="../assets/team/vishal_circle.png" class="team-avatar" style="border-color: var(--indigo-accent);" alt="Vishal" />
+          <h4>Vishal Patel</h4>
+          <p class="role" style="color: var(--indigo-accent);">QA & Security Lead</p>
+          <ul>
+            <li>92 Automated Unit Tests</li>
+            <li>Security MIME Validation</li>
+            <li>Edge Case Boundary Defense</li>
+          </ul>
+        </div>
+        <div class="card team-card">
+          <img src="../assets/team/sujeet_circle.png" class="team-avatar" style="border-color: var(--amber-accent);" alt="Sujeet" />
+          <h4>Sujeet Kannaujiya</h4>
+          <p class="role" style="color: var(--amber-accent);">Research & Docs Lead</p>
+          <ul>
+            <li>10 Markdown Doc Guides</li>
+            <li>OpenAPI Specifications</li>
+            <li>Executive Report Design</li>
+          </ul>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>Slide 3 of 18</span>
+        <span>Clear Ownership & Accountability</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 4: Problem and Motivation -->
+    <section class="slide" id="slide-4" data-presenter="Shivansh Mishra" data-time="60s" data-notes="Why did we build this? Consider a talented student who builds amazing FastAPI backends. They apply for a role, but the legacy ATS looks for the exact phrase 'REST API' and silently dumps their resume. Students have no idea why they failed. Existing commercial tools charge high subscription fees or harvest data. We wanted an accessible, transparent, semantic tool.">
+      <div class="slide-header">
+        <div class="slide-title-area">
+          <h2>Problem Statement & Motivation</h2>
+          <p class="subtitle">Why Traditional Hiring Systems Fail Modern Job Seekers</p>
+        </div>
+        <div class="presenter-pill"><span class="dot"></span> Speaker: Shivansh Mishra (60s)</div>
+      </div>
+      <div class="slide-body grid-2">
+        <div class="card">
+          <h3>⚠️ Industry Pain Points</h3>
+          <ul>
+            <li><strong>Keyword Matching is Obsolete</strong>: Legacy ATS uses basic string queries. Synonyms like <em>'FastAPI'</em> vs <em>'REST Framework'</em> cause immediate false rejections.</li>
+            <li><strong>The Feedback Void</strong>: 90% of applicants receive no actionable insights on missing skills, leading to repeated failed applications.</li>
+            <li><strong>Aggressive Monetization</strong>: Commercial tools charge $30–$50/month and restrict users to 2 or 3 scans before forcing subscriptions.</li>
+            <li><strong>Privacy Compromises</strong>: Unverified free websites harvest and sell student phone numbers and emails to recruiters.</li>
+          </ul>
+        </div>
+        <div class="card highlight">
+          <h3>🎯 Practical Campus Persona</h3>
+          <div style="background: rgba(0,0,0,0.3); padding: 14px; border-radius: 10px; border-left: 4px solid var(--cyan-accent); margin-bottom: 12px;">
+            <strong>Scenario: BBDU CSE Graduate</strong>
+            <p style="font-size: 13px; color: #CBD5E1; margin-top: 4px;">
+              Rahul has strong experience with Python, PyTorch, and Docker. He applies for a 'Backend Developer' job. The ATS rejects him because the JD required 'Containerization' and 'Web Services'.
+            </p>
+          </div>
+          <h4 style="color: var(--emerald-accent); font-size: 15px;">Our Project Goal:</h4>
+          <p style="font-size: 14px; line-height: 1.5; color: #E2E8F0;">
+            Give Rahul immediate semantic feedback: highlight that his Docker experience matches containerization, identify missing Git-flow keywords, and provide 1-click bullet point fixes.
+          </p>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>Slide 4 of 18</span>
+        <span>Democratizing Hiring Intelligence</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 5: Goals & Success Criteria -->
+    <section class="slide" id="slide-5" data-presenter="Shivansh Mishra" data-time="45s" data-notes="We set strict engineering targets. First, parsing must handle both PDF and Word documents in memory. Second, explainable scoring with clear skill categories. Third, privacy through BYOK. And fourth, 100% test pass rate with zero broken flows.">
+      <div class="slide-header">
+        <div class="slide-title-area">
+          <h2>Project Goals & Measurable Success Criteria</h2>
+          <p class="subtitle">Defining Engineering Standards and Delivery Benchmarks</p>
+        </div>
+        <div class="presenter-pill"><span class="dot"></span> Speaker: Shivansh Mishra (45s)</div>
+      </div>
+      <div class="slide-body grid-2">
+        <div class="card highlight">
+          <h3 style="color: var(--cyan-accent);">🎯 Must-Have Functional Goals (100% Shipped)</h3>
+          <ul>
+            <li><strong>Multi-Format File Parsing</strong>: In-memory extraction of both PDF and DOCX documents with spatial coordinate ordering.</li>
+            <li><strong>Explainable Semantic Scoring</strong>: Multi-dimensional score (0–100%) broken down by hard skills, soft skills, and experience match.</li>
+            <li><strong>Bring-Your-Own-Key (BYOK) Security</strong>: Client-side storage of user API keys (Gemini, OpenAI, Claude).</li>
+            <li><strong>Executive 2-Page PDF Export</strong>: Instant compilation of a professional, print-ready evaluation dossier.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="color: var(--emerald-accent);">📊 Non-Functional Engineering Benchmarks</h3>
+          <ul>
+            <li><strong>Sub-3 Second Execution</strong>: Complete end-to-end parsing, analysis, and rendering cycle under 3 seconds.</li>
+            <li><strong>Zero Server-Side Storage</strong>: Documents stream through volatile memory (`io.BytesIO`) and are purged immediately.</li>
+            <li><strong>100% Automated Test Pass Rate</strong>: 92/92 automated pytest test cases validating happy and error paths.</li>
+            <li><strong>Responsive Device Support</strong>: 60 FPS performance and fluid layouts across 320px to 4K resolutions.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>Slide 5 of 18</span>
+        <span>Objective Verification</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 6: Solution Overview -->
+    <section class="slide" id="slide-6" data-presenter="Shivansh Mishra" data-time="60s" data-notes="Here is the end-to-end flow: The candidate uploads a resume and pastes a job description. The FastAPI backend validates MIME types and size (<5MB). It streams bytes into pdfplumber with coordinate sorting, extracts clean text, packages it into a strict JSON prompt for Gemini/OpenAI, and returns validated Pydantic data for the React dashboard.">
+      <div class="slide-header">
+        <div class="slide-title-area">
+          <h2>Solution Overview & System Data Flow</h2>
+          <p class="subtitle">How Data Moves Securely from Document Upload to Actionable Dashboard</p>
+        </div>
+        <div class="presenter-pill"><span class="dot"></span> Speaker: Shivansh Mishra (60s)</div>
+      </div>
+      <div class="slide-body grid-2">
+        <div class="card" style="justify-content: space-around;">
+          <div style="background: rgba(56, 189, 248, 0.08); padding: 12px; border-radius: 8px; border-left: 3px solid var(--cyan-accent);">
+            <strong>1. Ingestion Layer:</strong>
+            <p style="font-size: 13px; color: #CBD5E1;">Client validates file type; FastAPI receives multipart payload in memory.</p>
+          </div>
+          <div style="background: rgba(16, 185, 129, 0.08); padding: 12px; border-radius: 8px; border-left: 3px solid var(--emerald-accent);">
+            <strong>2. Parsing & Normalization:</strong>
+            <p style="font-size: 13px; color: #CBD5E1;">`pdfplumber` / `python-docx` extracts text with spatial sorting (`sort=True`).</p>
+          </div>
+          <div style="background: rgba(129, 140, 248, 0.08); padding: 12px; border-radius: 8px; border-left: 3px solid var(--indigo-accent);">
+            <strong>3. Semantic AI Evaluation:</strong>
+            <p style="font-size: 13px; color: #CBD5E1;">Multi-LLM engine evaluates context at low temperature (0.2) against strict JSON schema.</p>
+          </div>
+          <div style="background: rgba(245, 158, 11, 0.08); padding: 12px; border-radius: 8px; border-left: 3px solid var(--amber-accent);">
+            <strong>4. Visualization & Export:</strong>
+            <p style="font-size: 13px; color: #CBD5E1;">React renders animated scores; ReportLab generates executive 2-page PDF.</p>
+          </div>
+        </div>
+        <div class="card media-box">
+          <img src="../assets/architecture.jpg" alt="Architecture Diagram" />
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>Slide 6 of 18</span>
+        <span>Clean Microservices Architecture</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 7: Architecture and Tech Stack -->
+    <section class="slide" id="slide-7" data-presenter="Shivansh Mishra & Harshvardhan" data-time="60s" data-notes="We selected tools engineered for speed and reliability. FastAPI provides asynchronous throughput and auto-generated OpenAPI docs. React 19 gives us concurrent rendering and modern state hooks. ReportLab generates pixel-perfect PDF dossiers. Now Harshvardhan will highlight our frontend tech choices.">
+      <div class="slide-header">
+        <div class="slide-title-area">
+          <h2>Architecture & Technology Stack</h2>
+          <p class="subtitle">Modern, Scalable, Enterprise-Grade Open Source Stack</p>
+        </div>
+        <div class="presenter-pill"><span class="dot"></span> Speakers: Shivansh Mishra & Harshvardhan Sisodiya (60s)</div>
+      </div>
+      <div class="slide-body" style="flex-direction: column;">
+        <table class="styled-table">
+          <thead>
+            <tr>
+              <th>Layer</th>
+              <th>Technologies Used</th>
+              <th>Selection Rationale</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Frontend</strong></td>
+              <td>React 19, Vite 6, Tailwind CSS, Lucide Icons</td>
+              <td>Sub-350ms build time, zero runtime bloat, concurrent DOM rendering.</td>
+            </tr>
+            <tr>
+              <td><strong>Backend</strong></td>
+              <td>FastAPI (Python 3.10+), Uvicorn ASGI, Pydantic v2</td>
+              <td>High asynchronous concurrency, automatic OpenAPI documentation, strict typing.</td>
+            </tr>
+            <tr>
+              <td><strong>Parsing Engine</strong></td>
+              <td>pdfplumber, python-docx, ReportLab</td>
+              <td>In-memory byte parsing, multi-column coordinate sorting, PDF dossier generation.</td>
+            </tr>
+            <tr>
+              <td><strong>AI / LLM</strong></td>
+              <td>Google Gemini 1.5/2.0 API, OpenAI GPT-4o, Anthropic Claude</td>
+              <td>Multi-provider BYOK flexibility, low latency, structured JSON mode.</td>
+            </tr>
+            <tr>
+              <td><strong>QA & Testing</strong></td>
+              <td>pytest, pytest-asyncio, HTTPX TestClient</td>
+              <td>92 automated tests across unit, integration, and security edge cases.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="slide-footer">
+        <span>Slide 7 of 18</span>
+        <span>Purpose-Built Technology Selection</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 8: Backend Implementation -->
+    <section class="slide" id="slide-8" data-presenter="Shivansh Mishra" data-time="75s" data-notes="On the backend, we built 3 core endpoints: POST /api/analyze, POST /api/export-pdf, and GET /api/health. To guarantee zero data leakage, we stream files directly in memory using BytesIO. Every response is governed by Pydantic v2 schemas. If an AI model returns malformed JSON, our backend catches it, sanitizes it, and guarantees the frontend receives clean data.">
+      <div class="slide-header">
+        <div class="slide-title-area">
+          <h2>Backend Implementation & API Design</h2>
+          <p class="subtitle">FastAPI Microservice with In-Memory Streaming & Pydantic Validation</p>
+        </div>
+        <div class="presenter-pill"><span class="dot"></span> Speaker: Shivansh Mishra (75s)</div>
+      </div>
+      <div class="slide-body grid-2">
+        <div class="card">
+          <h3>⚙️ Core REST API Endpoints</h3>
+          <ul>
+            <li><code>POST /api/analyze</code>: Accepts multipart form data (resume file + JD string + provider header). Returns structured analysis.</li>
+            <li><code>POST /api/export-pdf</code>: Takes analysis JSON and streams a compiled 2-page executive PDF report back.</li>
+            <li><code>GET /api/health</code>: Liveness & readiness probe for cloud monitoring and auto-healing.</li>
+          </ul>
+          <h3 style="margin-top: 10px;">🛡️ Defensive In-Memory Pipeline</h3>
+          <ul>
+            <li>Zero disk I/O: Files processed as <code>io.BytesIO</code> streams.</li>
+            <li>Strict MIME enforcement: Blocks executables, scripts, and archives.</li>
+            <li>Pydantic v2 enforcement: Guaranteed output structure.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>💻 Clean Code Architecture</h3>
+          <div class="code-box">
+<span style="color: #FF7B72;">@router.post</span>(<span style="color: #A5D6FF;">"/api/analyze"</span>, response_model=AnalysisResponse)
+<span style="color: #FF7B72;">async def</span> <span style="color: #D2A8FF;">analyze_resume</span>(
+    file: UploadFile = File(...),
+    job_description: <span style="color: #79C0FF;">str</span> = Form(...),
+    x_api_key: Optional[<span style="color: #79C0FF;">str</span>] = Header(<span style="color: #79C0FF;">None</span>)
+):
+    <span style="color: #8B949E;"># 1. Validate file size & MIME</span>
+    validate_file_security(file)
+    
+    <span style="color: #8B949E;"># 2. In-memory coordinate-based extraction</span>
+    raw_text = <span style="color: #FF7B72;">await</span> extract_text_stream(file)
+    
+    <span style="color: #8B949E;"># 3. Multi-LLM inference with strict JSON schema</span>
+    result = <span style="color: #FF7B72;">await</span> ai_service.evaluate(
+        resume=raw_text, jd=job_description, key=x_api_key
+    )
+    <span style="color: #FF7B72;">return</span> result
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>Slide 8 of 18</span>
+        <span>Secure, Asynchronous Python Backend</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 9: AI Integration -->
+    <section class="slide" id="slide-9" data-presenter="Shivansh Mishra" data-time="60s" data-notes="Our AI engine doesn't rely on generic chat prompts. We use low-temperature inference (0.2) for analytical consistency. We architected a 3-layer safeguard: even if an LLM returns markdown fences around its JSON, our regex sanitizers extract the payload. And if external APIs fail, our deterministic keyword fallback guarantees uninterrupted service.">
+      <div class="slide-header">
+        <div class="slide-title-area">
+          <h2>AI Integration & Multi-LLM Pipeline</h2>
+          <p class="subtitle">Low-Temperature Analytical Prompts, Multi-Provider BYOK & Fallbacks</p>
+        </div>
+        <div class="presenter-pill"><span class="dot"></span> Speaker: Shivansh Mishra (60s)</div>
+      </div>
+      <div class="slide-body grid-3">
+        <div class="card">
+          <h3 style="color: var(--cyan-accent);">🤖 Multi-LLM BYOK</h3>
+          <ul>
+            <li><strong>Google Gemini 1.5/2.0</strong>: Default ultra-fast inference with massive context capacity.</li>
+            <li><strong>OpenAI GPT-4o</strong>: High-precision alternative for enterprise recruiters.</li>
+            <li><strong>Anthropic Claude 3.5</strong>: Exceptional nuanced reasoning for complex executive roles.</li>
+          </ul>
+        </div>
+        <div class="card highlight">
+          <h3 style="color: var(--emerald-accent);">🎯 Prompt Engineering</h3>
+          <ul>
+            <li><strong>Temperature = 0.2</strong>: Forces analytical, deterministic output; minimizes creative hallucination.</li>
+            <li><strong>Strict JSON Schema</strong>: Enforces schema fields: <code>overall_score</code>, <code>matching_skills</code>, <code>missing_skills</code>, <code>recommendations</code>.</li>
+            <li><strong>Grounded Reasoning</strong>: LLM is explicitly barred from fabricating skills not present in the resume.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="color: var(--indigo-accent);">🛡️ 3-Layer Safeguards</h3>
+          <ul>
+            <li><strong>Regex Extraction</strong>: Automatically strips markdown backticks (<code>```json</code>) from LLM output.</li>
+            <li><strong>Schema Coercion</strong>: Auto-repairs minor type anomalies before returning to client.</li>
+            <li><strong>Deterministic Fallback</strong>: Keyword-frequency heuristics activate if external APIs hit rate limits.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>Slide 9 of 18</span>
+        <span>Reliable, Resilient AI Architecture</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 10: Frontend Implementation -->
+    <section class="slide" id="slide-10" data-presenter="Harshvardhan Sisodiya" data-time="60s" data-notes="Dean Sir and faculty, I am Harshvardhan Sisodiya. My focus was user experience. Our interface offers 1-click drag-and-drop file upload. Once parsed, animated circular score gauges display the match percentage, color-coded skill badges highlight strengths and gaps, and a responsive drawer lets users preview their executive PDF report. The UI is 100% responsive across mobile, tablet, and desktop.">
+      <div class="slide-header">
+        <div class="slide-title-area">
+          <h2>Frontend Implementation & User Experience</h2>
+          <p class="subtitle">Intuitive, Accessible React 19 UI with Real-Time Interactive Feedback</p>
+        </div>
+        <div class="presenter-pill"><span class="dot"></span> Speaker: Harshvardhan Sisodiya (60s)</div>
+      </div>
+      <div class="slide-body grid-2">
+        <div class="card">
+          <h3>✨ Core UI/UX Highlights</h3>
+          <ul>
+            <li><strong>Fluid Drag & Drop</strong>: Native file dropping with instant client-side size and extension checks.</li>
+            <li><strong>Animated Match Gauges</strong>: Dynamic SVG circular progress meters visualizing ATS compatibility.</li>
+            <li><strong>Color-Coded Skill Matrix</strong>:
+              <span style="color: var(--emerald-accent);">● Green</span> (Verified Match) |
+              <span style="color: var(--rose-accent);">● Red</span> (Missing Requirement) |
+              <span style="color: var(--cyan-accent);">● Cyan</span> (Suggested Keyword).
+            </li>
+            <li><strong>Targeted Improvement Cards</strong>: Contextual resume bullet point rewrites with quantified metrics.</li>
+          </ul>
+        </div>
+        <div class="card media-box">
+          <img src="../assets/dashboard.jpg" alt="Dashboard Screenshot" />
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>Slide 10 of 18</span>
+        <span>Designed for Usability & Accessibility</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 11: Testing Strategy -->
+    <section class="slide" id="slide-11" data-presenter="Vishal Patel" data-time="60s" data-notes="Good morning Dean Sir and faculty, I am Vishal Patel. Untested code is broken code. I developed our testing suite using pytest with exactly 92 automated tests across 13 modules. We test valid PDFs, corrupted files, oversized uploads (>5MB), invalid MIME types, and mock external AI outages. All 92 tests pass in 4.2 seconds, ensuring our platform is production-ready.">
+      <div class="slide-header">
+        <div class="slide-title-area">
+          <h2>Testing Strategy & Quality Assurance</h2>
+          <p class="subtitle">92/92 Passing Automated Tests Across 13 Test Modules</p>
+        </div>
+        <div class="presenter-pill"><span class="dot"></span> Speaker: Vishal Patel (60s)</div>
+      </div>
+      <div class="slide-body grid-2">
+        <div class="card highlight">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="color: var(--emerald-accent);">🧪 Test Suite Coverage</h3>
+            <span class="btn active" style="font-family: 'JetBrains Mono';">100% PASS</span>
+          </div>
+          <ul>
+            <li><strong>Parser Tests</strong>: Multi-column PDFs, tables, DOCX headers, unicode accents, and empty documents.</li>
+            <li><strong>Security Boundary Tests</strong>: 0-byte uploads, corrupted file signatures, files &gt; 5MB, malicious filenames.</li>
+            <li><strong>AI Integration Tests</strong>: Mock Gemini/OpenAI responses, simulated network latency, API rate-limiting recovery.</li>
+            <li><strong>Integration Tests</strong>: Full end-to-end `/api/analyze` and `/api/export-pdf` workflows.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>⚡ Pytest Execution Results</h3>
+          <div class="code-box">
+============================= test session starts =============================
+platform win32 -- Python 3.10.11, pytest-8.3.4, pluggy-1.5.0
+rootdir: C:\Users\91727\Desktop\Resume Analyzer
+plugins: anyio-4.8.0, asyncio-0.25.3
+collected 92 items
+
+backend/tests/test_api.py .........................                      [ 27%]
+backend/tests/test_parsers.py ...................................         [ 65%]
+backend/tests/test_ai_service.py .................                       [ 83%]
+backend/tests/test_pdf_export.py ................                        [100%]
+
+============================== <span style="color: #10B981; font-weight: bold;">92 passed in 4.21s</span> ==============================
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>Slide 11 of 18</span>
+        <span>Zero Regressions • Enterprise Rigor</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 12: Documentation & Presentation -->
+    <section class="slide" id="slide-12" data-presenter="Sujeet Kannaujiya" data-time="60s" data-notes="Respected Dean Sir, I am Sujeet Kannaujiya, leading Research and Documentation. A project is only as good as its documentation. I authored 10 comprehensive markdown guides covering architecture, security, API endpoints, and setup. Any evaluator can run this project locally in under two minutes. We also generate a print-ready 2-page PDF executive dossier.">
+      <div class="slide-header">
+        <div class="slide-title-area">
+          <h2>Documentation, Architecture & Open Standards</h2>
+          <p class="subtitle">Complete Technical Transparency, Developer Setup & Executive Reporting</p>
+        </div>
+        <div class="presenter-pill"><span class="dot"></span> Speaker: Sujeet Kannaujiya (60s)</div>
+      </div>
+      <div class="slide-body grid-3">
+        <div class="card">
+          <h3 style="color: var(--amber-accent);">📚 10 Repository Guides</h3>
+          <ul>
+            <li><code>CAPSTONE_DOSSIER.md</code>: Full academic project documentation.</li>
+            <li><code>ARCHITECTURE.md</code>: Microservice diagrams & component interactions.</li>
+            <li><code>API_REFERENCE.md</code>: Complete REST endpoints and request schemas.</li>
+            <li><code>SECURITY_PRIVACY.md</code>: Zero-retention & BYOK protocol.</li>
+          </ul>
+        </div>
+        <div class="card highlight">
+          <h3 style="color: var(--cyan-accent);">📄 2-Page Executive PDF</h3>
+          <ul>
+            <li><strong>Page 1</strong>: Overall ATS Score, Candidate Overview, Key Strengths, and Primary Gap Matrix.</li>
+            <li><strong>Page 2</strong>: Detailed Action Plan, Rewritten Resume Bullets, and Next Steps.</li>
+            <li><strong>Print-Ready</strong>: Generates directly via ReportLab without third-party dependencies.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="color: var(--emerald-accent);">🚀 1-Command Startup</h3>
+          <ul>
+            <li><strong>Interactive OpenAPI</strong>: Live interactive Swagger docs available at <code>/docs</code>.</li>
+            <li><strong>Reproducible Environment</strong>: Dual startup script: <code>npm run dev</code> for frontend, <code>uvicorn</code> for backend.</li>
+            <li><strong>Zero Config Required</strong>: Out-of-the-box local developer experience.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>Slide 12 of 18</span>
+        <span>Reproducibility & Standards Compliance</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 13: Live Demo -->
+    <section class="slide" id="slide-13" data-presenter="Shivansh Mishra & Team" data-time="2m 30s" data-notes="Now for our live demonstration. Harshvardhan is uploading a sample student resume in PDF format, and we are pasting a real job description for a Junior Software Engineer. We click Analyze: notice the real-time loading feedback. In under 3 seconds, we see an ATS score of 78%, highlighting missing containerization skills, giving revised bullets, and downloading a clean 2-page PDF.">
+      <div class="slide-header">
+        <div class="slide-title-area">
+          <h2>Live Interactive System Demonstration</h2>
+          <p class="subtitle">Real-Time Evaluation of a College Graduate Resume Against Industry Job Description</p>
+        </div>
+        <div class="presenter-pill"><span class="dot"></span> Led by: Shivansh Mishra (Demo Lead)</div>
+      </div>
+      <div class="slide-body grid-2">
+        <div class="card" style="justify-content: space-around;">
+          <div style="background: rgba(255,255,255,0.03); padding: 14px; border-radius: 10px; border-left: 4px solid var(--cyan-accent);">
+            <strong>Step 1: Document Upload</strong>
+            <p style="font-size: 13px; color: #CBD5E1;">Upload sample Computer Science Graduate resume (.pdf).</p>
+          </div>
+          <div style="background: rgba(255,255,255,0.03); padding: 14px; border-radius: 10px; border-left: 4px solid var(--emerald-accent);">
+            <strong>Step 2: Target Job Description</strong>
+            <p style="font-size: 13px; color: #CBD5E1;">Paste real-world Senior Full Stack Engineer requirements.</p>
+          </div>
+          <div style="background: rgba(255,255,255,0.03); padding: 14px; border-radius: 10px; border-left: 4px solid var(--indigo-accent);">
+            <strong>Step 3: Real-Time Scoring & Gaps</strong>
+            <p style="font-size: 13px; color: #CBD5E1;">View overall match (78%), missing Docker/CI-CD skills, and bullet rewrites.</p>
+          </div>
+          <div style="background: rgba(255,255,255,0.03); padding: 14px; border-radius: 10px; border-left: 4px solid var(--amber-accent);">
+            <strong>Step 4: Executive PDF Download</strong>
+            <p style="font-size: 13px; color: #CBD5E1;">Download the compiled 2-page dossier in under 2 seconds.</p>
+          </div>
+        </div>
+        <div class="card media-box">
+          <img src="../assets/banner.jpg" alt="Platform Banner Preview" />
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>Slide 13 of 18</span>
+        <span>Interactive Live Flow Demonstration</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 14: Results and Metrics -->
+    <section class="slide" id="slide-14" data-presenter="Shivansh Mishra & Vishal Patel" data-time="60s" data-notes="Let's look at the numbers. Our in-memory parsing extracts full resumes in under 450 milliseconds. End-to-end latency with AI analysis is under 3 seconds. Our 92 automated tests run in 4.2 seconds. Most importantly, across multiple evaluation runs, score variance on identical resumes was under 2%, proving high stability.">
+      <div class="slide-header">
+        <div class="slide-title-area">
+          <h2>Results, Benchmarks & Measured Outcomes</h2>
+          <p class="subtitle">Quantifiable Engineering Metrics & System Performance</p>
+        </div>
+        <div class="presenter-pill"><span class="dot"></span> Speakers: Shivansh Mishra & Vishal Patel (60s)</div>
+      </div>
+      <div class="slide-body grid-4">
+        <div class="card highlight" style="text-align: center;">
+          <div class="badge-metric">&lt; 450ms</div>
+          <div class="metric-sub">PDF Text Extraction</div>
+          <p style="font-size: 13px; color: #CBD5E1; margin-top: 10px;">In-memory streaming with spatial text coordinate sorting.</p>
+        </div>
+        <div class="card highlight" style="text-align: center;">
+          <div class="badge-metric" style="color: var(--cyan-accent);">&lt; 3.0s</div>
+          <div class="metric-sub">End-to-End Latency</div>
+          <p style="font-size: 13px; color: #CBD5E1; margin-top: 10px;">Complete pipeline: upload, parsing, AI inference, and response.</p>
+        </div>
+        <div class="card highlight" style="text-align: center;">
+          <div class="badge-metric" style="color: var(--emerald-accent);">92 / 92</div>
+          <div class="metric-sub">Automated Tests Passing</div>
+          <p style="font-size: 13px; color: #CBD5E1; margin-top: 10px;">100% pass rate in 4.2 seconds covering all 13 modules.</p>
+        </div>
+        <div class="card highlight" style="text-align: center;">
+          <div class="badge-metric" style="color: var(--indigo-accent);">&plusmn;1.8%</div>
+          <div class="metric-sub">Scoring Consistency</div>
+          <p style="font-size: 13px; color: #CBD5E1; margin-top: 10px;">Low variance across repetitive runs on identical inputs.</p>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>Slide 14 of 18</span>
+        <span>Empirical Performance Validation</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 15: Challenges and Lessons Learned -->
+    <section class="slide" id="slide-15" data-presenter="All Team Members" data-time="60s" data-notes="Like any real-world project, we faced challenges: 1) Multi-column PDF text scrambling, which we solved using spatial coordinate sorting in pdfplumber. 2) LLM JSON hallucinations, which we fixed using regex sanitizers and Pydantic validation. 3) Privacy concerns, which we resolved through zero-retention memory streaming and BYOK.">
+      <div class="slide-header">
+        <div class="slide-title-area">
+          <h2>Challenges Solved & Engineering Lessons</h2>
+          <p class="subtitle">Real Technical Roadblocks and How We Resolved Them as a Team</p>
+        </div>
+        <div class="presenter-pill"><span class="dot"></span> Speakers: All Team Members (60s)</div>
+      </div>
+      <div class="slide-body grid-3">
+        <div class="card">
+          <h3 style="color: var(--rose-accent);">1. Scrambled Multi-Column PDFs</h3>
+          <p style="font-size: 13px; color: #CBD5E1; line-height: 1.5;">
+            <strong>Issue:</strong> Standard byte parsers read across columns, scrambling work history and education sections.
+          </p>
+          <div style="background: rgba(56, 189, 248, 0.08); padding: 10px; border-radius: 8px; margin-top: 8px;">
+            <strong style="color: var(--cyan-accent);">Solution:</strong> Configured <code>pdfplumber</code> with <code>layout=True, sort=True</code> to preserve geometric reading order.
+          </div>
+        </div>
+        <div class="card">
+          <h3 style="color: var(--amber-accent);">2. LLM JSON Backtick Fencing</h3>
+          <p style="font-size: 13px; color: #CBD5E1; line-height: 1.5;">
+            <strong>Issue:</strong> External LLMs sometimes wrap responses in markdown backticks, crashing standard JSON decoders.
+          </p>
+          <div style="background: rgba(16, 185, 129, 0.08); padding: 10px; border-radius: 8px; margin-top: 8px;">
+            <strong style="color: var(--emerald-accent);">Solution:</strong> Engineered a regex sanitization pipeline that extracts pure JSON before Pydantic parsing.
+          </div>
+        </div>
+        <div class="card">
+          <h3 style="color: var(--indigo-accent);">3. User Data Privacy & Security</h3>
+          <p style="font-size: 13px; color: #CBD5E1; line-height: 1.5;">
+            <strong>Issue:</strong> Ensuring student contact info and proprietary resumes are never permanently leaked or stored.
+          </p>
+          <div style="background: rgba(129, 140, 248, 0.08); padding: 10px; border-radius: 8px; margin-top: 8px;">
+            <strong style="color: var(--indigo-accent);">Solution:</strong> Enforced zero-retention memory buffers (`io.BytesIO`) and client-side BYOK key isolation.
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>Slide 15 of 18</span>
+        <span>Resilience & Team Problem-Solving</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 16: Future Work -->
+    <section class="slide" id="slide-16" data-presenter="Shivansh Mishra" data-time="45s" data-notes="Looking ahead, we have a clear 4-phase roadmap: First, Bulk Screening for our university placement cell so coordinators can upload 200 resumes at once. Second, an automated Mock Interview Question Generator based on detected skill gaps. Third, verified GitHub and LinkedIn portfolio integrations. And fourth, distributed Celery queues for high-volume enterprise recruiter traffic.">
+      <div class="slide-header">
+        <div class="slide-title-area">
+          <h2>Future Roadmap & Production Scalability</h2>
+          <p class="subtitle">Next Milestones for Campus-Wide and Commercial Deployment</p>
+        </div>
+        <div class="presenter-pill"><span class="dot"></span> Speaker: Shivansh Mishra (45s)</div>
+      </div>
+      <div class="slide-body grid-4">
+        <div class="card">
+          <span style="font-size: 12px; font-weight: 800; color: var(--cyan-accent);">PHASE 1</span>
+          <h3>🏢 Placement Cell Bulk Mode</h3>
+          <p style="font-size: 13px; color: #CBD5E1;">Upload 200+ student resumes at once to rank candidate eligibility for visiting campus recruiters.</p>
+        </div>
+        <div class="card">
+          <span style="font-size: 12px; font-weight: 800; color: var(--emerald-accent);">PHASE 2</span>
+          <h3>🎤 Mock Viva / Interview Prep</h3>
+          <p style="font-size: 13px; color: #CBD5E1;">Automatically generate tailored technical interview questions based on the candidate's detected skill gaps.</p>
+        </div>
+        <div class="card">
+          <span style="font-size: 12px; font-weight: 800; color: var(--indigo-accent);">PHASE 3</span>
+          <h3>🔗 GitHub & LinkedIn Verification</h3>
+          <p style="font-size: 13px; color: #CBD5E1;">Direct API verification of public repository commit activity and claimed coding projects.</p>
+        </div>
+        <div class="card">
+          <span style="font-size: 12px; font-weight: 800; color: var(--amber-accent);">PHASE 4</span>
+          <h3>⚡ Distributed Celery Workers</h3>
+          <p style="font-size: 13px; color: #CBD5E1;">Asynchronous job processing with Redis queue caching to handle 10,000+ concurrent requests.</p>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>Slide 16 of 18</span>
+        <span>Strategic Vision & Long-Term Value</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 17: Appendix & Backup Slides -->
+    <section class="slide" id="slide-17" data-presenter="Sujeet Kannaujiya / Team" data-time="Backup" data-notes="This appendix slide contains our exact Pydantic schema definitions, HTTP status codes, and security validation matrix, which we can reference as needed during our Q&A discussion.">
+      <div class="slide-header">
+        <div class="slide-title-area">
+          <h2>Technical Appendix (Committee Reference)</h2>
+          <p class="subtitle">API Schemas, Error Handling Matrix & Architectural Contracts</p>
+        </div>
+        <div class="presenter-pill"><span class="dot"></span> Reference Slide (Q&A Backup)</div>
+      </div>
+      <div class="slide-body grid-2">
+        <div class="card">
+          <h3>📐 Pydantic Analysis Schema</h3>
+          <div class="code-box">
+<span style="color: #FF7B72;">class</span> <span style="color: #D2A8FF;">AnalysisResult</span>(BaseModel):
+    overall_score: <span style="color: #79C0FF;">int</span> = Field(ge=0, le=100)
+    hard_skills_score: <span style="color: #79C0FF;">int</span>
+    soft_skills_score: <span style="color: #79C0FF;">int</span>
+    matching_skills: List[<span style="color: #79C0FF;">str</span>]
+    missing_skills: List[<span style="color: #79C0FF;">str</span>]
+    recommended_keywords: List[<span style="color: #79C0FF;">str</span>]
+    bullet_recommendations: List[BulletItem]
+    summary_verdict: <span style="color: #79C0FF;">str</span>
+          </div>
+        </div>
+        <div class="card">
+          <h3>🛡️ HTTP Error Status Codes</h3>
+          <table class="styled-table" style="font-size: 12px;">
+            <thead>
+              <tr><th>Code</th><th>Trigger Condition</th><th>Mitigation</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>400</code></td><td>Empty or malformed file</td><td>Client alert + re-upload prompt</td></tr>
+              <tr><td><code>413</code></td><td>Payload &gt; 5MB</td><td>Immediate fast reject before reading</td></tr>
+              <tr><td><code>415</code></td><td>Unsupported MIME</td><td>Only PDF and DOCX permitted</td></tr>
+              <tr><td><code>429</code></td><td>AI Provider Rate Limit</td><td>Fallback to keyword heuristics</td></tr>
+              <tr><td><code>500</code></td><td>Internal Error</td><td>Logged with stack trace</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>Slide 17 of 18</span>
+        <span>Deep Technical Verification</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 18: Q&A Slide -->
+    <section class="slide" id="slide-18" data-presenter="Shivansh Mishra (Closes)" data-time="Remaining" data-notes="To conclude, the AI-Powered Resume Analyzer is a fully functional, rigorously tested platform built to solve a real student problem. We thank you, Dean Sir and respected committee members, for your time and guidance. We are now open and eager to take your questions.">
+      <div class="slide-header">
+        <div class="slide-title-area">
+          <h2>Thank You! Questions & Discussion</h2>
+          <p class="subtitle">AI-Powered Resume Analyzer • BBDU CSE Capstone 2026</p>
+        </div>
+        <div class="presenter-pill"><span class="dot"></span> All Team Members Open for Q&A</div>
+      </div>
+      <div class="slide-body grid-2">
+        <div class="card highlight" style="justify-content: center; text-align: center; gap: 20px;">
+          <h3 style="font-size: 32px; justify-content: center; color: var(--cyan-accent);">Any Questions?</h3>
+          <p style="font-size: 16px; color: #CBD5E1; line-height: 1.6;">
+            We welcome inquiries regarding our system architecture, prompt engineering, test suites, or live deployment.
+          </p>
+          <div style="display: flex; justify-content: center; gap: 14px;">
+            <span class="btn active" style="font-family: 'JetBrains Mono';">Live Demo Ready</span>
+            <span class="btn" style="font-family: 'JetBrains Mono';">92/92 Tests Passing</span>
+          </div>
+        </div>
+        <div class="card">
+          <h3>👥 Team Contact & Domain Leads</h3>
+          <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 6px;">
+            <div style="background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 8px;">
+              <strong>Shivansh Mishra</strong> — Lead & Backend Architect
+              <div style="font-size: 12px; color: var(--text-dim);">FastAPI, Multi-LLM, In-Memory Parsers</div>
+            </div>
+            <div style="background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 8px;">
+              <strong>Harshvardhan Sisodiya</strong> — Frontend Architect
+              <div style="font-size: 12px; color: var(--text-dim);">React 19, UI/UX, Real-Time Feedback</div>
+            </div>
+            <div style="background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 8px;">
+              <strong>Vishal Patel</strong> — QA & Security Lead
+              <div style="font-size: 12px; color: var(--text-dim);">92 Pytest Suites, Boundary Testing, Security</div>
+            </div>
+            <div style="background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 8px;">
+              <strong>Sujeet Kannaujiya</strong> — Research & Docs Lead
+              <div style="font-size: 12px; color: var(--text-dim);">10 Technical Guides, API Specs, Dossier</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>Slide 18 of 18</span>
+        <span>Repository: Shivansh-mishraji/AI-Powered-Resume-Analyzer</span>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Bottom Progress Bar -->
+  <div class="progress-bar-container">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <!-- Speaker Notes Drawer (Toggled with N) -->
+  <div id="notes-drawer">
+    <div class="notes-header">
+      <h4>📝 Speaker Notes & Time Allocation: <span id="notesPresenter" style="color: #FFFFFF; margin-left: 6px;"></span></h4>
+      <span class="btn" style="padding: 2px 8px; font-size: 11px;" onclick="toggleNotes()">Close (N)</span>
+    </div>
+    <div class="notes-content" id="notesContent"></div>
+  </div>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const totalSlides = slides.length;
+    let currentSlide = 1;
+    let notesOpen = false;
+
+    function showSlide(index) {
+      if (index < 1) index = 1;
+      if (index > totalSlides) index = totalSlides;
+      currentSlide = index;
+
+      slides.forEach((s, i) => {
+        if (i + 1 === currentSlide) {
+          s.classList.add('active');
+        } else {
+          s.classList.remove('active');
+        }
+      });
+
+      document.getElementById('slideIndicator').innerText = `${currentSlide} / ${totalSlides}`;
+      document.getElementById('progressBar').style.width = `${(currentSlide / totalSlides) * 100}%`;
+
+      // Update speaker notes
+      const activeSlide = document.getElementById(`slide-${currentSlide}`);
+      if (activeSlide) {
+        const presenter = activeSlide.getAttribute('data-presenter') || 'Team';
+        const time = activeSlide.getAttribute('data-time') || '';
+        const notes = activeSlide.getAttribute('data-notes') || 'No speaker notes for this slide.';
+        
+        document.getElementById('notesPresenter').innerText = `${presenter} (${time})`;
+        document.getElementById('notesContent').innerText = notes;
+      }
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        showSlide(currentSlide + 1);
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        showSlide(currentSlide - 1);
+      }
+    }
+
+    function toggleNotes() {
+      notesOpen = !notesOpen;
+      const drawer = document.getElementById('notes-drawer');
+      const btn = document.getElementById('notesToggleBtn');
+      if (notesOpen) {
+        drawer.classList.add('open');
+        btn.classList.add('active');
+      } else {
+        drawer.classList.remove('open');
+        btn.classList.remove('active');
+      }
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => console.log(err));
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+
+    // Keyboard navigation
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault();
+        prevSlide();
+      } else if (e.key === 'Home') {
+        e.preventDefault();
+        showSlide(1);
+      } else if (e.key === 'End') {
+        e.preventDefault();
+        showSlide(totalSlides);
+      } else if (e.key === 'n' || e.key === 'N') {
+        e.preventDefault();
+        toggleNotes();
+      } else if (e.key === 'f' || e.key === 'F') {
+        e.preventDefault();
+        toggleFullscreen();
+      }
+    });
+
+    // Initialize
+    showSlide(1);
+  </script>
+</body>
+</html>

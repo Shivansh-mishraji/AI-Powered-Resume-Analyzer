@@ -33,14 +33,14 @@ The **AI-Powered Resume Analyzer** bridges this divide through a hybrid architec
 ╔═════════════════════════╗    ╔═════════════════════════╗    ╔═════════════════════════╗
 ║  HARSHVARDHAN SISODIYA  ║    ║      VISHAL PATEL       ║    ║    SUJEET KANNAUJIYA    ║
 ║ 🎨 Frontend Architect    ║    ║ 🛡️ QA & Security Lead    ║    ║ 📑 Research & Docs Lead  ║
-║ React 19, Nebula Aurora ║    ║ 89-Test Suite, Benchmarks║    ║ Research Dossier, Specs ║
+║ React 19, Nebula Aurora ║    ║ 92-Test Suite, Benchmarks║    ║ Research Dossier, Specs ║
 ╚═════════════════════════╝    ╚═════════════════════════╝    ╚═════════════════════════╝
 ```
 
 ### Team Deliverables Matrix:
 - **Shivansh Mishra (Leader & Architect):** Conceived and engineered platform backend architecture, FastAPI endpoints, Gemini AI rubric engine, 440+ skills taxonomy graph, ATS heuristic engine, PyMuPDF report generator, and interview question generator.
 - **Harshvardhan Sisodiya (Frontend Architect):** Engineered React 19 SPA, Nebula Aurora glassmorphism UI, 180px SVG radial match gauge, and interactive team flashcard deck.
-- **Vishal Patel (QA & Security Lead):** Designed automated test suite (89 passing tests), E2E integration test harness, concurrency benchmark runner, and security vulnerability test suite.
+- **Vishal Patel (QA & Security Lead):** Designed automated test suite (92 passing tests), E2E integration test harness, concurrency benchmark runner, and security vulnerability test suite.
 - **Sujeet Kannaujiya (Research & Docs Lead):** Authored academic project dossier, LLM model benchmark study, ATS parsing specifications, ethical AI fairness rubric, and OWASP security audit.
 
 ---
@@ -76,7 +76,7 @@ The **AI-Powered Resume Analyzer** bridges this divide through a hybrid architec
 ---
 
 ## 4. Key Performance Indicators (KPIs)
-- **Test Suite Coverage:** **89/89 automated tests passing (100% success rate)**
+- **Test Suite Coverage:** **92/92 automated tests passing (100% success rate across 13 modules)**
 - **Processing Latency:** Sub-5ms deterministic analysis, ~780ms cloud AI evaluation
 - **Document Ingestion:** Zero-disk volatile memory decoding; zero disk persistence
 - **Security Posture:** SHA-256 digital seals, XSS/SQLi sanitization, OWASP API Top 10 compliance
