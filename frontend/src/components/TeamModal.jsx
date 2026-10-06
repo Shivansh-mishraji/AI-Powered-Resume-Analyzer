@@ -1,130 +1,11 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { TEAM_MEMBERS, playCyberChime } from '../data/teamData';
+import './TeamModal.css';
 
-const TEAM_CARDS = [
-  {
-    id: 'shivansh',
-    number: '01',
-    isLeader: true,
-    tabLabel: '👑 Shivansh',
-    badgeText: '👑 Team Leader & Principal Architect',
-    name: 'Shivansh Mishra',
-    initials: 'SM',
-    avatar: '/team/shivansh_circle.png',
-    role: 'Team Lead • Backend & AI System Architect',
-    themeColor: 'text-secondary',
-    borderClass: 'border-secondary/70',
-    glowClass: 'shadow-[0_0_40px_rgba(56,189,248,0.35)]',
-    ringClass: 'ring-4 ring-secondary/70 shadow-glow-cyan',
-    orbBg: 'bg-secondary',
-    badgeClass: 'bg-secondary/20 border-secondary/60 text-secondary',
-    verticalBg: 'from-secondary/15 via-surface-card/95 to-primary/10',
-    github: 'https://github.com/Shivansh-mishraji',
-    email: 'tgsmishra@gmail.com',
-    summary:
-      'Conceived, engineered, and steered the complete platform architecture: FastAPI REST Gateway, 5 Enterprise Backend Engines (Taxonomy Graph, ATS Audit, Exporters, Interview Generator), Multi-Provider AI BYOK, and production cloud deployments on Render & Vercel.',
-    deliverables: [
-      { icon: 'bolt', text: 'FastAPI REST Gateway & 5 Enterprise Engines' },
-      { icon: 'psychology', text: 'Multi-Provider AI Engine (Gemini 3.6, GPT-4o, Claude)' },
-      { icon: 'account_tree', text: '440+ Skills Taxonomy Graph & Synonym Resolution' },
-      { icon: 'memory', text: 'In-Memory Zero-Disk PyMuPDF Stream & Exporters' },
-    ],
-    techStack: ['Python 3.13', 'FastAPI', 'Gemini 3.6', 'PyMuPDF', 'Pydantic', 'Render Cloud'],
-  },
-  {
-    id: 'harshvardhan',
-    number: '02',
-    isLeader: false,
-    tabLabel: '🎨 Harshvardhan',
-    badgeText: '🎨 Frontend Architect & UI/UX Lead',
-    name: 'Harshvardhan Sisodiya',
-    initials: 'HS',
-    avatar: '/team/harshvardhan.png',
-    role: 'Frontend Architect • UI/UX Lead',
-    themeColor: 'text-primary',
-    borderClass: 'border-primary/70',
-    glowClass: 'shadow-[0_0_40px_rgba(99,102,241,0.35)]',
-    ringClass: 'ring-4 ring-primary/70 shadow-glow-sm',
-    orbBg: 'bg-primary',
-    badgeClass: 'bg-primary/20 border-primary/60 text-primary',
-    verticalBg: 'from-primary/15 via-surface-card/95 to-secondary/10',
-    github: 'https://github.com/harsh123-code',
-    email: 'hsisodiya205@bbdu.ac.in',
-    summary:
-      'Architected the React 19 single-page application with GPU-accelerated Nebula Aurora glassmorphism, 60/120 FPS hardware-synchronized score physics, 180px SVG radial match gauge, and BYOK security vault.',
-    deliverables: [
-      { icon: 'web', text: 'React 19 + Vite Modular SPA Architecture' },
-      { icon: 'auto_awesome', text: 'Nebula Aurora Glassmorphism & 60fps Physics' },
-      { icon: 'speed', text: '180px SVG Radial Match Gauge & Count-Up' },
-      { icon: 'key', text: 'Multi-Provider BYOK Security Hub & Telemetry' },
-    ],
-    techStack: ['React 19', 'Vite 6', 'Tailwind CSS', 'SVG Physics', 'Vercel Edge'],
-  },
-  {
-    id: 'vishal',
-    number: '03',
-    isLeader: false,
-    tabLabel: '🛡️ Vishal',
-    badgeText: '🛡️ QA Lead & Security Specialist',
-    name: 'Vishal Patel',
-    initials: 'VP',
-    avatar: '/team/vishal.png',
-    role: 'QA Lead • Security & Automated Testing',
-    themeColor: 'text-match-emerald',
-    borderClass: 'border-match-emerald/70',
-    glowClass: 'shadow-[0_0_40px_rgba(52,211,153,0.35)]',
-    ringClass: 'ring-4 ring-match-emerald/70 shadow-glow-sm',
-    orbBg: 'bg-match-emerald',
-    badgeClass: 'bg-match-emerald/20 border-match-emerald/60 text-match-emerald',
-    verticalBg: 'from-emerald-500/15 via-surface-card/95 to-primary/10',
-    github: 'https://github.com/patelvishal-ji',
-    email: 'patelvishal7800023@gmail.com',
-    summary:
-      'Designed and executed automated testing infrastructure: 92/92 passing pytest test suite, benchmark runner, security sanitization, and multi-format QA evaluation dataset.',
-    deliverables: [
-      { icon: 'verified', text: 'Pytest 92/92 Passing Automated Test Suite' },
-      { icon: 'speed', text: 'Concurrency & Latency Benchmark Runner' },
-      { icon: 'security', text: 'OWASP Sanitization (XSS, SQLi, Prompt Injection)' },
-      { icon: 'description', text: 'Synthetic Evaluation Dataset & Audit Logs' },
-    ],
-    techStack: ['Pytest', 'Python 3.13', 'Benchmark', 'Security Audit', 'CI/CD'],
-  },
-  {
-    id: 'sujeet',
-    number: '04',
-    isLeader: false,
-    tabLabel: '📑 Sujeet',
-    badgeText: '📑 Research Lead & Technical Writer',
-    name: 'Sujeet Kannaujiya',
-    initials: 'SK',
-    avatar: '/team/sujeet.png',
-    role: 'Research Lead • Technical Documentation',
-    themeColor: 'text-match-amber',
-    borderClass: 'border-match-amber/70',
-    glowClass: 'shadow-[0_0_40px_rgba(251,191,36,0.35)]',
-    ringClass: 'ring-4 ring-match-amber/70 shadow-glow-sm',
-    orbBg: 'bg-match-amber',
-    badgeClass: 'bg-match-amber/20 border-match-amber/60 text-match-amber',
-    verticalBg: 'from-amber-500/15 via-surface-card/95 to-secondary/10',
-    github: 'https://github.com/sujeet-official',
-    email: 'sujeetkannaujiya2004@bbdu.ac.in',
-    summary:
-      'Authored academic research and technical documentation: ATS heuristics specification, LLM benchmark study, ethical AI non-bias framework, and Capstone Project Dossier.',
-    deliverables: [
-      { icon: 'menu_book', text: 'Deep ATS Parsing Heuristics & Font Specifications' },
-      { icon: 'science', text: 'Empirical LLM Benchmarking (Gemini vs GPT vs Claude)' },
-      { icon: 'gavel', text: 'EEOC Non-Bias Compliance & Ethical AI Rubric' },
-      { icon: 'library_books', text: 'Capstone Project Technical Dossier & Architecture' },
-    ],
-    techStack: ['Capstone Dossier', 'ATS Specs', 'LLM Benchmarks', 'Ethical AI'],
-  },
-];
-
-export default function TeamModal({ isOpen, onClose }) {
-  // Always reset to Card 0 (Shivansh Mishra) whenever modal opens
+export default function TeamModal({ isOpen, onClose, initialMemberId = null }) {
+  const [viewMode, setViewMode] = useState('grid'); // 'grid' | 'spotlight'
   const [activeCardIndex, setActiveCardIndex] = useState(0);
-  const [animClass, setAnimClass] = useState('');
-  const [isBusy, setIsBusy] = useState(false);
-  // Track which photos have already loaded (keyed by avatar path)
+  const [copiedEmail, setCopiedEmail] = useState(null);
   const [loadedPhotos, setLoadedPhotos] = useState({});
   const touchStartX = useRef(null);
 
@@ -134,52 +15,34 @@ export default function TeamModal({ isOpen, onClose }) {
 
   useEffect(() => {
     if (isOpen) {
-      setActiveCardIndex(0);
-      setAnimClass('');
-      setIsBusy(false);
+      if (initialMemberId) {
+        const foundIdx = TEAM_MEMBERS.findIndex((m) => m.id === initialMemberId);
+        if (foundIdx !== -1) {
+          setActiveCardIndex(foundIdx);
+          setViewMode('spotlight');
+        }
+      } else {
+        setActiveCardIndex(0);
+      }
+      setCopiedEmail(null);
     }
-  }, [isOpen]);
+  }, [isOpen, initialMemberId]);
 
-  const swapCard = (newIndex, direction = 'next') => {
-    if (isBusy || newIndex === activeCardIndex) return;
-    setIsBusy(true);
-
-    // Phase 1: Animate current card out
-    setAnimClass(direction === 'next' ? 'flashcard-swap-out-next' : 'flashcard-swap-out-prev');
-
-    setTimeout(() => {
-      // Phase 2: Switch index and animate new card in
-      setActiveCardIndex(newIndex);
-      setAnimClass(direction === 'next' ? 'flashcard-swap-in-next' : 'flashcard-swap-in-prev');
-
-      setTimeout(() => {
-        setAnimClass('');
-        setIsBusy(false);
-      }, 260);
-    }, 220);
-  };
-
-  const handleNext = () => {
-    const nextIdx = (activeCardIndex + 1) % TEAM_CARDS.length;
-    swapCard(nextIdx, 'next');
-  };
-
-  const handlePrev = () => {
-    const prevIdx = (activeCardIndex - 1 + TEAM_CARDS.length) % TEAM_CARDS.length;
-    swapCard(prevIdx, 'prev');
-  };
-
-  // Keyboard navigation: Escape closes modal, Left/Right arrow keys / Space swap cards
+  // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') onClose();
-      if (e.key === 'ArrowRight' || e.key === ' ') {
-        e.preventDefault();
-        handleNext();
-      }
-      if (e.key === 'ArrowLeft') {
-        e.preventDefault();
-        handlePrev();
+      if (viewMode === 'spotlight') {
+        if (e.key === 'ArrowRight' || e.key === ' ') {
+          e.preventDefault();
+          playCyberChime('hover');
+          setActiveCardIndex((prev) => (prev + 1) % TEAM_MEMBERS.length);
+        }
+        if (e.key === 'ArrowLeft') {
+          e.preventDefault();
+          playCyberChime('hover');
+          setActiveCardIndex((prev) => (prev - 1 + TEAM_MEMBERS.length) % TEAM_MEMBERS.length);
+        }
       }
     };
     if (isOpen) {
@@ -190,9 +53,9 @@ export default function TeamModal({ isOpen, onClose }) {
       window.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = 'unset';
     };
-  }, [isOpen, onClose, activeCardIndex, isBusy]);
+  }, [isOpen, onClose, viewMode]);
 
-  // Touch swipe support for mobile
+  // Touch swipe
   const handleTouchStart = (e) => {
     touchStartX.current = e.touches[0].clientX;
   };
@@ -201,330 +64,525 @@ export default function TeamModal({ isOpen, onClose }) {
     if (touchStartX.current === null) return;
     const diff = touchStartX.current - e.changedTouches[0].clientX;
     if (diff > 40) {
-      handleNext();
+      playCyberChime('hover');
+      setActiveCardIndex((prev) => (prev + 1) % TEAM_MEMBERS.length);
     } else if (diff < -40) {
-      handlePrev();
+      playCyberChime('hover');
+      setActiveCardIndex((prev) => (prev - 1 + TEAM_MEMBERS.length) % TEAM_MEMBERS.length);
     }
     touchStartX.current = null;
   };
 
+  const handleCopyEmail = (email) => {
+    playCyberChime('celebrate');
+    navigator.clipboard.writeText(email);
+    setCopiedEmail(email);
+    setTimeout(() => setCopiedEmail(null), 2200);
+  };
+
+  const handleCardMouseMove = (e) => {
+    const card = e.currentTarget;
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    card.style.setProperty('--mouse-x', `${x}px`);
+    card.style.setProperty('--mouse-y', `${y}px`);
+
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const rotateX = ((y - centerY) / centerY) * -6;
+    const rotateY = ((x - centerX) / centerX) * 6;
+    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.015, 1.015, 1.015)`;
+  };
+
+  const handleCardMouseLeave = (e) => {
+    const card = e.currentTarget;
+    card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+  };
+
   if (!isOpen) return null;
 
-  // --- Preload all photos immediately so they are browser-cached before the user taps them ---
-  const photoPreloader = (
-    <div aria-hidden="true" style={{ position: 'absolute', width: 0, height: 0, overflow: 'hidden', opacity: 0, pointerEvents: 'none' }}>
-      {TEAM_CARDS.map((card) => (
-        <img
-          key={card.id}
-          src={card.avatar}
-          alt=""
-          width="160"
-          height="160"
-          fetchPriority="high"
-          decoding="async"
-          onLoad={() => markLoaded(card.avatar)}
-        />
-      ))}
-    </div>
-  );
-
-  const currentCard = TEAM_CARDS[activeCardIndex];
+  const currentMember = TEAM_MEMBERS[activeCardIndex];
 
   return (
-    <>
-    {photoPreloader}
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md animate-fade-in"
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 md:p-6 bg-slate-950/85 backdrop-blur-xl animate-fade-in overflow-y-auto"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
       aria-labelledby="team-modal-title"
     >
-      {/* Outer Centered Wrapper */}
       <div
-        className="w-full max-w-[430px] flex flex-col items-center relative my-auto max-h-[96vh]"
+        className="w-full max-w-6xl flex flex-col bg-slate-900/90 border border-slate-700/60 rounded-3xl shadow-[0_0_50px_rgba(0,0,0,0.8)] overflow-hidden my-auto max-h-[94vh]"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Top Controls Header */}
-        <div className="w-full flex items-center justify-between px-2 mb-2 text-xs">
-          <div className="flex items-center gap-1.5">
-            <span className="material-symbols-outlined text-secondary text-[16px]" aria-hidden="true">
-              style
-            </span>
-            <span className="font-bold text-on-background tracking-wide">
-              Engineering Flashcard
-            </span>
-            <span className="text-outline">•</span>
-            <span className="font-mono text-secondary font-bold">
-              {currentCard.number} / 04
-            </span>
+        {/* ── Top Header Navigation Bar ── */}
+        <div className="px-5 py-4 border-b border-slate-800 bg-slate-950/60 flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white shadow-glow-sm">
+              <span className="material-symbols-outlined text-[20px]">groups</span>
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h2 id="team-modal-title" className="font-headline-md text-base sm:text-lg font-bold text-white tracking-tight">
+                  Core Engineering Roster &amp; Defense Dossier
+                </h2>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-sky-500/20 text-sky-300 border border-sky-400/30 font-semibold">
+                  BBD University 2026
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-400">
+                Architects &amp; Authors of the AI-Powered Resume &amp; ATS Compatibility Analyzer
+              </p>
+            </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            <a
-              href="https://ai-powered-resume-analyzer-pi.vercel.app"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[11px] font-medium hover:bg-emerald-500/20 transition-all"
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              <span>Live App</span>
-            </a>
+          {/* Center / Right Controls: View Switcher & Close */}
+          <div className="flex items-center gap-2 self-stretch sm:self-auto justify-between sm:justify-end">
+            {/* View Mode Toggle Pill */}
+            <div className="flex items-center bg-slate-950/80 p-1 rounded-xl border border-slate-800 text-xs">
+              <button
+                type="button"
+                onClick={() => {
+                  playCyberChime('click');
+                  setViewMode('grid');
+                }}
+                className={`px-3 py-1.5 rounded-lg font-medium transition-all flex items-center gap-1.5 cursor-pointer ${
+                  viewMode === 'grid'
+                    ? 'bg-gradient-to-r from-sky-500 to-indigo-600 text-white shadow-sm'
+                    : 'text-slate-400 hover:text-slate-200'
+                }`}
+                title="View All 4 Members Side-by-Side"
+              >
+                <span className="material-symbols-outlined text-[16px]">grid_view</span>
+                <span>All Roster (4)</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  playCyberChime('click');
+                  setViewMode('spotlight');
+                }}
+                className={`px-3 py-1.5 rounded-lg font-medium transition-all flex items-center gap-1.5 cursor-pointer ${
+                  viewMode === 'spotlight'
+                    ? 'bg-gradient-to-r from-sky-500 to-indigo-600 text-white shadow-sm'
+                    : 'text-slate-400 hover:text-slate-200'
+                }`}
+                title="View Focused Spotlight Presentation Deck"
+              >
+                <span className="material-symbols-outlined text-[16px]">style</span>
+                <span>Spotlight Deck</span>
+              </button>
+            </div>
+
             <button
               type="button"
               onClick={onClose}
-              className="p-1.5 rounded-lg bg-surface-bright/70 text-on-surface-variant hover:text-on-background hover:bg-surface-bright transition-all"
+              className="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition-all cursor-pointer border border-slate-700/60"
               aria-label="Close Modal"
+              title="Close (Esc)"
             >
-              <span className="material-symbols-outlined text-[18px]" aria-hidden="true">close</span>
+              <span className="material-symbols-outlined text-[18px]">close</span>
             </button>
           </div>
         </div>
 
-        {/* 🎴 3D STACKED DECK CONTAINER 🎴 */}
-        <div
-          className="relative w-full flex justify-center py-1"
-          onTouchStart={handleTouchStart}
-          onTouchEnd={handleTouchEnd}
-        >
-          {/* Stacked Deck Shadow Layer 2 (Furthest behind) */}
-          <div className="absolute top-4 w-[90%] h-[94%] rounded-3xl bg-surface-container-high/40 border border-outline-variant/30 pointer-events-none transform translate-y-3 scale-[0.93] opacity-40 shadow-xl" />
-
-          {/* Stacked Deck Shadow Layer 1 (Directly behind) */}
-          <div className="absolute top-2 w-[95%] h-[97%] rounded-3xl bg-surface-container-high/60 border border-outline-variant/50 pointer-events-none transform translate-y-1.5 scale-[0.97] opacity-70 shadow-xl" />
-
-          {/* 🌟 ACTIVE VERTICAL FLASHCARD 🌟 */}
-          <div
-            onClick={handleNext}
-            className={`relative w-full rounded-3xl p-5 sm:p-6 bg-gradient-to-b ${currentCard.verticalBg} border-2 ${currentCard.borderClass} ${currentCard.glowClass} shadow-2xl overflow-hidden cursor-pointer select-none transition-all ${animClass}`}
-            title="Click card or use buttons to swap"
-          >
-            {/* Ambient Background Glow Orb */}
-            <div
-              className={`absolute -top-10 left-1/2 -translate-x-1/2 w-48 h-48 rounded-full blur-3xl opacity-25 pointer-events-none ${currentCard.orbBg}`}
-            />
-
-            {/* Card Header Pill Row */}
-            <div className="relative z-10 flex items-center justify-between mb-3">
-              <span className={`inline-flex items-center gap-1 px-3 py-0.5 rounded-full text-xs font-bold border ${currentCard.badgeClass} shadow-sm`}>
-                <span className="material-symbols-outlined text-[13px]" aria-hidden="true">
-                  {currentCard.isLeader ? 'stars' : 'verified'}
-                </span>
-                <span>{currentCard.isLeader ? 'Team Leader' : 'Core Contributor'}</span>
-              </span>
-
-              <div className="flex items-center gap-1 text-[11px] font-mono text-outline bg-surface-container-lowest/60 px-2 py-0.5 rounded-full border border-outline-variant/40">
-                <span className="material-symbols-outlined text-[13px] text-secondary animate-spin-slow" aria-hidden="true">
-                  cached
-                </span>
-                <span>Tap to Swap</span>
-              </div>
-            </div>
-
-            {/* 📸 Large Clear Centerpiece Avatar Photo 📸 */}
-            <div className="relative z-10 flex flex-col items-center text-center my-1">
-              <div className="relative">
-                {/* Shimmer skeleton — shown only while photo hasn't loaded yet */}
-                {!loadedPhotos[currentCard.avatar] && (
-                  <div
-                    className={`absolute inset-0 w-36 h-36 sm:w-40 sm:h-40 rounded-full ${currentCard.ringClass} overflow-hidden`}
-                    aria-hidden="true"
-                  >
-                    <div className="w-full h-full bg-surface-container-high animate-pulse" />
-                  </div>
-                )}
-                <img
-                  src={currentCard.avatar}
-                  alt={currentCard.name}
-                  width="160"
-                  height="160"
-                  fetchPriority="high"
-                  decoding="async"
-                  className={`w-36 h-36 sm:w-40 sm:h-40 rounded-full object-cover shadow-2xl ${currentCard.ringClass} bg-surface-container-high transition-all duration-300 hover:scale-105 ${
-                    loadedPhotos[currentCard.avatar] ? 'opacity-100' : 'opacity-0'
-                  }`}
-                  onLoad={(e) => {
-                    markLoaded(currentCard.avatar);
-                    e.currentTarget.style.opacity = '1';
-                  }}
-                  onError={(e) => {
-                    markLoaded(currentCard.avatar); // stop shimmer
-                    e.currentTarget.style.display = 'none';
-                    const fallback = e.currentTarget.nextElementSibling;
-                    if (fallback) fallback.style.display = 'flex';
-                  }}
-                />
-                {/* Initials fallback — shown only when image fails to load */}
+        {/* ── Main Modal Body: Scrollable ── */}
+        <div className="p-4 sm:p-6 overflow-y-auto team-modal-scroll flex-1">
+          {/* =========================================================
+              VIEW MODE A: 3D HOLOGRAPHIC GRID (ALL 4 MEMBERS)
+             ========================================================= */}
+          {viewMode === 'grid' && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 team-perspective-container">
+              {TEAM_MEMBERS.map((m, idx) => (
                 <div
-                  style={{ display: 'none' }}
-                  className={`w-36 h-36 sm:w-40 sm:h-40 rounded-full bg-gradient-to-br from-cyan-400 via-teal-500 to-blue-600 items-center justify-center text-white font-black text-4xl shadow-2xl ${currentCard.ringClass}`}
+                  key={m.id}
+                  onMouseMove={handleCardMouseMove}
+                  onMouseLeave={handleCardMouseLeave}
+                  className={`team-holo-card roster-card-enter-${idx} rounded-2xl p-5 bg-gradient-to-b ${m.cardGradient} border ${m.borderClass} ${m.glowClass} flex flex-col justify-between relative overflow-hidden backdrop-blur-md transition-all duration-300`}
                 >
-                  {currentCard.initials}
-                </div>
+                  <div className="team-card-shine" />
 
-                {currentCard.isLeader && (
-                  <span className="absolute -bottom-2.5 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-secondary text-surface text-[10px] font-black uppercase tracking-wider shadow-lg border border-white/30 flex items-center gap-1 whitespace-nowrap">
-                    <span className="material-symbols-outlined text-[13px]" aria-hidden="true">crown</span>
-                    <span>Team Leader</span>
-                  </span>
-                )}
-              </div>
+                  {/* Top Badge & Number */}
+                  <div>
+                    <div className="flex items-center justify-between mb-4 relative z-10">
+                      <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${m.badgeBg} flex items-center gap-1`}>
+                        <span className="material-symbols-outlined text-[12px]">
+                          {m.isLeader ? 'crown' : 'verified'}
+                        </span>
+                        <span>{m.isLeader ? 'Lead Architect' : 'Core Contributor'}</span>
+                      </span>
+                      <span className="font-mono text-xs font-bold text-slate-500">
+                        {m.number}
+                      </span>
+                    </div>
 
-              {/* Name & Role Title */}
-              <div className="mt-4">
-                <h3 className="font-display-lg text-2xl sm:text-3xl font-extrabold text-on-background tracking-tight">
-                  {currentCard.name}
-                </h3>
-                <p className={`text-xs sm:text-sm font-bold ${currentCard.themeColor} mt-0.5`}>
-                  {currentCard.role}
-                </p>
-                <p className="text-[11px] text-outline font-medium mt-0.5">
-                  BBD University • Academic Capstone 2026
-                </p>
-              </div>
-            </div>
+                    {/* Centered Avatar with Ring */}
+                    <div className="flex flex-col items-center text-center relative z-10 mb-4">
+                      <div className="relative group">
+                        <img
+                          src={m.avatar}
+                          alt={m.name}
+                          width="112"
+                          height="112"
+                          className={`w-24 h-24 sm:w-28 sm:h-28 rounded-full object-cover shadow-xl ${m.ringClass} bg-slate-800 transition-transform duration-300 group-hover:scale-105`}
+                          onLoad={() => markLoaded(m.avatar)}
+                          onError={(e) => {
+                            if (m.fallbackAvatar && e.currentTarget.src !== m.fallbackAvatar) {
+                              e.currentTarget.src = m.fallbackAvatar;
+                            } else {
+                              e.currentTarget.style.display = 'none';
+                              const fallback = e.currentTarget.nextElementSibling;
+                              if (fallback) fallback.style.display = 'flex';
+                            }
+                          }}
+                        />
+                        <div
+                          style={{ display: 'none' }}
+                          className={`w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-gradient-to-tr from-sky-500 to-indigo-600 items-center justify-center text-white font-black text-2xl shadow-xl ${m.ringClass}`}
+                        >
+                          {m.initials}
+                        </div>
 
-            {/* Mission / Architecture Summary Box */}
-            <div className="relative z-10 mt-3 p-3 rounded-xl bg-surface-container-lowest/80 border border-outline-variant/40 text-left">
-              <span className="text-[10px] uppercase tracking-wider text-outline font-bold block mb-1">
-                Executive Contribution
-              </span>
-              <p className="text-[11px] sm:text-xs text-on-surface-variant leading-relaxed">
-                {currentCard.summary}
-              </p>
-            </div>
+                        {m.isLeader && (
+                          <span className="team-crown-float absolute -top-2 -right-1 w-6 h-6 rounded-full bg-amber-400 text-slate-950 flex items-center justify-center text-xs font-bold shadow-md border border-white/60">
+                            👑
+                          </span>
+                        )}
+                      </div>
 
-            {/* Authored Deliverables Stack */}
-            <div className="relative z-10 mt-3 text-left">
-              <span className="text-[10px] uppercase tracking-wider text-secondary font-bold block mb-1.5">
-                Core Deliverables Authored
-              </span>
-              <div className="space-y-1.5">
-                {currentCard.deliverables.map((item, idx) => (
-                  <div
-                    key={idx}
-                    className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-surface-container-low/70 border border-outline-variant/30 text-xs"
-                  >
-                    <span className="material-symbols-outlined text-secondary text-[15px] shrink-0" aria-hidden="true">
-                      {item.icon}
-                    </span>
-                    <span className="font-medium text-on-background/90 text-[11px] truncate">
-                      {item.text}
-                    </span>
+                      <h3 className="font-headline-sm text-base font-bold text-white mt-3 tracking-tight">
+                        {m.name}
+                      </h3>
+                      <p className={`text-xs font-semibold ${m.accentClass} mt-0.5`}>
+                        {m.role.split('•')[0].trim()}
+                      </p>
+                      <p className="text-[10px] text-slate-400 font-mono mt-0.5">
+                        {m.role.split('•')[1]?.trim() || 'Software Engineer'}
+                      </p>
+                    </div>
+
+                    {/* Superpower Metrics Progress Bars */}
+                    <div className="space-y-2 mb-4 relative z-10 bg-slate-950/40 p-2.5 rounded-xl border border-slate-800/80">
+                      <div className="text-[10px] font-mono uppercase tracking-wider text-slate-400 flex items-center justify-between font-bold">
+                        <span>Core Metrics</span>
+                        <span className={m.accentClass}>Live Stats</span>
+                      </div>
+                      {m.superpowers.map((sp, sIdx) => (
+                        <div key={sIdx}>
+                          <div className="flex justify-between text-[10px] text-slate-300 mb-0.5 font-medium">
+                            <span className="truncate pr-1">{sp.name}</span>
+                            <span className="font-mono text-slate-400">{sp.percent}%</span>
+                          </div>
+                          <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                            <div
+                              className="h-full rounded-full transition-all duration-1000"
+                              style={{
+                                width: `${sp.percent}%`,
+                                backgroundColor: m.themeColor,
+                              }}
+                            />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Deliverables Snippet */}
+                    <div className="space-y-1.5 mb-4 relative z-10">
+                      {m.deliverables.slice(0, 2).map((del, dIdx) => (
+                        <div
+                          key={dIdx}
+                          className="flex items-center gap-1.5 text-[11px] text-slate-300 bg-slate-900/50 p-1.5 rounded-lg border border-slate-800/60"
+                        >
+                          <span className={`material-symbols-outlined text-[14px] ${m.accentClass} shrink-0`}>
+                            {del.icon}
+                          </span>
+                          <span className="truncate text-[10px] font-medium">{del.text}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                ))}
-              </div>
-            </div>
 
-            {/* Tech Stack Strip */}
-            <div className="relative z-10 mt-3 flex flex-wrap gap-1 justify-center">
-              {currentCard.techStack.map((tech, idx) => (
-                <span
-                  key={idx}
-                  className="px-2 py-0.5 rounded-md bg-surface-bright/50 border border-outline-variant/40 text-on-surface-variant text-[10px] font-mono"
-                >
-                  {tech}
-                </span>
+                  {/* Card Bottom Actions: Deep-Dive, GitHub, Email */}
+                  <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between gap-1.5 relative z-10">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        playCyberChime('click');
+                        setActiveCardIndex(idx);
+                        setViewMode('spotlight');
+                      }}
+                      className="px-2.5 py-1 rounded-lg bg-sky-500/15 hover:bg-sky-500/25 border border-sky-400/30 text-sky-300 text-[11px] font-medium transition-all flex items-center gap-1 cursor-pointer"
+                      title="View Detailed Spotlight Dossier"
+                    >
+                      <span className="material-symbols-outlined text-[13px]">visibility</span>
+                      <span>Details</span>
+                    </button>
+
+                    <div className="flex items-center gap-1">
+                      <a
+                        href={m.github}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-all border border-slate-700/60"
+                        title="GitHub Profile"
+                      >
+                        <span className="material-symbols-outlined text-[14px]">code</span>
+                      </a>
+                      <button
+                        type="button"
+                        onClick={() => handleCopyEmail(m.email)}
+                        className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-all border border-slate-700/60 relative cursor-pointer"
+                        title="Copy Email Address"
+                      >
+                        <span className="material-symbols-outlined text-[14px]">
+                          {copiedEmail === m.email ? 'done' : 'mail'}
+                        </span>
+                        {copiedEmail === m.email && (
+                          <span className="absolute -top-7 left-1/2 -translate-x-1/2 px-1.5 py-0.5 rounded bg-emerald-500 text-slate-950 font-bold text-[9px] shadow-sm whitespace-nowrap">
+                            Copied!
+                          </span>
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                </div>
               ))}
             </div>
+          )}
 
-            {/* Card Action Buttons */}
-            <div className="relative z-10 mt-3 pt-2.5 border-t border-outline-variant/30 flex items-center justify-center gap-2">
-              <a
-                href={currentCard.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(e) => e.stopPropagation()}
-                className="px-3 py-1.5 rounded-lg bg-surface-bright/70 hover:bg-surface-bright text-on-surface-variant hover:text-on-background border border-outline-variant/60 text-xs font-semibold flex items-center gap-1.5 transition-all shadow-sm"
+          {/* =========================================================
+              VIEW MODE B: 3D SPOTLIGHT DECK (CINEMATIC FOCUS)
+             ========================================================= */}
+          {viewMode === 'spotlight' && (
+            <div
+              className="max-w-2xl mx-auto flex flex-col items-center relative py-2"
+              onTouchStart={handleTouchStart}
+              onTouchEnd={handleTouchEnd}
+            >
+              {/* Stack Depth Layers */}
+              <div className="absolute top-4 w-[92%] h-[92%] rounded-3xl bg-slate-800/40 border border-slate-700/30 team-deck-shadow-2 pointer-events-none" />
+              <div className="absolute top-2 w-[96%] h-[96%] rounded-3xl bg-slate-800/60 border border-slate-700/50 team-deck-shadow-1 pointer-events-none" />
+
+              {/* Main Spotlight Card */}
+              <div
+                className={`relative w-full rounded-3xl p-6 sm:p-8 bg-gradient-to-b ${currentMember.cardGradient} border-2 ${currentMember.borderClass} ${currentMember.glowClass} shadow-2xl backdrop-blur-xl transition-all duration-300 z-10`}
               >
-                <span className="material-symbols-outlined text-[14px]" aria-hidden="true">code</span>
-                <span>GitHub Profile</span>
-              </a>
-              <a
-                href={`mailto:${currentCard.email}`}
-                onClick={(e) => e.stopPropagation()}
-                className="px-3 py-1.5 rounded-lg bg-surface-container-lowest/70 hover:bg-surface-container-lowest text-on-surface-variant hover:text-on-background border border-outline-variant/40 text-xs font-medium flex items-center gap-1.5 transition-all"
-              >
-                <span className="material-symbols-outlined text-[14px]" aria-hidden="true">mail</span>
-                <span>Email</span>
-              </a>
+                {/* Header Row */}
+                <div className="flex items-center justify-between mb-4">
+                  <span className={`px-3 py-1 rounded-full text-xs font-bold border ${currentMember.badgeBg} flex items-center gap-1.5 shadow-sm`}>
+                    <span className="material-symbols-outlined text-[14px]">
+                      {currentMember.isLeader ? 'crown' : 'verified'}
+                    </span>
+                    <span>{currentMember.badgeText}</span>
+                  </span>
+
+                  <span className="font-mono text-sm font-bold text-slate-400">
+                    {currentMember.number} / 04
+                  </span>
+                </div>
+
+                {/* Avatar & Center Identity */}
+                <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 my-2">
+                  <div className="relative shrink-0">
+                    <img
+                      src={currentMember.avatar}
+                      alt={currentMember.name}
+                      width="140"
+                      height="140"
+                      className={`w-32 h-32 sm:w-36 sm:h-36 rounded-full object-cover shadow-2xl ${currentMember.ringClass} bg-slate-800`}
+                      onError={(e) => {
+                        if (currentMember.fallbackAvatar && e.currentTarget.src !== currentMember.fallbackAvatar) {
+                          e.currentTarget.src = currentMember.fallbackAvatar;
+                        }
+                      }}
+                    />
+                    {currentMember.isLeader && (
+                      <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-amber-400 text-slate-950 text-[10px] font-black uppercase tracking-wider shadow-lg border border-white/60 whitespace-nowrap">
+                        👑 Team Leader
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="text-center sm:text-left flex-1">
+                    <h3 className="font-headline-lg text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+                      {currentMember.name}
+                    </h3>
+                    <p className={`text-sm sm:text-base font-bold ${currentMember.accentClass} mt-0.5`}>
+                      {currentMember.role}
+                    </p>
+                    <p className="text-xs text-slate-400 font-mono mt-0.5">
+                      BBD University • Academic Capstone 2026
+                    </p>
+                    <p className="text-xs text-slate-300 italic mt-3 bg-slate-950/40 p-2.5 rounded-xl border border-slate-800/80">
+                      {currentMember.quote}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Defense Presentation Slot (5-7 Min Pitch Guide) */}
+                {currentMember.defenseSlot && (
+                  <div className="mt-4 p-3.5 rounded-xl bg-amber-500/10 border border-amber-400/30 text-xs">
+                    <div className="flex items-center justify-between text-amber-300 font-bold mb-1.5 font-mono">
+                      <span className="flex items-center gap-1">
+                        <span className="material-symbols-outlined text-[15px]">timer</span>
+                        <span>Defense Slot: {currentMember.defenseSlot.phase}</span>
+                      </span>
+                      <span>{currentMember.defenseSlot.time}</span>
+                    </div>
+                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-1 text-[11px] text-slate-300">
+                      {currentMember.defenseSlot.topics.map((top, tIdx) => (
+                        <li key={tIdx} className="flex items-center gap-1.5">
+                          <span className="w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0" />
+                          <span className="truncate">{top}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {/* Architecture Summary */}
+                <div className="mt-4 p-4 rounded-xl bg-slate-950/60 border border-slate-800 text-xs text-slate-300 leading-relaxed">
+                  <span className="font-mono uppercase text-[10px] font-bold text-slate-400 block mb-1">
+                    Platform Contribution Summary
+                  </span>
+                  {currentMember.summary}
+                </div>
+
+                {/* Authored Deliverables Grid */}
+                <div className="mt-4">
+                  <span className={`font-mono uppercase text-[10px] font-bold ${currentMember.accentClass} block mb-2`}>
+                    Core Technical Deliverables Authored
+                  </span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {currentMember.deliverables.map((item, idx) => (
+                      <div
+                        key={idx}
+                        className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-900/60 border border-slate-800/80 text-xs text-slate-200"
+                      >
+                        <span className={`material-symbols-outlined text-[16px] ${currentMember.accentClass} shrink-0`}>
+                          {item.icon}
+                        </span>
+                        <span className="text-[11px] font-medium">{item.text}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Tech Stack Badges */}
+                <div className="mt-4 flex flex-wrap gap-1.5 justify-center sm:justify-start">
+                  {currentMember.techStack.map((tech, idx) => (
+                    <span
+                      key={idx}
+                      className="px-2.5 py-0.5 rounded-md bg-slate-800/80 border border-slate-700/60 text-slate-300 text-[10px] font-mono"
+                    >
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+
+                {/* External Action Buttons */}
+                <div className="mt-5 pt-4 border-t border-slate-800 flex items-center justify-between gap-3">
+                  <a
+                    href={currentMember.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 py-2 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-medium text-xs flex items-center justify-center gap-1.5 transition-all border border-slate-700"
+                  >
+                    <span className="material-symbols-outlined text-[15px]">code</span>
+                    <span>GitHub Profile</span>
+                  </a>
+
+                  <button
+                    type="button"
+                    onClick={() => handleCopyEmail(currentMember.email)}
+                    className="flex-1 py-2 px-3 rounded-xl bg-slate-900/80 hover:bg-slate-800 text-slate-200 font-medium text-xs flex items-center justify-center gap-1.5 transition-all border border-slate-800 cursor-pointer relative"
+                  >
+                    <span className="material-symbols-outlined text-[15px]">
+                      {copiedEmail === currentMember.email ? 'done' : 'mail'}
+                    </span>
+                    <span>{copiedEmail === currentMember.email ? 'Email Copied!' : 'Copy Email'}</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Spotlight Carousel Navigation Toolbar */}
+              <div className="flex items-center gap-3 mt-4 z-10">
+                <button
+                  type="button"
+                  onClick={() => {
+                    playCyberChime('hover');
+                    setActiveCardIndex((prev) => (prev - 1 + TEAM_MEMBERS.length) % TEAM_MEMBERS.length);
+                  }}
+                  className="px-3.5 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold flex items-center gap-1 transition-all cursor-pointer"
+                >
+                  <span className="material-symbols-outlined text-[16px]">arrow_back</span>
+                  <span>Previous</span>
+                </button>
+
+                {/* Pill Member Selectors */}
+                <div className="flex items-center gap-1 bg-slate-950/80 p-1 rounded-xl border border-slate-800">
+                  {TEAM_MEMBERS.map((m, idx) => (
+                    <button
+                      key={m.id}
+                      type="button"
+                      onClick={() => {
+                        playCyberChime('hover');
+                        setActiveCardIndex(idx);
+                      }}
+                      className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                        activeCardIndex === idx
+                          ? 'bg-sky-500 text-white shadow-sm'
+                          : 'text-slate-400 hover:text-white'
+                      }`}
+                    >
+                      {m.tabLabel.split('(')[0].trim()}
+                    </button>
+                  ))}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    playCyberChime('hover');
+                    setActiveCardIndex((prev) => (prev + 1) % TEAM_MEMBERS.length);
+                  }}
+                  className="px-3.5 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold flex items-center gap-1 transition-all cursor-pointer"
+                >
+                  <span>Next</span>
+                  <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+                </button>
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
-        {/* 🔄 SWAP DECK CONTROLS (Below Card) 🔄 */}
-        <div className="w-full flex flex-col items-center gap-2 mt-3">
-          {/* Main Swap & Navigation Buttons */}
+        {/* ── Modal Footer Banner ── */}
+        <div className="px-5 py-3 border-t border-slate-800 bg-slate-950/80 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-2 shrink-0">
           <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={handlePrev}
-              disabled={isBusy}
-              className="px-3 py-1.5 rounded-xl bg-surface-container-high/80 hover:bg-surface-bright text-on-surface-variant hover:text-on-background border border-outline-variant/50 text-xs font-medium flex items-center gap-1 transition-all disabled:opacity-50"
-              aria-label="Previous Flashcard"
-            >
-              <span className="material-symbols-outlined text-[16px]" aria-hidden="true">arrow_back</span>
-              <span>Prev</span>
-            </button>
-
-            {/* Big Glow Swap Button */}
-            <button
-              type="button"
-              onClick={handleNext}
-              disabled={isBusy}
-              className="px-5 py-2 rounded-xl bg-gradient-to-r from-secondary to-primary text-surface font-black text-xs flex items-center gap-2 shadow-glow-cyan hover:brightness-110 active:scale-95 transition-all disabled:opacity-50"
-              aria-label="Swap Flashcard"
-            >
-              <span className="material-symbols-outlined text-[16px] animate-spin-slow" aria-hidden="true">
-                swap_horiz
-              </span>
-              <span>Swap Next Card</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={handleNext}
-              disabled={isBusy}
-              className="px-3 py-1.5 rounded-xl bg-surface-container-high/80 hover:bg-surface-bright text-on-surface-variant hover:text-on-background border border-outline-variant/50 text-xs font-medium flex items-center gap-1 transition-all disabled:opacity-50"
-              aria-label="Next Flashcard"
-            >
-              <span>Next</span>
-              <span className="material-symbols-outlined text-[16px]" aria-hidden="true">arrow_forward</span>
-            </button>
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="font-mono text-[11px] text-slate-300">
+              92/92 Automated Tests Passing • Zero-Disk RAM Privacy • Free AI BYOK
+            </span>
           </div>
-
-          {/* Quick Pill Dots */}
-          <div className="flex items-center gap-1.5 bg-surface-container-low/80 px-2.5 py-1 rounded-full border border-outline-variant/40">
-            {TEAM_CARDS.map((card, idx) => {
-              const isActive = activeCardIndex === idx;
-              return (
-                <button
-                  key={card.id}
-                  type="button"
-                  onClick={() => swapCard(idx, idx > activeCardIndex ? 'next' : 'prev')}
-                  disabled={isBusy}
-                  className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold transition-all flex items-center gap-1 ${
-                    isActive
-                      ? card.isLeader
-                        ? 'bg-secondary text-surface shadow-glow-cyan scale-105'
-                        : 'bg-primary text-white shadow-glow-sm scale-105'
-                      : 'text-on-surface-variant hover:text-on-background hover:bg-surface-bright/40'
-                  }`}
-                >
-                  <span>{card.tabLabel}</span>
-                </button>
-              );
-            })}
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => {
+                playCyberChime('click');
+                setViewMode(viewMode === 'grid' ? 'spotlight' : 'grid');
+              }}
+              className="text-sky-400 hover:text-sky-300 hover:underline font-medium text-[11px] cursor-pointer"
+            >
+              Switch to {viewMode === 'grid' ? 'Spotlight Deck' : 'Roster Grid'}
+            </button>
+            <span className="text-slate-600">•</span>
+            <span className="text-[10px] font-mono text-slate-500">
+              Press Esc or click outside to dismiss
+            </span>
           </div>
-
-          <span className="text-[10px] text-outline font-mono">
-            Click card, use swipe, or press ← / → keys to swap
-          </span>
         </div>
       </div>
     </div>
-    </>
   );
 }
-
-

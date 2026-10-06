@@ -1,0 +1,126 @@
+/* ═══════════════════════════════════════════════════════════════
+   TeamModal.css — Next-Gen 3D Holographic Team Roster & Spotlight
+   GPU-Accelerated Glassmorphism, 3D Perspective & Micro-Physics
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Container Perspective ── */
+.team-perspective-container {
+  perspective: 1200px;
+  transform-style: preserve-3d;
+}
+
+/* ── Hologram 3D Card ── */
+.team-holo-card {
+  position: relative;
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+  transform-style: preserve-3d;
+  will-change: transform, box-shadow;
+}
+
+.team-holo-card:hover {
+  transform: translateY(-4px) scale(1.015);
+}
+
+/* ── Specular Shine Overlay ── */
+.team-card-shine {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(255, 255, 255, 0.12) 0%,
+    transparent 60%
+  );
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.team-holo-card:hover .team-card-shine {
+  opacity: 1;
+}
+
+/* ── Animated Border Beam ── */
+.team-border-beam {
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  pointer-events: none;
+  background: conic-gradient(
+    from var(--beam-angle, 0deg) at 50% 50%,
+    transparent 0deg,
+    var(--beam-color, #38bdf8) 60deg,
+    transparent 120deg
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  padding: 1.5px;
+  opacity: 0.6;
+}
+
+/* ── Skill Bar Progress Animation ── */
+@keyframes skillProgressFill {
+  from { width: 0%; }
+  to { width: var(--skill-percent, 95%); }
+}
+
+.team-skill-bar {
+  animation: skillProgressFill 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ── Floating Crown & Status Pulse ── */
+@keyframes floatGentle {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-4px) scale(1.05); }
+}
+
+.team-crown-float {
+  animation: floatGentle 2.4s ease-in-out infinite;
+}
+
+/* ── 3D Stack Depth Shadows ── */
+.team-deck-shadow-1 {
+  transform: translateY(6px) scale(0.97);
+  opacity: 0.55;
+  filter: blur(1px);
+}
+
+.team-deck-shadow-2 {
+  transform: translateY(12px) scale(0.93);
+  opacity: 0.3;
+  filter: blur(2px);
+}
+
+/* ── Roster Stagger Entry ── */
+@keyframes rosterCardIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.roster-card-enter-0 { animation: rosterCardIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) 0.05s both; }
+.roster-card-enter-1 { animation: rosterCardIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) 0.12s both; }
+.roster-card-enter-2 { animation: rosterCardIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) 0.19s both; }
+.roster-card-enter-3 { animation: rosterCardIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) 0.26s both; }
+
+/* ── Custom Scrollbar for Modal Content ── */
+.team-modal-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.team-modal-scroll::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.4);
+  border-radius: 999px;
+}
+.team-modal-scroll::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.4);
+  border-radius: 999px;
+}
+.team-modal-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.7);
+}

@@ -8,6 +8,7 @@ import JobDescriptionCard from './components/JobDescriptionCard';
 import AnalyzeButton from './components/AnalyzeButton';
 import ResultsDashboard from './components/ResultsDashboard';
 import TeamModal from './components/TeamModal';
+import TeamSection from './components/TeamSection';
 import SessionHistoryDrawer from './components/SessionHistoryDrawer';
 import ApiTelemetryDrawer from './components/ApiTelemetryDrawer';
 import HowItWorksModal from './components/HowItWorksModal';
@@ -83,10 +84,16 @@ export default function App() {
   // Modals & Drawers
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isTeamOpen, setIsTeamOpen] = useState(false);
+  const [selectedTeamMemberId, setSelectedTeamMemberId] = useState(null);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [isTelemetryOpen, setIsTelemetryOpen] = useState(false);
   const [isHowItWorksOpen, setIsHowItWorksOpen] = useState(false);
   const [isAboutOpen, setIsAboutOpen] = useState(false);
+
+  const handleOpenTeam = (memberId = null) => {
+    setSelectedTeamMemberId(memberId);
+    setIsTeamOpen(true);
+  };
 
   // Health check on mount and interval
   useEffect(() => {
@@ -181,7 +188,7 @@ Key Qualifications & Responsibilities:
         isOnline={isBackendOnline}
         onOpenAbout={() => setIsAboutOpen(true)}
         onOpenHowItWorks={() => setIsHowItWorksOpen(true)}
-        onOpenTeam={() => setIsTeamOpen(true)}
+        onOpenTeam={() => handleOpenTeam(null)}
         onToggleMobileMenu={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
       />
 
@@ -190,7 +197,7 @@ Key Qualifications & Responsibilities:
         activeView={analysisResult ? 'dashboard' : 'analyzer'}
         onOpenHistory={() => setIsHistoryOpen(true)}
         onOpenTelemetry={() => setIsTelemetryOpen(true)}
-        onOpenTeam={() => setIsTeamOpen(true)}
+        onOpenTeam={() => handleOpenTeam(null)}
         onOpenAbout={() => setIsAboutOpen(true)}
         onOpenHowItWorks={() => setIsHowItWorksOpen(true)}
         isAiPowered={Boolean(activeKey)}
@@ -272,13 +279,19 @@ Key Qualifications & Responsibilities:
               loading={loading}
               disabled={!resumeFile || !jobDescription.trim()}
             />
+
+            {/* Core Engineering Architects & Authors Roster Section */}
+            <TeamSection
+              onOpenModal={() => handleOpenTeam(null)}
+              onSelectMember={(memberId) => handleOpenTeam(memberId)}
+            />
           </div>
         ) : (
           <div className="animate-dashboard-reveal">
           <ResultsDashboard
             result={analysisResult}
             onReset={handleReset}
-            onOpenTeam={() => setIsTeamOpen(true)}
+            onOpenTeam={() => handleOpenTeam(null)}
           />
           </div>
         )}
@@ -294,7 +307,7 @@ Key Qualifications & Responsibilities:
             <button
               type="button"
               className="hover:text-secondary transition-colors block sm:inline mt-1 sm:mt-0 font-medium"
-              onClick={() => setIsTeamOpen(true)}
+              onClick={() => handleOpenTeam(null)}
             >
               Project Lead: Shivansh Mishra &amp; Team
             </button>
@@ -306,7 +319,7 @@ Key Qualifications & Responsibilities:
             <button type="button" onClick={() => setIsHowItWorksOpen(true)} className="hover:text-on-background transition-colors">
               Architecture
             </button>
-            <button type="button" onClick={() => setIsTeamOpen(true)} className="hover:text-on-background transition-colors">
+            <button type="button" onClick={() => handleOpenTeam(null)} className="hover:text-on-background transition-colors">
               Security
             </button>
           </div>
@@ -344,7 +357,14 @@ Key Qualifications & Responsibilities:
       )}
 
       {/* Interactive Modals & Drawers */}
-      <TeamModal isOpen={isTeamOpen} onClose={() => setIsTeamOpen(false)} />
+      <TeamModal
+        isOpen={isTeamOpen}
+        onClose={() => {
+          setIsTeamOpen(false);
+          setSelectedTeamMemberId(null);
+        }}
+        initialMemberId={selectedTeamMemberId}
+      />
       <SessionHistoryDrawer
         isOpen={isHistoryOpen}
         onClose={() => setIsHistoryOpen(false)}
