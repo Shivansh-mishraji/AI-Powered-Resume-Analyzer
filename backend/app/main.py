@@ -1,6 +1,8 @@
 from fastapi import FastAPI, UploadFile, File, Form, Header, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 from typing import Optional
+from app.services.xray_stream_service import xray_stream
 
 from app.config import (
     ALLOWED_MIME_TYPES,
@@ -125,6 +127,50 @@ async def analyze_resume(
         raise HTTPException(status_code=429, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Analysis processing error: {str(e)}")
+
+
+# -----------------------------------------------------------------------------
+# X-Ray Streaming Endpoint — Live Skill Extraction + Match Visualization
+# -----------------------------------------------------------------------------
+@app.post("/analyze-stream")
+@app.post("/api/analyze-stream")
+async def analyze_stream_endpoint(
+    resume: UploadFile = File(...),
+    job_description: str = Form(...),
+    x_gemini_api_key: Optional[str] = Header(None, alias="X-Gemini-API-Key")
+):
+    """
+    Server-Sent Events (SSE) streaming endpoint that powers the live X-Ray
+    keyword extraction & matching visualization while analysis runs.
+    """
+    if resume.content_type not in ALLOWED_MIME_TYPES:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Unsupported file type '{resume.content_type}'. Please upload a PDF or DOCX file."
+        )
+
+    contents = await resume.read()
+    if len(contents) > MAX_FILE_SIZE_BYTES:
+        raise HTTPException(
+            status_code=400,
+            detail="File size exceeds the 5MB limit. Please upload a smaller document."
+        )
+
+    return StreamingResponse(
+        xray_stream(
+            file_bytes=contents,
+            content_type=resume.content_type,
+            job_description=job_description,
+            api_key=x_gemini_api_key,
+            filename=resume.filename or "resume.pdf",
+        ),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no",
+        }
+    )
 
 
 # -----------------------------------------------------------------------------

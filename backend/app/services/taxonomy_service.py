@@ -138,6 +138,11 @@ class TaxonomyService:
         cats = self.categorize_skills(skills)
         return {domain: len(skill_list) for domain, skill_list in cats.items()}
 
+    def get_domain_for_skill(self, skill: str) -> Optional[str]:
+        """Returns the domain name for a given skill (or synonym), or None."""
+        canonical = self.resolve_synonym(skill)
+        return self._skill_to_domain.get(canonical.lower())
+
     def get_all_domains(self) -> List[str]:
         """Returns list of all cataloged domains."""
         return sorted(list(self.domains.keys()))

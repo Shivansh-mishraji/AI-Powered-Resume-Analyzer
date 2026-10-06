@@ -11,6 +11,7 @@ export default function ResultsDashboard({
   const [animatedScore, setAnimatedScore] = useState(0);
   const [pdfLoading, setPdfLoading] = useState(false);
   const [pdfError, setPdfError] = useState('');
+  const [showScoreTooltip, setShowScoreTooltip] = useState(false);
 
   // Score Count-Up Animation (60/120fps hardware synced)
   useEffect(() => {
@@ -197,16 +198,137 @@ ${(result.missing_skills || []).join(', ') || 'None'}`;
         </div>
       )}
 
+      {/* 30-Second Quick Verdict (Judge & Recruiter Fast Review) */}
+      <div className="mb-8 p-5 sm:p-6 rounded-2xl bg-gradient-to-r from-slate-900/90 via-indigo-950/40 to-slate-900/90 border border-primary/30 shadow-[0_0_30px_rgba(99,102,241,0.15)] backdrop-blur-md animate-stagger-1">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 pb-3 border-b border-primary/20">
+          <div className="flex items-center gap-2.5">
+            <span className="text-2xl" role="img" aria-label="bolt">⚡</span>
+            <div>
+              <h3 className="font-headline-md text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                <span>30-Second Verdict</span>
+                <span className="px-2 py-0.5 rounded-full text-[10px] uppercase font-bold bg-secondary/20 text-secondary border border-secondary/40">
+                  Instant Summary
+                </span>
+              </h3>
+              <p className="text-xs text-slate-300">
+                Key insights synthesized for quick evaluation by judges, professors, and hiring managers.
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 self-start sm:self-auto">
+            <span className="px-2.5 py-1 rounded-lg bg-surface-container/60 border border-outline/30 text-xs font-mono text-slate-300">
+              Score: <strong className={result.score >= 80 ? 'text-match-emerald' : result.score >= 60 ? 'text-match-amber' : 'text-match-rose'}>{result.score}%</strong>
+            </span>
+          </div>
+        </div>
+
+        {/* Friendly Emoji-Powered Bullet Points */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+          <div className="p-3 sm:p-3.5 rounded-xl bg-surface-container-low/40 border border-outline-variant/30 flex items-start gap-3">
+            <span className="text-xl shrink-0 mt-0.5" role="img" aria-label="target">🎯</span>
+            <div>
+              <h4 className="text-xs font-bold uppercase tracking-wider text-secondary mb-0.5">Overall Fit</h4>
+              <p className="text-xs sm:text-sm text-slate-200 leading-snug">
+                {result.score >= 80
+                  ? '🌟 Strong Candidate: High ATS compatibility with target role requirements.'
+                  : result.score >= 60
+                  ? '⚡ Good Contender: Core technical stack matches well with a few skill gaps.'
+                  : '⚠️ Moderate Alignment: Substantial keyword discrepancies with this specific posting.'}
+              </p>
+            </div>
+          </div>
+
+          <div className="p-3 sm:p-3.5 rounded-xl bg-surface-container-low/40 border border-outline-variant/30 flex items-start gap-3">
+            <span className="text-xl shrink-0 mt-0.5" role="img" aria-label="check">🟢</span>
+            <div>
+              <h4 className="text-xs font-bold uppercase tracking-wider text-match-emerald mb-0.5">Verified Strengths</h4>
+              <p className="text-xs sm:text-sm text-slate-200 leading-snug">
+                Matched <strong>{matchedList.length}</strong> required skills ({matchedList.slice(0, 3).join(', ') || 'Core proficiencies'}).
+              </p>
+            </div>
+          </div>
+
+          <div className="p-3 sm:p-3.5 rounded-xl bg-surface-container-low/40 border border-outline-variant/30 flex items-start gap-3">
+            <span className="text-xl shrink-0 mt-0.5" role="img" aria-label="cross">🔴</span>
+            <div>
+              <h4 className="text-xs font-bold uppercase tracking-wider text-match-rose mb-0.5">Priority Skill Gaps</h4>
+              <p className="text-xs sm:text-sm text-slate-200 leading-snug">
+                {missingList.length > 0
+                  ? `Missing ${missingList.length} required keywords: ${missingList.slice(0, 3).join(', ')}${missingList.length > 3 ? '...' : ''}`
+                  : 'No major technical gaps detected against this specification.'}
+              </p>
+            </div>
+          </div>
+
+          <div className="p-3 sm:p-3.5 rounded-xl bg-surface-container-low/40 border border-outline-variant/30 flex items-start gap-3">
+            <span className="text-xl shrink-0 mt-0.5" role="img" aria-label="bulb">💡</span>
+            <div>
+              <h4 className="text-xs font-bold uppercase tracking-wider text-match-amber mb-0.5">Quick Optimization Tip</h4>
+              <p className="text-xs sm:text-sm text-slate-200 leading-snug">
+                {missingList.length > 0
+                  ? `Add ${missingList.slice(0, 2).join(' & ')} into your project achievements to boost ATS rank by ~15%.`
+                  : 'Structure and technical keywords are optimal. Ready to submit!'}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Bento Grid Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-gutter-desktop">
         {/* Match Score Gauge (Span 4) */}
-        <div className="lg:col-span-4 glass-panel p-6 sm:p-8 flex flex-col items-center justify-center min-h-[320px] animate-stagger-2">
+        <div className="lg:col-span-4 glass-panel p-6 sm:p-8 flex flex-col items-center justify-center min-h-[320px] animate-stagger-2 relative">
           <div className="ai-accent-bar" />
-          <h3 className="font-label-md text-sm text-secondary mb-6 uppercase tracking-widest self-start w-full text-center font-semibold">
-            Match Score
-          </h3>
+          <div className="flex items-center justify-between w-full mb-6">
+            <h3 className="font-label-md text-sm text-secondary uppercase tracking-widest font-semibold">
+              Match Score
+            </h3>
+            {/* Tooltip trigger button */}
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setShowScoreTooltip(!showScoreTooltip)}
+                onMouseEnter={() => setShowScoreTooltip(true)}
+                onMouseLeave={() => setShowScoreTooltip(false)}
+                className="p-1 rounded-full text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+                aria-label="What does this score mean?"
+                title="What does this score mean?"
+              >
+                <span className="material-symbols-outlined text-[18px]">info</span>
+              </button>
 
-          <div className="relative w-[160px] h-[160px] sm:w-[180px] sm:h-[180px] flex items-center justify-center mb-6 group">
+              {/* Tooltip Popover */}
+              {showScoreTooltip && (
+                <div className="absolute right-0 top-8 z-50 w-64 p-3.5 rounded-xl bg-slate-900 border border-secondary/40 shadow-xl text-left backdrop-blur-md animate-fade-in text-xs">
+                  <div className="font-bold text-white mb-1.5 flex items-center gap-1.5">
+                    <span className="text-secondary">🎯 Score Benchmark</span>
+                  </div>
+                  <div className="space-y-1.5 text-slate-300">
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-match-emerald shrink-0" />
+                      <span><strong>80%+:</strong> Strong fit (Interview ready)</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-match-amber shrink-0" />
+                      <span><strong>60–79%:</strong> Moderate fit (Few keyword gaps)</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-match-rose shrink-0" />
+                      <span><strong>&lt;60%:</strong> Low fit (High ATS filter risk)</span>
+                    </div>
+                  </div>
+                  <p className="mt-2 text-[10px] text-slate-400 border-t border-slate-800 pt-1.5">
+                    Calculated via in-memory Jaccard similarity &amp; enterprise synonym taxonomy.
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div
+            className="relative w-[160px] h-[160px] sm:w-[180px] sm:h-[180px] flex items-center justify-center mb-6 group cursor-pointer"
+            onClick={() => setShowScoreTooltip(!showScoreTooltip)}
+          >
             {/* SVG Radial Gauge */}
             <svg
               className="w-full h-full transform -rotate-90 absolute inset-0 filter drop-shadow-[0_0_15px_rgba(34,211,238,0.3)] group-hover:drop-shadow-[0_0_25px_rgba(34,211,238,0.5)] transition-all duration-500"

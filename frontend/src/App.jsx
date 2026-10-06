@@ -12,6 +12,8 @@ import SessionHistoryDrawer from './components/SessionHistoryDrawer';
 import ApiTelemetryDrawer from './components/ApiTelemetryDrawer';
 import HowItWorksModal from './components/HowItWorksModal';
 import AboutModal from './components/AboutModal';
+import XRayVisualizer from './components/XRayVisualizer';
+import InteractiveWalkthrough from './components/InteractiveWalkthrough';
 import { analyzeResume, checkHealth } from './services/api';
 import { useSecureApiKey } from './hooks/useSecureApiKey';
 import AuroraBackground from './components/AuroraBackground';
@@ -27,6 +29,7 @@ export default function App() {
     setKey, clearKey, toggleEnabled, toggleSave
   } = useSecureApiKey();
   const [loading, setLoading] = useState(false);
+  const [isLoadingSample, setIsLoadingSample] = useState(false);
   const [error, setError] = useState(null);
   const [analysisResult, setAnalysisResult] = useState(() => {
     if (typeof window !== 'undefined' && window.location.search.includes('demo=true')) {
@@ -117,9 +120,41 @@ export default function App() {
     }
   };
 
-  const handleAnalyze = async () => {
+  const handleLoadSample = async () => {
+    try {
+      setIsLoadingSample(true);
+      setError(null);
+      const res = await fetch('/sample_resume.pdf');
+      if (!res.ok) throw new Error('Could not fetch sample resume file');
+      const blob = await res.blob();
+      const sampleFile = new File([blob], 'Alex_Rivera_Senior_FullStack_Resume.pdf', {
+        type: 'application/pdf',
+      });
+      setResumeFile(sampleFile);
+      setJobDescription(
+`Senior Full Stack & AI Software Engineer
+TechCorp Innovations | San Francisco, CA (Hybrid / Remote)
+
+About the Role:
+We are seeking a versatile Senior Full Stack & AI Engineer to design and scale our cloud-native platforms. You will develop backend microservices, build sleek React frontends, and integrate generative AI pipelines.
+
+Key Qualifications & Responsibilities:
+• 4+ years of professional experience with Python, FastAPI, and PostgreSQL.
+• Strong frontend development experience with React, TypeScript, and Tailwind CSS.
+• Hands-on experience containerizing services with Docker and deploying cloud workloads on AWS/Kubernetes.
+• Familiarity with AI/ML concepts (PyTorch, LLMs, NLP) and Redis caching is a strong plus.
+• Solid background in building high-throughput REST APIs and CI/CD pipelines.`
+      );
+    } catch (err) {
+      setError('Could not load sample resume. Please upload your own PDF/DOCX file.');
+    } finally {
+      setIsLoadingSample(false);
+    }
+  };
+
+  const handleAnalyze = () => {
     if (!resumeFile) {
-      setError('Please select or upload a resume file (PDF or DOCX).');
+      setError('Please select or upload a resume file (PDF or DOCX), or click "Try 1-Click Demo".');
       return;
     }
     if (!jobDescription.trim()) {
@@ -127,26 +162,8 @@ export default function App() {
       return;
     }
 
-    setLoading(true);
     setError(null);
-
-    try {
-      const data = await analyzeResume(resumeFile, jobDescription, activeKey);
-      setAnalysisResult(data);
-
-      setSessionHistory((prev) => [
-        {
-          ...data,
-          timestamp: Date.now(),
-          jdSnippet: jobDescription.substring(0, 80) + '...',
-        },
-        ...prev,
-      ]);
-    } catch (err) {
-      setError(err.message || 'An unexpected error occurred during analysis.');
-    } finally {
-      setLoading(false);
-    }
+    setLoading(true);
   };
 
   const handleReset = () => {
@@ -206,6 +223,14 @@ export default function App() {
           <div className="workspace-container">
             {/* Hero Section */}
             <Hero isAiPowered={Boolean(activeKey)} />
+
+            {/* 1-Click Interactive Demo & Step Walkthrough */}
+            <InteractiveWalkthrough
+              hasResume={Boolean(resumeFile)}
+              hasJd={Boolean(jobDescription && jobDescription.trim())}
+              onLoadSample={handleLoadSample}
+              isLoadingSample={isLoadingSample}
+            />
 
             {/* Workspace Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-stack-md relative items-stretch" style={{ position: 'relative', zIndex: 1 }}>
@@ -288,31 +313,32 @@ export default function App() {
         </footer>
       )}
 
-      {/* Progressive Loading State Overlay */}
+      {/* Live X-Ray Streaming Visualizer Overlay */}
       {loading && (
-        <div className="fixed inset-0 bg-background/90 backdrop-blur-sm z-[100] flex flex-col items-center justify-center p-4 animate-fade-in">
-          <div className="glass-panel rounded-2xl p-6 sm:p-8 max-w-md w-full border-secondary/30 shadow-glow-cyan relative">
-            <h3 className="font-headline-md text-xl sm:text-2xl text-on-background mb-6 text-center font-semibold">
-              Analyzing Compatibility
-            </h3>
-            <div className="flex flex-col gap-4">
-              <div className="flex items-center gap-3 text-match-emerald">
-                <span className="material-symbols-outlined text-[20px]" aria-hidden="true">check_circle</span>
-                <span className="font-label-md text-sm sm:text-base">Extracting resume entities...</span>
-              </div>
-              <div className="flex items-center gap-3 text-secondary animate-pulse">
-                <div className="w-5 h-5 border-2 border-secondary border-t-transparent rounded-full animate-spin" aria-hidden="true" />
-                <span className="font-label-md text-sm sm:text-base font-medium">Mapping JD requirements...</span>
-              </div>
-              <div className="flex items-center gap-3 text-outline">
-                <span className="material-symbols-outlined text-[20px] opacity-50" aria-hidden="true">pending</span>
-                <span className="font-label-md text-sm sm:text-base opacity-50">Running ATS AST rules...</span>
-              </div>
-              <div className="flex items-center gap-3 text-outline">
-                <span className="material-symbols-outlined text-[20px] opacity-50" aria-hidden="true">pending</span>
-                <span className="font-label-md text-sm sm:text-base opacity-50">Generating AI insights...</span>
-              </div>
-            </div>
+        <div className="fixed inset-0 bg-background/95 backdrop-blur-md z-[120] flex items-center justify-center p-3 sm:p-6 overflow-y-auto animate-fade-in">
+          <div className="max-w-4xl w-full my-auto">
+            <XRayVisualizer
+              file={resumeFile}
+              jobDescription={jobDescription}
+              apiKey={activeKey}
+              onDone={(data) => {
+                setAnalysisResult(data);
+                setSessionHistory((prev) => [
+                  {
+                    ...data,
+                    timestamp: Date.now(),
+                    jdSnippet: jobDescription.substring(0, 80) + '...',
+                  },
+                  ...prev,
+                ]);
+                setLoading(false);
+              }}
+              onError={(err) => {
+                setError(err || 'Analysis encountered an issue. Please try again.');
+                setLoading(false);
+              }}
+              onCancel={() => setLoading(false)}
+            />
           </div>
         </div>
       )}

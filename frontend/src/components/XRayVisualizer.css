@@ -1,0 +1,400 @@
+/* ═══════════════════════════════════════════════════════════════
+   XRayVisualizer.css — Live Resume Analysis Visualization
+   Premium glassmorphism dark theme with GPU-accelerated animations
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Root container ─────────────────────────────────────── */
+.xray-root {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  color: #e2e8f0;
+}
+
+/* ── Header ─────────────────────────────────────────────── */
+.xray-header {
+  position: relative;
+  text-align: center;
+  padding: 1.5rem;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  border-radius: 20px;
+  backdrop-filter: blur(12px);
+  overflow: hidden;
+}
+
+.xray-header-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 50% at 50% -10%,
+    rgba(99, 102, 241, 0.25) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.xray-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #a5b4fc 0%, #67e8f9 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0 0 0.75rem;
+  letter-spacing: -0.5px;
+}
+
+.xray-title-icon { margin-right: 0.5rem; filter: none; -webkit-text-fill-color: initial; }
+
+/* ── Phase label ─────────────────────────────────────────── */
+.xray-phase-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 1rem;
+  background: rgba(99, 102, 241, 0.15);
+  border: 1px solid rgba(99, 102, 241, 0.4);
+  border-radius: 999px;
+  font-size: 0.88rem;
+  color: #c7d2fe;
+  animation: fadeInUp 0.3s ease;
+}
+
+.xray-phase-dot {
+  width: 7px; height: 7px;
+  background: #6366f1;
+  border-radius: 50%;
+  animation: pulseDot 1s ease infinite;
+}
+
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(0.7); }
+}
+
+/* ── Document cards row ──────────────────────────────────── */
+.xray-docs-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 1rem;
+  align-items: start;
+}
+
+.xray-doc-card {
+  position: relative;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  border-radius: 16px;
+  padding: 1.25rem;
+  overflow: hidden;
+  min-height: 160px;
+  transition: border-color 0.3s;
+}
+
+.xray-doc-card--scanning {
+  border-color: rgba(16, 185, 129, 0.6);
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.15);
+}
+
+.xray-doc-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: #94a3b8;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+}
+
+/* ── Scan line animation ─────────────────────────────────── */
+.xray-scan-line {
+  position: absolute;
+  left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(16, 185, 129, 0.8) 40%,
+    rgba(16, 185, 129, 1) 50%,
+    rgba(16, 185, 129, 0.8) 60%,
+    transparent 100%);
+  animation: scanDown 1.2s ease-in-out;
+  box-shadow: 0 0 12px 3px rgba(16, 185, 129, 0.5);
+  pointer-events: none;
+  z-index: 10;
+}
+
+@keyframes scanDown {
+  from { top: 0;    opacity: 1; }
+  to   { top: 100%; opacity: 0; }
+}
+
+/* ── Skill chips ─────────────────────────────────────────── */
+.xray-chips-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  min-height: 100px;
+}
+
+.xray-doc-placeholder {
+  color: #475569;
+  font-size: 0.8rem;
+  font-style: italic;
+  align-self: center;
+  margin: auto;
+}
+
+.xray-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border: 1px solid color-mix(in srgb, var(--chip-color) 50%, transparent);
+  color: color-mix(in srgb, var(--chip-color) 90%, white);
+  background: color-mix(in srgb, var(--chip-color) 15%, transparent);
+  animation: chipSpawn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  will-change: transform, opacity;
+}
+
+.xray-chip::before {
+  content: '';
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--chip-color);
+  margin-right: 0.4rem;
+  flex-shrink: 0;
+}
+
+/* Resume chips — blue-violet palette */
+.xray-chip--resume { /* uses --chip-color from domain */ }
+/* JD chips — amber-orange tint overlay */
+.xray-chip--jd     { filter: hue-rotate(30deg) saturate(1.2); }
+
+@keyframes chipSpawn {
+  from { opacity: 0; transform: translateY(12px) scale(0.75); }
+  to   { opacity: 1; transform: translateY(0)   scale(1); }
+}
+
+/* ── VS divider ──────────────────────────────────────────── */
+.xray-vs {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  padding-top: 2rem;
+}
+
+.xray-vs-line {
+  width: 1px;
+  height: 40px;
+  background: linear-gradient(to bottom, transparent, #334155, transparent);
+}
+
+.xray-vs-text {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  color: #475569;
+}
+
+/* ── Sections ────────────────────────────────────────────── */
+.xray-section {
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  border-radius: 16px;
+  padding: 1.5rem;
+  animation: fadeInUp 0.4s ease;
+}
+
+.xray-section-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #94a3b8;
+  margin-bottom: 1rem;
+}
+
+/* ── Graph edges ─────────────────────────────────────────── */
+.xray-edges-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.xray-edge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.75rem;
+  background: color-mix(in srgb, var(--edge-color) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--edge-color) 30%, transparent);
+  border-radius: 8px;
+  font-size: 0.8rem;
+  animation: edgeDraw 0.4s ease both;
+}
+
+.xray-edge-node {
+  font-weight: 600;
+  color: #e2e8f0;
+}
+
+.xray-edge-node--canonical {
+  color: color-mix(in srgb, var(--edge-color) 90%, white);
+}
+
+.xray-edge-arrow {
+  color: #475569;
+  flex-shrink: 0;
+}
+
+.xray-edge-domain {
+  margin-left: auto;
+  font-size: 0.7rem;
+  color: color-mix(in srgb, var(--edge-color) 70%, white);
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--edge-color) 12%, transparent);
+}
+
+@keyframes edgeDraw {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ── Match / Gap section ─────────────────────────────────── */
+.xray-match-columns {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.xray-match-col { display: flex; flex-direction: column; gap: 0; }
+.xray-match-list { display: flex; flex-direction: column; gap: 0.3rem; }
+
+.xray-match-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  animation: matchReveal 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  font-size: 0.78rem;
+}
+
+.xray-match-pill {
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.72rem;
+  white-space: nowrap;
+}
+
+.xray-match-pill--resume {
+  background: rgba(99, 102, 241, 0.15);
+  border: 1px solid rgba(99, 102, 241, 0.4);
+  color: #a5b4fc;
+}
+
+.xray-match-pill--jd {
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  color: #fcd34d;
+}
+
+.xray-match-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, #10b981 0%, rgba(16,185,129,0.3) 100%);
+}
+
+.xray-match-line--gap {
+  background: linear-gradient(90deg, rgba(239,68,68,0.3) 0%, #ef4444 100%);
+}
+
+.xray-match-check { font-size: 0.85rem; flex-shrink: 0; }
+.xray-match-check--gap { filter: grayscale(0.2); }
+.xray-match-gap-spacer { min-width: 80px; }
+
+@keyframes matchReveal {
+  from { opacity: 0; transform: scaleX(0.7); }
+  to   { opacity: 1; transform: scaleX(1); }
+}
+
+/* ── Score ring column ───────────────────────────────────── */
+.xray-score-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0 1rem;
+}
+
+.xray-score-ring-wrap {
+  position: relative;
+  width: 130px; height: 130px;
+}
+
+.xray-score-ring-wrap svg {
+  position: absolute; inset: 0;
+}
+
+.xray-score-value {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  font-weight: 800;
+  letter-spacing: -1px;
+  transition: color 0.3s;
+}
+
+.xray-score-unit {
+  font-size: 0.8rem;
+  font-weight: 400;
+  margin-left: 1px;
+  margin-top: 4px;
+  align-self: flex-end;
+}
+
+.xray-score-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #94a3b8;
+  text-align: center;
+}
+
+/* ── Scoring-only state ──────────────────────────────────── */
+.xray-scoring-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 2rem;
+  animation: fadeInUp 0.3s ease;
+}
+
+.xray-scoring-label {
+  font-size: 0.9rem;
+  color: #94a3b8;
+}
+
+/* ── Shared animations ───────────────────────────────────── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .xray-docs-row     { grid-template-columns: 1fr; }
+  .xray-vs           { flex-direction: row; padding-top: 0; }
+  .xray-vs-line      { width: 30px; height: 1px; }
+  .xray-match-columns{ grid-template-columns: 1fr; }
+  .xray-score-col    { order: -1; }
+}
