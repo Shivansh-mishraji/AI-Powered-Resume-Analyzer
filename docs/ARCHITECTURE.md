@@ -29,8 +29,11 @@ The AI-Powered Resume Analyzer implements a **Hybrid Multi-Model & Deterministic
 │                                                                        │
 │   App.jsx                                                              │
 │   ├── Multi-Provider BYOK (Gemini AQ./AIza, OpenAI, Claude)            │
+│   ├── 1-Click Instant Demo & InteractiveWalkthrough.jsx                │
 │   ├── Drag-and-Drop File Upload (PDF / DOCX in-memory)                 │
 │   ├── Target Job Description Textarea & Quick Templates                │
+│   ├── Live Resume X-Ray Visualizer (XRayVisualizer.jsx via SSE stream) │
+│   ├── 30-Second Verdict Card & Interactive Score Benchmark Tooltips   │
 │   ├── Silent Backend Warmup Trigger (warmUpBackend on mount)           │
 │   ├── GPU-Accelerated Nebula Aurora Background & Reduced-Motion Guard  │
 │   └── 60/120 FPS rAF Score Dashboard (Score, Skills, Strengths, Advice)│
@@ -43,6 +46,7 @@ The AI-Powered Resume Analyzer implements a **Hybrid Multi-Model & Deterministic
 │   HTTP Gateway (`main.py`)                                             │
 │   ├── GET  /health              ──> System health check                │
 │   ├── POST /analyze             ──> Enriched analysis orchestrator     │
+│   ├── POST /analyze-stream      ──> Real-time SSE X-Ray streaming      │
 │   ├── GET  /taxonomy/domains    ──> 12 domains & 440+ skills catalog   │
 │   ├── POST /audit/ats           ──> Deep ATS heuristics & verb density │
 │   ├── POST /export/*            ──> PDF/MD/JSON/HTML with SHA-256 seal │

@@ -29,12 +29,15 @@ frontend/
 │   │   ├── TopNavBar.jsx        # Fixed top navigation + status indicator
 │   │   ├── Sidebar.jsx          # Desktop sidebar & drawer manager
 │   │   ├── Hero.jsx             # Headline banner & quick action triggers
+│   │   ├── InteractiveWalkthrough.jsx # 1-Click Instant Demo loader & 3-step progress bar
 │   │   ├── ResumeUploadCard.jsx # Drag-and-drop file upload zone (PDF/DOCX)
 │   │   ├── ByokCard.jsx         # Card wrapper for multi-provider API key
 │   │   ├── ApiKeyInput.jsx      # Key input with masking, provider detection, & toggles
 │   │   ├── JobDescriptionCard.jsx # Target JD textarea + quick role templates
 │   │   ├── AnalyzeButton.jsx    # CTA button with cycling progress messages
-│   │   ├── ResultsDashboard.jsx # 60/120fps score gauge, KPI tiles, & AI insights
+│   │   ├── XRayVisualizer.jsx   # Live SSE extraction & knowledge graph visualizer
+│   │   ├── XRayVisualizer.css   # GPU-accelerated scan lines & chip spring physics
+│   │   ├── ResultsDashboard.jsx # 30-Sec Verdict, score tooltip, KPI tiles, & AI insights
 │   │   ├── ScoreCard.jsx        # Radial score meter with ease-out cubic animation
 │   │   ├── AuroraBackground.jsx # Lightweight GPU aurora particles with tab-pause
 │   │   ├── ApiTelemetryDrawer.jsx # Latency meter & system status drawer

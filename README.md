@@ -44,16 +44,24 @@
 
 | # | Feature | Description |
 |---|---------|-------------|
-| 1 | 🤖 **Multi-Provider AI (BYOK)** | Gemini, OpenAI GPT-4o, Claude — auto-detected from key prefix. No key? Deterministic fallback (<5ms). |
-| 2 | 🎯 **Deep Semantic Matching** | Understands context: *AWS ECS + Terraform = Container Orchestration & IaC* — not just keyword counting. |
-| 3 | 🧬 **Skills Taxonomy Graph** | 440+ canonical technologies across 12 engineering domains with alias resolution (`k8s` → `Kubernetes`). |
-| 4 | 🔍 **Deep ATS Heuristic Audit** | 4 composite scores, 7 section detectors, 150+ action verbs, quantified bullet analysis. |
-| 5 | 📄 **Executive PDF Dossier** | High-density 2-page print-ready executive audit report with KPI tiles, composite ATS progress bars, competency matrix, recruiter interview kit & SHA-256 seal. |
-| 6 | 🎤 **Targeted Interview Kit** | Auto-generates technical questions & behavioral prompts from your specific skill gaps. |
-| 7 | 🔒 **Zero-Storage Privacy** | In-memory only processing — no disk writes, no DB, keys live in `sessionStorage` only. |
-| 8 | 🎨 **Nebula Aurora UI** | React 19 glassmorphism, 60/120 FPS GPU animations, fully responsive bento grid. |
+| 1 | 🔬 **Live Resume X-Ray** | Real-time Server-Sent Events (SSE) animation: scan lines, live skill chips, graph alias edges & score ticking. |
+| 2 | ✨ **1-Click Instant Demo** | Test in 0.2s without searching for files using pre-verified Full-Stack Engineer resume & target JD. |
+| 3 | ⚡ **30-Second Verdict** | Emoji-powered executive summary card with instant actionable advice for busy recruiters & evaluators. |
+| 4 | 🤖 **Multi-Provider AI (BYOK)** | Gemini, OpenAI GPT-4o, Claude — auto-detected from key prefix. No key? Deterministic fallback (<5ms). |
+| 5 | 🎯 **Deep Semantic Matching** | Understands context: *AWS ECS + Terraform = Container Orchestration & IaC* — not just keyword counting. |
+| 6 | 🧬 **Skills Taxonomy Graph** | 440+ canonical technologies across 12 engineering domains with alias resolution (`k8s` → `Kubernetes`). |
+| 7 | 🔍 **Deep ATS Heuristic Audit** | 4 composite scores, 7 section detectors, 150+ action verbs, quantified bullet analysis. |
+| 8 | 📄 **Executive PDF Dossier** | High-density 2-page print-ready executive audit report with KPI tiles, composite ATS progress bars & SHA-256 seal. |
+| 9 | 🎤 **Targeted Interview Kit** | Auto-generates technical questions & behavioral prompts from your specific skill gaps. |
+| 10 | 🔒 **Zero-Storage Privacy** | In-memory only processing — no disk writes, no DB, keys live in `sessionStorage` only. |
+| 11 | 🎨 **Nebula Aurora UI** | React 19 glassmorphism, 60/120 FPS GPU animations, fully responsive bento grid. |
 
-> 📖 Detailed explanations → [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md)
+> 📑 **Project Documentation & Deliverables:**
+> - [📄 Project Synopsis & Proposal](./SYNOPSIS.md)
+> - [📘 Comprehensive Project Report](./PROJECT_REPORT.md)
+> - [🎬 5–7 Min Video Presentation Script](./PRESENTATION_VIDEO_SCRIPT.md)
+> - [🏛️ System Architecture Deep Dive](./docs/ARCHITECTURE.md)
+> - [📡 Complete API Reference](./docs/API_REFERENCE.md)
 
 ---
 

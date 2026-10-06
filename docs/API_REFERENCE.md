@@ -39,7 +39,35 @@ Analyzes a resume against a target job description using either the **Multi-Prov
 
 ---
 
-### 3. GET `/taxonomy/domains` (or `/api/taxonomy/domains`)
+### 3. POST `/analyze-stream` (or `/api/analyze-stream`)
+**Server-Sent Events (SSE)** real-time streaming endpoint that powers the live **Resume X-Ray Visualizer**. Emits real-time JSON events as skills are parsed, mapped against the knowledge graph, and scored.
+
+#### Request Headers:
+| Header | Type | Required | Description |
+|---|---|---|---|
+| `X-Gemini-API-Key` | string | ❌ Optional | Multi-Provider BYOK key for contextual AI insights. |
+
+#### Request Body (`multipart/form-data`):
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `resume` | File | ✅ Required | PDF or DOCX file (Max 5MB). |
+| `job_description` | string | ✅ Required | Target job description text. |
+
+#### Stream Event Types (`text/event-stream`):
+```text
+data: {"type": "phase", "phase": "parsing", "label": "📄 Reading your resume..."}
+data: {"type": "scan_line", "target": "resume"}
+data: {"type": "skill_chip", "skill": "FastAPI", "domain": "Backend", "source": "resume"}
+data: {"type": "graph_edge", "from": "ReactJS", "to": "React", "domain": "Frontend", "label": "ReactJS → React"}
+data: {"type": "match", "skill": "Python"}
+data: {"type": "gap", "skill": "Kubernetes"}
+data: {"type": "score_tick", "value": 85}
+data: {"type": "done", "result": { ...Full AnalysisResult JSON... }}
+```
+
+---
+
+### 4. GET `/taxonomy/domains` (or `/api/taxonomy/domains`)
 Returns all 12 cataloged technology domains, canonical skill counts, and alias mappings.
 
 **Response (200 OK):**
@@ -62,7 +90,7 @@ Returns all 12 cataloged technology domains, canonical skill counts, and alias m
 
 ---
 
-### 4. POST `/taxonomy/categorize` (or `/api/taxonomy/categorize`)
+### 5. POST `/taxonomy/categorize` (or `/api/taxonomy/categorize`)
 Groups arbitrary skills into their respective domains and resolves industry synonyms (e.g., `k8s` → `Kubernetes`).
 
 #### Request Body (`application/json`):
@@ -90,7 +118,7 @@ Groups arbitrary skills into their respective domains and resolves industry syno
 
 ---
 
-### 5. POST `/audit/ats` (or `/api/audit/ats`)
+### 6. POST `/audit/ats` (or `/api/audit/ats`)
 Evaluates raw resume text for ATS section integrity, action verb strength, and quantified achievements.
 
 #### Request Body (`application/json`):
@@ -122,7 +150,7 @@ Evaluates raw resume text for ATS section integrity, action verb strength, and q
 
 ---
 
-### 6. POST `/export/markdown`, `/export/json`, `/export/html`, `/export/pdf`
+### 7. POST `/export/markdown`, `/export/json`, `/export/html`, `/export/pdf`
 Exports candidate evaluations into executive multi-format documents stamped with **SHA-256 digital seals**.
 
 - `POST /export/markdown`: Returns formatted Markdown with cryptographic verification block.
@@ -132,7 +160,7 @@ Exports candidate evaluations into executive multi-format documents stamped with
 
 ---
 
-### 7. POST `/interview/generate` (or `/api/interview/generate`)
+### 8. POST `/interview/generate` (or `/api/interview/generate`)
 Generates structured technical probing questions, architecture drills, and behavioral STAR prompts based on candidate skill gaps.
 
 #### Request Body (`application/json`):
